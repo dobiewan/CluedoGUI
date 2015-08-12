@@ -1,4 +1,4 @@
-package GUI;
+package cluedogame.GUI;
 
 import javax.swing.JPanel;
 
