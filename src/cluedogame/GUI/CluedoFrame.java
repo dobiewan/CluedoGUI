@@ -15,12 +15,12 @@ import java.awt.event.*;
  */
 public class CluedoFrame extends JFrame implements MouseListener {
 	
-	public static int BOARD_CANVAS_WIDTH = 400;
-	public static int BOARD_CANVAS_HEIGHT = 400;
-	public static int DASH_CANVAS_WIDTH = 400;
-	public static int DASH_CANVAS_HEIGHT = 100;
 	public static int PREF_BUTTON_SIZE = GroupLayout.DEFAULT_SIZE;
 	public static int MAX_BUTTON_SIZE = Short.MAX_VALUE;
+	public static int BOARD_CANVAS_WIDTH = 400;
+	public static int BOARD_CANVAS_HEIGHT = 400;
+	public static int DASH_CANVAS_WIDTH = 400 - PREF_BUTTON_SIZE;
+	public static int DASH_CANVAS_HEIGHT = 100;
 
     private BoardCanvas boardCanvas; // the canvas which displays the playing board
     private DashboardCanvas dashboardCanvas; // the canvas which displays the cards and dice
@@ -109,7 +109,7 @@ public class CluedoFrame extends JFrame implements MouseListener {
         ParallelGroup hzGroup = panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING);
         hzGroup.addComponent(accuseBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
         hzGroup.addComponent(rollDiceBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
-        hzGroup.addComponent(suggestBtn, GroupLayout.Alignment.TRAILING, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
+        hzGroup.addComponent(suggestBtn, /*GroupLayout.Alignment.TRAILING,*/ PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
         panelLayout.setHorizontalGroup(hzGroup);
         
         // set up the vertical alignment
