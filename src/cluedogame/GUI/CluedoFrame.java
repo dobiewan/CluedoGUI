@@ -37,6 +37,8 @@ public class CluedoFrame extends JFrame implements MouseListener {
      * Constructor for class CluedoFrame
      */
     public CluedoFrame() {
+    	setVisible(true);
+    	setResizable(false);
         initialiseUI();
     }
 
@@ -45,7 +47,6 @@ public class CluedoFrame extends JFrame implements MouseListener {
      */
     @SuppressWarnings("unchecked")                          
     private void initialiseUI() {
-    	setVisible(true);
         initialiseFields();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         initialiseButtons();
