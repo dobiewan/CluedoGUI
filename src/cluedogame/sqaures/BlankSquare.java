@@ -15,9 +15,4 @@ public class BlankSquare extends Square {
 		super(false);
 	}
 
-	@Override
-	public char boardChar() {
-		return ' ';
-	}
-
 }

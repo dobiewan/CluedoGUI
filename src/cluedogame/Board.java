@@ -8,6 +8,7 @@ import java.util.Queue;
 import java.util.Scanner;
 
 import cluedogame.sqaures.*;
+import cluedogame.sqaures.RoomEntranceSquare.Dir;
 
 /**
  * A 2D array representation of the Cluedo playing board.
@@ -36,9 +37,8 @@ public class Board {
 		try{
 			Scanner s = new Scanner(file);
 			// create queues of special squares
-			Queue<Character> title = titleChars();
-//			Queue<String> players = startPlayers();
 			Queue<String> shortcuts = shortcutRooms();
+			Queue<String> roomDoors = roomDoors();
 			// iterate over each row
 			for(int r = 0; r<board.length; r++){
 				String line = s.nextLine();
@@ -46,7 +46,7 @@ public class Board {
 				for(int c=0; c < board[0].length; c++){
 					char code = line.charAt(c); // get the character in the file
 					// determine the Square corresponding to the code
-					Square sq = squareTypeFromCode(code, title, shortcuts);
+					Square sq = squareTypeFromCode(code, shortcuts, roomDoors);
 					// add the square to the board
 					board[r][c] = sq;
 				}
@@ -60,62 +60,29 @@ public class Board {
 	/**
 	 * Creates a new square based on the code read from the file.
 	 * @param code A character from the file
-	 * @param title The remaining letters of 'CLUEDO'
 	 * @param shortcuts The remaining shortcut rooms
+	 * @param roomDoors The remaining room entrances
 	 * @return A Square corresponding to the given code.
 	 */
-	private Square squareTypeFromCode(char code, Queue<Character> title,
-			 Queue<String> shortcuts) {
+	private Square squareTypeFromCode(char code, Queue<String> shortcuts,
+			Queue<String> roomDoors) {
 		Square sq = null;
 		switch(code){
 		case '/' : sq = new BlankSquare(); break;
 		case '_' : sq = new GridSquare(); break;
-		case '?' : sq = new CharSquare('?'); break;
-		case '#' : sq = new CharSquare(title.poll()); break;
 		case '~' : sq = new ShortcutSquare(shortcuts.poll(), this); break;
-		case '*' : sq = new StarterSquare(); break;
-		case 'K' : sq = new RoomWallSquare(GameOfCluedo.KITCHEN); break;
-		case 'B' : sq = new RoomWallSquare(GameOfCluedo.BALL_ROOM); break;
-		case 'C' : sq = new RoomWallSquare(GameOfCluedo.CONSERVATORY); break;
-		case 'P' : sq = new RoomWallSquare(GameOfCluedo.BILLIARD_ROOM); break;
-		case 'L' : sq = new RoomWallSquare(GameOfCluedo.LIBRARY); break;
-		case 'S' : sq = new RoomWallSquare(GameOfCluedo.STUDY); break;
-		case 'H' : sq = new RoomWallSquare(GameOfCluedo.HALL); break;
-		case 'G' : sq = new RoomWallSquare(GameOfCluedo.LOUNGE); break;
-		case 'D' : sq = new RoomWallSquare(GameOfCluedo.DINING_ROOM); break;
-		case 'k' : sq = new RoomSquare(GameOfCluedo.KITCHEN); break;
-		case 'b' : sq = new RoomSquare(GameOfCluedo.BALL_ROOM); break;
-		case 'c' : sq = new RoomSquare(GameOfCluedo.CONSERVATORY); break;
-		case 'p' : sq = new RoomSquare(GameOfCluedo.BILLIARD_ROOM); break;
-		case 'l' : sq = new RoomSquare(GameOfCluedo.LIBRARY); break;
-		case 's' : sq = new RoomSquare(GameOfCluedo.STUDY); break;
-		case 'h' : sq = new RoomSquare(GameOfCluedo.HALL); break;
-		case 'g' : sq = new RoomSquare(GameOfCluedo.LOUNGE); break;
-		case 'd' : sq = new RoomSquare(GameOfCluedo.DINING_ROOM); break;
+		case 'N' : sq = new RoomEntranceSquare(roomDoors.poll(), Dir.NORTH); break;
+		case 'E' : sq = new RoomEntranceSquare(roomDoors.poll(), Dir.EAST); break;
+		case 'S' : sq = new RoomEntranceSquare(roomDoors.poll(), Dir.SOUTH); break;
+		case 'W' : sq = new RoomEntranceSquare(roomDoors.poll(), Dir.WEST); break;
 		}
 		return sq;
 	}
 	
 	/**
-	 * Creates a queue containing each letter of the word CLUEDO.
-	 * @return A queue containing the letters (in order) C, L,
-	 * U, E, D, O
-	 */
-	private Queue<Character> titleChars(){
-		Queue<Character> title = new LinkedList<Character>();
-		title.add('C');
-		title.add('L');
-		title.add('U');
-		title.add('E');
-		title.add('D');
-		title.add('O');
-		return title;
-	}
-	
-	/**
 	 * Creates a queue containing the room at each shortcut
-	 * location, in the order that they will be parsed.
-	 * @return A queue containing the room at each shortcut
+	 * location (ie. the room it goes to), in the order that they will be parsed.
+	 * @return A queue containing the end room at each shortcut
 	 * location, in the order that they will be parsed.
 	 */
 	private Queue<String> shortcutRooms(){
@@ -128,69 +95,31 @@ public class Board {
 	}
 	
 	/**
-	 * Make a copy of the board.
-	 * @return A new 2D array referencing all the same Squares as
-	 * the board field.
+	 * Creates a queue containing the name of each room in the order
+	 * that their door will be parsed.
+	 * @return A queue containing the room at each shortcut
+	 * location, in the order that they will be parsed.
 	 */
-	private Square[][] copyBoard(){
-		Square[][] copy = new Square[ROWS][COLS];
-		for(int r=0; r<ROWS; r++){
-			for(int c=0; c<COLS; c++){
-				copy[r][c] = board[r][c];
-			}
-		}
-		return copy;
-	}
-	
-	/**
-	 * Displays the board on the console.
-	 */
-	public void draw(List<Player> players){
-		// replace squares for player positions
-		Square[][] drawBoard = copyBoard();
-		for (Player p : players){
-			drawBoard[p.row()][p.column()] = new CharSquare(p.ID());
-		}
-		
-		// iterate over every row
-		for(int r=0; r<ROWS; r++){
-			// don't draw a wall if the next square is blank or a letter
-			boolean drawnBlank = false;
-			if(drawBoard[r][0] instanceof BlankSquare){
-				System.out.print(" ");
-			} else {
-				System.out.print("|");
-			}
-			// iterate over every column in r
-			for(int c=0; c<COLS; c++){
-				Square sq = drawBoard[r][c];
-				// don't draw a wall if this square is blank or a letter
-				if(sq instanceof BlankSquare || sq instanceof CharSquare){
-					if(drawnBlank){
-						System.out.print(" ");
-					}
-					System.out.print(sq.boardChar());
-					drawnBlank = true;
-					continue;
-				}
-				// if we've just drawn a blank square, draw a wall
-				if(drawnBlank){
-					System.out.print("|");
-					drawnBlank = false;
-				}
-				// print this square's symbol
-				System.out.print(sq.boardChar());
-				// draw a wall
-				System.out.print("|");
-			}
-			// print characters that are on this row
-			for (Player p : players){
-				if (p.row() == r){
-					System.out.print(" <- " + p.getName());
-				}
-			}
-			System.out.println();
-		}
+	private Queue<String> roomDoors(){
+		Queue<String> rooms = new LinkedList<String>();
+		rooms.add(GameOfCluedo.CONSERVATORY);
+		rooms.add(GameOfCluedo.BALL_ROOM);
+		rooms.add(GameOfCluedo.BALL_ROOM);
+		rooms.add(GameOfCluedo.KITCHEN);
+		rooms.add(GameOfCluedo.BALL_ROOM);
+		rooms.add(GameOfCluedo.BALL_ROOM);
+		rooms.add(GameOfCluedo.BILLIARD_ROOM);
+		rooms.add(GameOfCluedo.DINING_ROOM);
+		rooms.add(GameOfCluedo.BILLIARD_ROOM);
+		rooms.add(GameOfCluedo.LIBRARY);
+		rooms.add(GameOfCluedo.DINING_ROOM);
+		rooms.add(GameOfCluedo.LIBRARY);
+		rooms.add(GameOfCluedo.HALL);
+		rooms.add(GameOfCluedo.HALL);
+		rooms.add(GameOfCluedo.LOUNGE);
+		rooms.add(GameOfCluedo.HALL);
+		rooms.add(GameOfCluedo.STUDY);
+		return rooms;
 	}
 	
 	/**

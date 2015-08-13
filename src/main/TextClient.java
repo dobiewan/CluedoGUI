@@ -130,7 +130,7 @@ public class TextClient {
 		outer: for(int i=roll; i>0 && !endTurn; i--){
 			List<String> options = new ArrayList<String>(); // stores options available
 			Square sq = board.squareAt(player.row(), player.column());
-			game.drawBoard(playersInGame);
+//			game.drawBoard(playersInGame);
 			
 			System.out.println();
 			System.out.println(i +" turns remaining");
@@ -152,7 +152,7 @@ public class TextClient {
 			options.add("A");
 			
 			// check if the currrent square is a room
-			if(sq instanceof RoomSquare){
+			if(sq instanceof RoomEntranceSquare){
 				// player can make a suggestion if in a room
 				System.out.println("M : Make an accusatory suggestion");
 				options.add("M");
@@ -249,7 +249,7 @@ public class TextClient {
 			List<Player> playersInGame, GameOfCluedo game, Boolean suggested) {
 		if(playersInGame.contains(player)){
 			while(true){
-				game.drawBoard(playersInGame);
+//				game.drawBoard(playersInGame);
 				Square sq = game.getBoard().squareAt(player.row(), player.column());
 				System.out.println();
 				System.out.println("0 turns remaining");
@@ -264,7 +264,7 @@ public class TextClient {
 				options.add("C");
 				
 				// option to make a suggestion if player is in a room
-				if (sq instanceof RoomSquare && !suggested){
+				if (sq instanceof RoomEntranceSquare && !suggested){
 					System.out.println("M : Make an accusatory suggestion");
 					options.add("M");
 				}
@@ -325,7 +325,7 @@ public class TextClient {
 	 */
 	private static void makeSuggestion(Player player, GameOfCluedo game) {
 		System.out.println();
-		RoomSquare square = (RoomSquare)game.getBoard().squareAt(player.row(), player.column());
+		RoomEntranceSquare square = (RoomEntranceSquare)game.getBoard().squareAt(player.row(), player.column());
 		String room = square.getRoom();
 		System.out.println("You're in the " + room);
 		System.out.println("Suggest a character and weapon:");

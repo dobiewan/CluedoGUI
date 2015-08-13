@@ -15,9 +15,4 @@ public class GridSquare extends Square {
 		super(true);
 	}
 
-	@Override
-	public char boardChar() {
-		return '_';
-	}
-
 }

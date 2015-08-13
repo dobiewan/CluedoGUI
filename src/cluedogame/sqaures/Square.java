@@ -25,11 +25,4 @@ public abstract class Square {
 	public boolean isSteppable(){
 		return steppable;
 	}
-	
-	/**
-	 * Returns the char that will represent this square on
-	 * the board.
-	 * @return A char representation of this Square.
-	 */
-	public abstract char boardChar();
 }

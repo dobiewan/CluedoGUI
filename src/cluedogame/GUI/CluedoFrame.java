@@ -282,10 +282,12 @@ public class CluedoFrame extends JFrame implements MouseListener {
         }*/
 
         // Create and display the form 
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new CluedoFrame()/*.setVisible(true)*/;
-            }
-        });
+//        EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new CluedoFrame()/*.setVisible(true)*/;
+//            }
+//        });
+    	
+    	new CluedoFrame();
     }   
 }

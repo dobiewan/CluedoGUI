@@ -85,9 +85,4 @@ public class ShortcutSquare extends Square {
 		return toCol;
 	}
 
-	@Override
-	public char boardChar() {
-		return '~';
-	}
-
 }

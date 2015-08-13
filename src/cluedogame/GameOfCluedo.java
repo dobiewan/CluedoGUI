@@ -175,13 +175,6 @@ public class GameOfCluedo {
 				" used the " + murderCards[1].getName() +
 				" in the " + murderCards[2].getName() + "!");
 	}
-	
-	/**
-	 * Displays the board on the console.
-	 */
-	public void drawBoard(List<Player> players) {
-		board.draw(players);
-	}
 
 	/**
 	 * Gets this game's board.
