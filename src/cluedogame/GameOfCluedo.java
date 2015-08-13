@@ -45,7 +45,7 @@ public class GameOfCluedo {
 	private List<Card> roomCards;
 	private List<Card> weaponCards;
 	private Card[] murderCards = new Card[3];
-	List<Player> players;
+	List<Player> players = new ArrayList<Player>();
 	private Board board;
 	
 	/**
@@ -198,6 +198,13 @@ public class GameOfCluedo {
 	 */
 	public List<Player> getPlayers(){
 		return this.players;
+	}
+
+	/**
+	 * Adds a player to the game.
+	 */
+	public void addPlayer(Player p){
+		this.players.add(p);
 	}
 	
 	/**

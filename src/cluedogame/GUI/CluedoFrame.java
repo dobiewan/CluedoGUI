@@ -41,23 +41,19 @@ public class CluedoFrame extends JFrame implements MouseListener {
     private JMenuItem fileExit;
     
     // Game info
-    private List<Player> players = new ArrayList<Player>();
+    private GameOfCluedo game;
     
     public List<Player> getPlayers(){
-    	return players;
+    	return game.getPlayers();
     }
     
     /**
      * Constructor for class CluedoFrame
      */
     public CluedoFrame() {
-    	players.add(new Player(GameOfCluedo.SCARLETT));
-    	players.add(new Player(GameOfCluedo.PLUM));
-    	players.add(new Player(GameOfCluedo.PEACOCK));
-    	
-    	setVisible(true);
-    	setResizable(false);
         initialiseUI();
+        this.game = new GameOfCluedo();
+        selectPlayers();
     }
 
     /**
@@ -65,6 +61,8 @@ public class CluedoFrame extends JFrame implements MouseListener {
      */
     @SuppressWarnings("unchecked")                          
     private void initialiseUI() {
+    	setVisible(true);
+    	setResizable(false);
         initialiseFields();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         initialiseButtons();
@@ -213,8 +211,20 @@ public class CluedoFrame extends JFrame implements MouseListener {
 	 * @param evt
 	 */
     private void exitActionPerformed(ActionEvent evt) {                                           
-        // TODO add your handling code here:
-    }                                          
+    	confirmExit();
+    }                    
+    
+    /**
+     * Checks if the user wants to exit, and closes the window if they do.
+     */
+    private void confirmExit(){
+		int r = JOptionPane.showConfirmDialog(this, new JLabel("Do you really want to quit?"),
+				"Exit Cluedo?", JOptionPane.YES_NO_OPTION,
+				JOptionPane.WARNING_MESSAGE);
+		if(r == 0){
+			System.exit(0);
+		}
+    }
 
     /**
 	 * Runs when the Roll Dice button is pushed.
@@ -269,59 +279,158 @@ public class CluedoFrame extends JFrame implements MouseListener {
 		// TODO Auto-generated method stub
 		
 	}    
+	
+	/**
+	 * Allows users to set up their tokens
+	 */
+	public void selectPlayers(){
+		int numPlayers = inputNumPlayers();
+		
+		// let each player choose a character
+		for(int i=0; i<numPlayers; i++){
+			JPanel panel = new JPanel(new GridLayout(0, 1));
+			
+			// determine which characters are available
+			List<String> playerNames = new ArrayList<String>();
+			for(Player p : game.getPlayers()){
+				playerNames.add(p.getName());
+			}
+			
+			// create buttons
+	        ButtonGroup bg = new ButtonGroup();
+			JRadioButton greenBtn = new JRadioButton(GameOfCluedo.GREEN);
+			JRadioButton mustardBtn = new JRadioButton(GameOfCluedo.MUSTARD);
+			JRadioButton peacockBtn = new JRadioButton(GameOfCluedo.PEACOCK); 
+			JRadioButton plumBtn = new JRadioButton(GameOfCluedo.PLUM); 
+			JRadioButton scarlettBtn = new JRadioButton(GameOfCluedo.SCARLETT); 
+	        JRadioButton whiteBtn = new JRadioButton(GameOfCluedo.WHITE); 
+	        
+	        addAvailableCharacterOptions(panel, playerNames, bg, greenBtn,
+					mustardBtn, peacockBtn, plumBtn, scarlettBtn, whiteBtn);
+			
+
+			JOptionPane.showMessageDialog(this, panel);
+			generatePlayerFromInput(greenBtn, mustardBtn, peacockBtn,
+					plumBtn, scarlettBtn, whiteBtn);
+			
+	        boardCanvas.repaint();
+		}
+	}
+
+	/**
+	 * Determines which button is selected and makes a new player
+	 * based on the appropriate button
+	 * @param greenBtn
+	 * @param mustardBtn
+	 * @param peacockBtn
+	 * @param plumBtn
+	 * @param scarlettBtn
+	 * @param whiteBtn
+	 */
+	private void generatePlayerFromInput(JRadioButton greenBtn,
+			JRadioButton mustardBtn, JRadioButton peacockBtn,
+			JRadioButton plumBtn, JRadioButton scarlettBtn,
+			JRadioButton whiteBtn) {
+		if(greenBtn.isSelected()){
+			game.addPlayer(new Player(GameOfCluedo.GREEN));
+		} else if(mustardBtn.isSelected()){
+			game.addPlayer(new Player(GameOfCluedo.MUSTARD));
+		} else if(peacockBtn.isSelected()){
+			game.addPlayer(new Player(GameOfCluedo.PEACOCK));
+		} else if(plumBtn.isSelected()){
+			game.addPlayer(new Player(GameOfCluedo.PLUM));
+		} else if(scarlettBtn.isSelected()){
+			game.addPlayer(new Player(GameOfCluedo.SCARLETT));
+		} else if(whiteBtn.isSelected()){
+			game.addPlayer(new Player(GameOfCluedo.WHITE));
+		}
+	}
+
+	/**
+	 * Gets the number of players from the user.
+	 * @return The number of players in the game.
+	 * (Between 2 and 6 inclusive.)
+	 */
+	private int inputNumPlayers() {
+		// input number of players
+		int numPlayers = Integer.parseInt(JOptionPane.showInputDialog(this, "How many players? (2-6)"));
+		// check for invalid input
+		while(numPlayers < 2 || numPlayers > 6){
+			numPlayers = Integer.parseInt(JOptionPane.showInputDialog(this, "Invalid numer. Must be 2-6 players."));
+		}
+		return numPlayers;
+	}
+
+	private void addAvailableCharacterOptions(JPanel panel,
+			List<String> playerNames, ButtonGroup bg, JRadioButton greenBtn,
+			JRadioButton mustardBtn, JRadioButton peacockBtn,
+			JRadioButton plumBtn, JRadioButton scarlettBtn,
+			JRadioButton whiteBtn) {
+		
+		if(!playerNames.contains(GameOfCluedo.GREEN)){ 
+			bg.add(greenBtn);
+			panel.add(greenBtn);
+		}
+		if(!playerNames.contains(GameOfCluedo.MUSTARD)){
+			bg.add(mustardBtn);
+			panel.add(mustardBtn);
+		}
+		if(!playerNames.contains(GameOfCluedo.PEACOCK)){
+			bg.add(peacockBtn);
+			panel.add(peacockBtn);
+		}
+		if(!playerNames.contains(GameOfCluedo.PLUM)){
+			bg.add(plumBtn);
+			panel.add(plumBtn);
+		}
+		if(!playerNames.contains(GameOfCluedo.SCARLETT)){
+			bg.add(scarlettBtn);
+		}
+			panel.add(scarlettBtn);
+		if(!playerNames.contains(GameOfCluedo.WHITE)){
+			bg.add(whiteBtn);
+			panel.add(whiteBtn);
+		}
+	}
 
     /**
      * Main method for CluedoFrame
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        /*try {
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CluedoFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CluedoFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CluedoFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CluedoFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch(Exception e){
-        	
-        }*/
-
-        // Create and display the form 
-//        EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new CluedoFrame()/*.setVisible(true)*/;
-//            }
-//        });
-    	
     	new CluedoFrame();
     }   
     
+    /**
+     * Converts a column position to an absolute x position.
+     * @param c The column position to convert
+     * @return The absolute x position of the left of the column.
+     */
     public static int convertColToX(int c){
     	return (int)(squareWidth()*c);
     }
 
+    /**
+     * Determines the current width of a board square
+     * @return The width of a board square
+     */
     public static double squareWidth() {
 		double width = (double)BOARD_CANVAS_WIDTH/(double)Board.COLS;
 		return width;
 	}
     
+    /**
+     * Converts a row position to an absolute y position.
+     * @param r The row position to convert
+     * @return The absolute y position of the top of the row.
+     */
     public static int convertRowToY(int r){
     	return (int)(squareHeight()*r);
     }
 
+    /**
+     * Determines the current height of a board square
+     * @return The height of a board square
+     */
     public static double squareHeight() {
 		double height = (double)BOARD_CANVAS_HEIGHT/(double)Board.ROWS;
 		return height;
