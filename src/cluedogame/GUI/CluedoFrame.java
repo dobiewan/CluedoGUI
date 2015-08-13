@@ -59,7 +59,6 @@ public class CluedoFrame extends JFrame implements MouseListener {
     /**
      * Initialises all GUI components.
      */
-    @SuppressWarnings("unchecked")                          
     private void initialiseUI() {
     	setVisible(true);
     	setResizable(false);
@@ -269,7 +268,7 @@ public class CluedoFrame extends JFrame implements MouseListener {
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e) {
+	public void mouseEntered(MouseEvent e) { //TODO use this for hovering
 		// TODO Auto-generated method stub
 		
 	}
@@ -310,7 +309,7 @@ public class CluedoFrame extends JFrame implements MouseListener {
 			
 
 			JOptionPane.showMessageDialog(this, panel);
-			generatePlayerFromInput(greenBtn, mustardBtn, peacockBtn,
+			generatePlayerFromInput(panel, greenBtn, mustardBtn, peacockBtn,
 					plumBtn, scarlettBtn, whiteBtn);
 			
 	        boardCanvas.repaint();
@@ -320,14 +319,8 @@ public class CluedoFrame extends JFrame implements MouseListener {
 	/**
 	 * Determines which button is selected and makes a new player
 	 * based on the appropriate button
-	 * @param greenBtn
-	 * @param mustardBtn
-	 * @param peacockBtn
-	 * @param plumBtn
-	 * @param scarlettBtn
-	 * @param whiteBtn
 	 */
-	private void generatePlayerFromInput(JRadioButton greenBtn,
+	private void generatePlayerFromInput(JPanel panel, JRadioButton greenBtn,
 			JRadioButton mustardBtn, JRadioButton peacockBtn,
 			JRadioButton plumBtn, JRadioButton scarlettBtn,
 			JRadioButton whiteBtn) {
@@ -343,6 +336,11 @@ public class CluedoFrame extends JFrame implements MouseListener {
 			game.addPlayer(new Player(GameOfCluedo.SCARLETT));
 		} else if(whiteBtn.isSelected()){
 			game.addPlayer(new Player(GameOfCluedo.WHITE));
+		} else {
+			// the player hasn't selected an option
+			JOptionPane.showMessageDialog(this, panel);
+			generatePlayerFromInput(panel, greenBtn, mustardBtn, peacockBtn,
+					plumBtn, scarlettBtn, whiteBtn);
 		}
 	}
 
@@ -353,10 +351,17 @@ public class CluedoFrame extends JFrame implements MouseListener {
 	 */
 	private int inputNumPlayers() {
 		// input number of players
-		int numPlayers = Integer.parseInt(JOptionPane.showInputDialog(this, "How many players? (2-6)"));
-		// check for invalid input
-		while(numPlayers < 2 || numPlayers > 6){
-			numPlayers = Integer.parseInt(JOptionPane.showInputDialog(this, "Invalid numer. Must be 2-6 players."));
+		String numPlayersResponse = JOptionPane.showInputDialog(this, "How many players? (2-6)");
+		int numPlayers = 0;
+		try{
+			numPlayers = Integer.parseInt(numPlayersResponse);
+			// check for out of bounds number
+			while(numPlayers < 2 || numPlayers > 6){
+				numPlayers = Integer.parseInt(JOptionPane.showInputDialog(this, "Invalid numer. Must be 2-6 players."));
+			}
+		} catch(NumberFormatException e){
+			// player entered null or a non-numeric string
+			return inputNumPlayers();
 		}
 		return numPlayers;
 	}
@@ -385,8 +390,8 @@ public class CluedoFrame extends JFrame implements MouseListener {
 		}
 		if(!playerNames.contains(GameOfCluedo.SCARLETT)){
 			bg.add(scarlettBtn);
-		}
 			panel.add(scarlettBtn);
+		}
 		if(!playerNames.contains(GameOfCluedo.WHITE)){
 			bg.add(whiteBtn);
 			panel.add(whiteBtn);

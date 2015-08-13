@@ -25,17 +25,16 @@ public class Board {
 	 * Constructor for class Board.
 	 */
 	public Board(){
-		File f = new File("boardFile.txt");
-		parse(f);
+		parse();
 	}
 	
 	/**
 	 * Loads a board from a given file.
 	 * @param file The file containing the board data.
 	 */
-	public void parse(File file){
+	public void parse(){
 		try{
-			Scanner s = new Scanner(file);
+			Scanner s = new Scanner(new File("boardFile.txt"));
 			// create queues of special squares
 			Queue<String> shortcuts = shortcutRooms();
 			Queue<String> roomDoors = roomDoors();
