@@ -12,6 +12,8 @@ import javax.imageio.ImageIO;
 
 import cluedogame.GUI.CluedoFrame;
 import cluedogame.cards.*;
+import cluedogame.sqaures.RoomEntranceSquare;
+import cluedogame.sqaures.RoomEntranceSquare.Dir;
 import cluedogame.sqaures.Square;
 
 /**
@@ -155,7 +157,11 @@ public class Player {
 			int leftRow = rPosition;
 			int leftCol = cPosition-1;
 			Square leftSquare = board.squareAt(leftRow, leftCol);
-			return leftSquare.isSteppable() && !game.hasPlayerAt(leftRow, leftCol);
+			// check if entering a room
+			if(leftSquare instanceof RoomEntranceSquare){
+				return ((RoomEntranceSquare)leftSquare).getEnterDir() == Dir.EAST;
+			}
+			return leftSquare.isSteppable() && !game.hasPlayerAt(leftRow, leftCol); //FIXME - test this works, check if players can be in same spot
 		} catch(ArrayIndexOutOfBoundsException e){
 			return false;
 		}
@@ -172,6 +178,10 @@ public class Player {
 			int rightRow = rPosition;
 			int rightCol = cPosition+1;
 			Square rightSquare = board.squareAt(rightRow, rightCol);
+			// check if entering a room
+			if(rightSquare instanceof RoomEntranceSquare){
+				return ((RoomEntranceSquare)rightSquare).getEnterDir() == Dir.WEST;
+			}
 			return rightSquare.isSteppable() && !game.hasPlayerAt(rightRow, rightCol);
 		} catch(ArrayIndexOutOfBoundsException e){
 			return false;
@@ -189,6 +199,10 @@ public class Player {
 			int upRow = rPosition-1;
 			int upCol = cPosition;
 			Square upSquare = board.squareAt(upRow, upCol);
+			// check if entering a room
+			if(upSquare instanceof RoomEntranceSquare){
+				return ((RoomEntranceSquare)upSquare).getEnterDir() == Dir.SOUTH;
+			}
 			return upSquare.isSteppable() && !game.hasPlayerAt(upRow, upCol);
 		} catch(ArrayIndexOutOfBoundsException e){
 			return false;
@@ -206,6 +220,10 @@ public class Player {
 			int downRow = rPosition+1;
 			int downCol = cPosition;
 			Square downSquare = board.squareAt(downRow, downCol);
+			// check if entering a room
+			if(downSquare instanceof RoomEntranceSquare){
+				return ((RoomEntranceSquare)downSquare).getEnterDir() == Dir.NORTH;
+			}
 			return downSquare.isSteppable() && !game.hasPlayerAt(downRow, downCol);
 		} catch(ArrayIndexOutOfBoundsException e){
 			return false;

@@ -307,7 +307,6 @@ public class CluedoFrame extends JFrame implements MouseListener {
 	        addAvailableCharacterOptions(panel, playerNames, bg, greenBtn,
 					mustardBtn, peacockBtn, plumBtn, scarlettBtn, whiteBtn);
 			
-
 			JOptionPane.showMessageDialog(this, panel);
 			generatePlayerFromInput(panel, greenBtn, mustardBtn, peacockBtn,
 					plumBtn, scarlettBtn, whiteBtn);
@@ -350,8 +349,21 @@ public class CluedoFrame extends JFrame implements MouseListener {
 	 * (Between 2 and 6 inclusive.)
 	 */
 	private int inputNumPlayers() {
-		// input number of players
-		String numPlayersResponse = JOptionPane.showInputDialog(this, "How many players? (2-6)");
+		// set up dialog box
+		String[] options = {"OK"};
+		JPanel panel = new JPanel(new GridLayout(0, 1));
+		JLabel lbl = new JLabel("How many players? (2-6)");
+		JTextField txt = new JTextField(10);
+		panel.add(lbl);
+		panel.add(txt);
+		
+		// show dialog box
+		JOptionPane.showOptionDialog(this, panel, "# Players",
+				JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
+		String numPlayersResponse = txt.getText();
+//		String numPlayersResponse = JOptionPane.showInputDialog(this, "How many players? (2-6)");
+		
+		// determine input validity
 		int numPlayers = 0;
 		try{
 			numPlayers = Integer.parseInt(numPlayersResponse);
@@ -360,12 +372,16 @@ public class CluedoFrame extends JFrame implements MouseListener {
 				numPlayers = Integer.parseInt(JOptionPane.showInputDialog(this, "Invalid numer. Must be 2-6 players."));
 			}
 		} catch(NumberFormatException e){
-			// player entered null or a non-numeric string
+			// player entered nothing or a non-numeric string
 			return inputNumPlayers();
 		}
 		return numPlayers;
 	}
 
+	/**
+	 * Adds the adds the remaining character options to the character select
+	 * panel.
+	 */
 	private void addAvailableCharacterOptions(JPanel panel,
 			List<String> playerNames, ButtonGroup bg, JRadioButton greenBtn,
 			JRadioButton mustardBtn, JRadioButton peacockBtn,

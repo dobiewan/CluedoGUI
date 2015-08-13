@@ -27,5 +27,9 @@ public class RoomEntranceSquare extends Square {
 	public String getRoom(){
 		return room;
 	}
+	
+	public Dir getEnterDir(){
+		return enterDir;
+	}
 
 }
