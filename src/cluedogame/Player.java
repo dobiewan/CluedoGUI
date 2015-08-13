@@ -1,8 +1,16 @@
 package cluedogame;
 
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+
+import cluedogame.GUI.CluedoFrame;
 import cluedogame.cards.*;
 import cluedogame.sqaures.Square;
 
@@ -14,7 +22,7 @@ import cluedogame.sqaures.Square;
 public class Player {
 	
 	private String name; // which character playing as
-	private char number; // the number displayed on the board
+	private BufferedImage img; // the image representing this player
 	private List<Card> hand; // cards in the player's hand
 	private List<Card> cardsSeen; // cards the player has seen
 	
@@ -26,16 +34,25 @@ public class Player {
 	 * @param simpleName The simplified name for the chosen character.
 	 * @param number The player's id.
 	 */
-	public Player(String name, char number) {
+	public Player(String name) {
 		super();
 		this.name = name;
-		this.number = number;
+		this.img = chooseImage();
 		this.hand = new ArrayList<Card>();
 		this.cardsSeen = new ArrayList<Card>();
 		this.cPosition = startCol(this.name);
 		this.rPosition = startRow(this.name);
 	}
 	
+	private BufferedImage chooseImage() {
+		try {
+			return img = ImageIO.read(new File(name+".jpg"));
+		} catch (IOException e) {
+			System.out.println("Could not read image file: "+e.getMessage());
+			return null;
+		}
+	}
+
 	/**
 	 * Gets the cards in the this player's hand.
 	 * @return The cards in the player's hand
@@ -82,14 +99,6 @@ public class Player {
 	 */
 	public int row(){
 		return rPosition;
-	}
-	
-	/**
-	 * Gets the player's ID number (represented as a char)
-	 * @return The player's ID
-	 */
-	public char ID(){
-		return number;
 	}
 	
 	/**
@@ -273,6 +282,18 @@ public class Player {
 	 */
 	public boolean hasSeenCard(Card c){
 		return cardsSeen.contains(c);
+	}
+	
+	/**
+	 * Draws the player
+	 * @param g The Graphics object to draw on.
+	 */
+	public void draw(Graphics g){
+		int x = CluedoFrame.convertColToX(cPosition);
+		int y = CluedoFrame.convertRowToY(rPosition);
+		Image resizedImage = img.getScaledInstance((int)CluedoFrame.squareWidth(),
+				(int)CluedoFrame.squareHeight(), Image.SCALE_SMOOTH);
+		g.drawImage(resizedImage, x, y, null);
 	}
 	
 }

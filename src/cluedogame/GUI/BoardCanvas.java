@@ -9,15 +9,19 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import cluedogame.Player;
+
 public class BoardCanvas extends JPanel {
 	
 	private Image boardImage;
+	private CluedoFrame frame;
 	
-	public BoardCanvas(){
+	public BoardCanvas(CluedoFrame frame){
+		this.frame = frame;
 		try {
 			boardImage = ImageIO.read(new File("board.jpg"));
 		} catch (IOException e) {
-			System.out.println("Could not read image file");
+			System.out.println("Could not read image file: "+e.getMessage());
 		}
 	}
 
@@ -30,6 +34,9 @@ public class BoardCanvas extends JPanel {
 		Image resizedImage = boardImage.getScaledInstance(CluedoFrame.BOARD_CANVAS_WIDTH,
 				CluedoFrame.BOARD_CANVAS_HEIGHT, Image.SCALE_SMOOTH);
 		g.drawImage(resizedImage, 0, 0, null);
+		for(Player p : frame.getPlayers()){
+			p.draw(g);
+		}
 	}
 	
 }

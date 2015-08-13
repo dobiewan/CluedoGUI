@@ -5,8 +5,14 @@ import javax.swing.*;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
 
+import cluedogame.Board;
+import cluedogame.GameOfCluedo;
+import cluedogame.Player;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
+import java.util.List;
 
 /**
  * Window containing all GUI components.
@@ -17,11 +23,12 @@ public class CluedoFrame extends JFrame implements MouseListener {
 	
 	public static int PREF_BUTTON_SIZE = GroupLayout.DEFAULT_SIZE;
 	public static int MAX_BUTTON_SIZE = Short.MAX_VALUE;
-	public static int BOARD_CANVAS_WIDTH = 400;
-	public static int BOARD_CANVAS_HEIGHT = 400;
-	public static int DASH_CANVAS_WIDTH = 400 - PREF_BUTTON_SIZE;
+	public static int BOARD_CANVAS_WIDTH = 500;
+	public static int BOARD_CANVAS_HEIGHT = 500;
+	public static int DASH_CANVAS_WIDTH = BOARD_CANVAS_WIDTH - PREF_BUTTON_SIZE;
 	public static int DASH_CANVAS_HEIGHT = 100;
 
+	// GUI components
     private BoardCanvas boardCanvas; // the canvas which displays the playing board
     private DashboardCanvas dashboardCanvas; // the canvas which displays the cards and dice
     private Panel btnPanel; // panel containing the buttons
@@ -33,10 +40,21 @@ public class CluedoFrame extends JFrame implements MouseListener {
     private JMenuItem fileNewGame;
     private JMenuItem fileExit;
     
+    // Game info
+    private List<Player> players = new ArrayList<Player>();
+    
+    public List<Player> getPlayers(){
+    	return players;
+    }
+    
     /**
      * Constructor for class CluedoFrame
      */
     public CluedoFrame() {
+    	players.add(new Player(GameOfCluedo.SCARLETT));
+    	players.add(new Player(GameOfCluedo.PLUM));
+    	players.add(new Player(GameOfCluedo.PEACOCK));
+    	
     	setVisible(true);
     	setResizable(false);
         initialiseUI();
@@ -60,7 +78,7 @@ public class CluedoFrame extends JFrame implements MouseListener {
 	 * Initialises all fields (components of the GUI)
 	 */
 	private void initialiseFields() {
-		boardCanvas = new BoardCanvas();
+		boardCanvas = new BoardCanvas(this);
 	    dashboardCanvas = new DashboardCanvas();
 	    btnPanel = new Panel();
 	    rollDiceBtn = new JButton();
@@ -290,4 +308,22 @@ public class CluedoFrame extends JFrame implements MouseListener {
     	
     	new CluedoFrame();
     }   
+    
+    public static int convertColToX(int c){
+    	return (int)(squareWidth()*c);
+    }
+
+    public static double squareWidth() {
+		double width = (double)BOARD_CANVAS_WIDTH/(double)Board.COLS;
+		return width;
+	}
+    
+    public static int convertRowToY(int r){
+    	return (int)(squareHeight()*r);
+    }
+
+    public static double squareHeight() {
+		double height = (double)BOARD_CANVAS_HEIGHT/(double)Board.ROWS;
+		return height;
+	}
 }

@@ -106,7 +106,7 @@ public class TextClient {
 			characters.remove(chosenCharacter); // the chosen character is no longer available
 			characters.remove(TextHelpers.capitalise(chosenCharacter));
 			chosenCharacter = TextHelpers.simpleToFullName(chosenCharacter);
-			players.add(new Player(chosenCharacter, Character.forDigit(i, 10))); // create the Player object
+			players.add(new Player(chosenCharacter)); // create the Player object
 		}
 		return players;
 	}
