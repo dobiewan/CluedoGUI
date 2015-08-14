@@ -11,8 +11,8 @@ public class BlankSquare extends Square {
 	/**
 	 * Constructor for class BlankSquare.
 	 */
-	public BlankSquare() {
-		super(false);
+	public BlankSquare(int row, int col) {
+		super(false, row, col);
 	}
 
 }

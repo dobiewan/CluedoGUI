@@ -202,8 +202,27 @@ public class CluedoFrame extends JFrame implements MouseListener {
 	 * @param evt
 	 */
 	private void newGameActionPerformed(ActionEvent evt) {                                           
-        // TODO add your handling code here:
-    }                                          
+        confirmNewGame();
+    }    
+	
+	/**
+     * Checks if the user wants to start a new game, and restarts the game if they do.
+     */
+    private void confirmNewGame(){
+		int r = JOptionPane.showConfirmDialog(this, new JLabel("Do you really want to abandon this game?"),
+				"Start New Game?", JOptionPane.YES_NO_OPTION,
+				JOptionPane.WARNING_MESSAGE);
+		if(r == 0){
+	        initialiseFields();
+	        initialiseButtons();
+	        initialisePanel();
+	        initialiseMenu();
+	        initialiseFrame();
+	        pack();
+	        this.game = new GameOfCluedo();
+	        selectPlayers();
+		}
+    }
 
 	/**
 	 * Runs when the Exit button is pushed.
@@ -369,7 +388,15 @@ public class CluedoFrame extends JFrame implements MouseListener {
 			numPlayers = Integer.parseInt(numPlayersResponse);
 			// check for out of bounds number
 			while(numPlayers < 2 || numPlayers > 6){
-				numPlayers = Integer.parseInt(JOptionPane.showInputDialog(this, "Invalid numer. Must be 2-6 players."));
+//				numPlayers = Integer.parseInt(JOptionPane.showInputDialog(this, "Invalid number. Must be 2-6 players."));
+				panel.remove(lbl);
+				txt.setText("");
+				lbl = new JLabel("Invalid number. Must be 2-6 players.");
+				panel.add(lbl);
+				JOptionPane.showOptionDialog(this, panel, "# Players",
+						JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
+				numPlayersResponse = txt.getText();
+				numPlayers = Integer.parseInt(numPlayersResponse);
 			}
 		} catch(NumberFormatException e){
 			// player entered nothing or a non-numeric string

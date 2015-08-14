@@ -19,8 +19,8 @@ public class ShortcutSquare extends Square {
 	 * @param toRoom The room the shortcut goes to
 	 * @param board The board the shortcut is on
 	 */
-	public ShortcutSquare(String toRoom, Board board){
-		super(true);
+	public ShortcutSquare(String toRoom, Board board, int row, int col){
+		super(true, row, col);
 		this.toRoom = toRoom;
 		toRow = findRow(toRoom);
 		toCol = findCol(toRoom);

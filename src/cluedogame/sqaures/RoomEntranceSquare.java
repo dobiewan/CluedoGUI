@@ -18,8 +18,8 @@ public class RoomEntranceSquare extends Square {
 	 * Constructor for class RoomSquare.
 	 * @param room The room being represented
 	 */
-	public RoomEntranceSquare(String room, Dir enterDir){
-		super(true);
+	public RoomEntranceSquare(String room, Dir enterDir, int row, int col){
+		super(true, row, col);
 		this.room = room;
 		this.enterDir = enterDir;
 	}

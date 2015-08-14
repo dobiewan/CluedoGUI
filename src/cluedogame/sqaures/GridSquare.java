@@ -11,8 +11,8 @@ public class GridSquare extends Square {
 	/**
 	 * Constructor for class GridSquare.
 	 */
-	public GridSquare(){
-		super(true);
+	public GridSquare(int row, int col){
+		super(true, row, col);
 	}
 
 }
