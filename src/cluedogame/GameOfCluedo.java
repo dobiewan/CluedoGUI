@@ -2,6 +2,7 @@ package cluedogame;
 
 import java.util.*;
 
+import cluedogame.GUI.CluedoFrame;
 import cluedogame.cards.*;
 
 /**
@@ -46,15 +47,19 @@ public class GameOfCluedo {
 	private List<Card> weaponCards;
 	private Card[] murderCards = new Card[3];
 	List<Player> players = new ArrayList<Player>();
+	private Player currentPlayer;
 	private Board board;
+	private int roll;
+	private GameController control;
 	
 	/**
 	 * Constructor for class GameOfCluedo
 	 */
-	public GameOfCluedo(){
+	public GameOfCluedo(CluedoFrame frame){
 		this.board = new Board();
 		setupCards();
 		setMurderCards();
+		control = new GameController(this, frame);
 	}
 	
 	/**
@@ -205,8 +210,25 @@ public class GameOfCluedo {
 	 */
 	public void addPlayer(Player p){
 		this.players.add(p);
+		this.control.addPlayer(p);
 	}
 	
+	public Player getCurrentPlayer() {
+		return currentPlayer;
+	}
+
+	public void setCurrentPlayer(Player currentPlayer) {
+		this.currentPlayer = currentPlayer;
+	}
+	
+	public void rollDice(){
+		roll = new Random().nextInt(10) + 2;
+	}
+
+	public int getRoll() {
+		return roll;
+	}
+
 	/**
 	 * Determines whether there is a player at the given position.
 	 * @param row The row of the position
@@ -220,6 +242,18 @@ public class GameOfCluedo {
 			}
 		}
 		return false;
+	}
+	
+	public void useMoves(int movesUsed){
+		roll -= movesUsed;
+	}
+
+	public void playTurn(CluedoFrame frame) {
+		control.playTurn();
+	}
+
+	public void makeSuggestion() {
+		control.makeSuggestion();
 	}
 	
 }

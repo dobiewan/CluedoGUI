@@ -10,7 +10,7 @@ import java.util.Queue;
 import java.util.Scanner;
 
 import cluedogame.sqaures.*;
-import cluedogame.sqaures.RoomEntranceSquare.Dir;
+import cluedogame.sqaures.RoomSquare.Dir;
 
 /**
  * A 2D array representation of the Cluedo playing board.
@@ -72,10 +72,10 @@ public class Board {
 		case '/' : sq = new BlankSquare(row, col); break;
 		case '_' : sq = new GridSquare(row, col); break;
 		case '~' : sq = new ShortcutSquare(shortcuts.poll(), this, row, col); break;
-		case 'N' : sq = new RoomEntranceSquare(roomDoors.poll(), Dir.NORTH, row, col); break;
-		case 'E' : sq = new RoomEntranceSquare(roomDoors.poll(), Dir.EAST, row, col); break;
-		case 'S' : sq = new RoomEntranceSquare(roomDoors.poll(), Dir.SOUTH, row, col); break;
-		case 'W' : sq = new RoomEntranceSquare(roomDoors.poll(), Dir.WEST, row, col); break;
+		case 'N' : sq = new RoomSquare(roomDoors.poll(), Dir.NORTH, row, col); break;
+		case 'E' : sq = new RoomSquare(roomDoors.poll(), Dir.EAST, row, col); break;
+		case 'S' : sq = new RoomSquare(roomDoors.poll(), Dir.SOUTH, row, col); break;
+		case 'W' : sq = new RoomSquare(roomDoors.poll(), Dir.WEST, row, col); break;
 		}
 		return sq;
 	}
@@ -133,40 +133,42 @@ public class Board {
 		return board[row][col];
 	}
 	
-	public List<Square> shortestPath(Square start, Square goal, int moves){ //TODO moves
-		// initalise flags for all square 
-		for(int r=0; r<ROWS; r++){
-			for(int c=0; c<COLS; c++){
-				Square sq = board[r][c];
-				sq.setVisited(false);
-				sq.setFrom(null);
-			}
-		}
+	/**
+	 * Determines the shortest path between two squares, and whether this
+	 * path is short enough to be taken within a certain number of moves.
+	 * @param start The first square in the path
+	 * @param goal The last square in the path
+	 * @param moves The number of moves this path must be taken in
+	 * @return A List of all the squares in the path, or null if it cannot be
+	 * taken within the given number of moves.
+	 */
+	public List<Square> shortestPath(Square start, Square goal, int moves){
+		if(!goal.isSteppable()){return null;} // goal out of bounds
+		// prepare nodes and queue
+		setupSearchFlags();
 		PriorityQueue<AStarNode> fringe = new PriorityQueue<AStarNode>();
 		fringe.offer(new AStarNode(start, null, 0, distance(start,goal)));
+		boolean found = false;
+		
+		// continue polling from fringe until shortest path is found
 		while(!fringe.isEmpty()){
 			AStarNode n = fringe.poll();
 			if(!n.node.isVisited()){
+				// update node info
 				n.node.setVisited(true);
 				n.node.setFrom(n.from);
 				n.node.setCost(n.costToHere);
+				// check if we have reached the end of the path
 				if(n.node == goal){
+					found = true;
 					break;
 				}
 				//make list of neighbours
-				List<Square> neighbours = new ArrayList<Square>();
-				int nodeRow = n.node.row();
-				int nodeCol = n.node.col();
-				int leftCol = nodeCol - 1;
-				int rightCol = nodeCol + 1;
-				int upRow = nodeRow - 1;
-				int downRow = nodeRow + 1;
-				if(validCol(leftCol)){neighbours.add(board[nodeRow][leftCol]);}
-				if(validCol(rightCol)){neighbours.add(board[nodeRow][rightCol]);}
-				if(validRow(upRow)){neighbours.add(board[upRow][nodeCol]);}
-				if(validRow(downRow)){neighbours.add(board[downRow][nodeCol]);}
+				List<Square> neighbours = setupNeighbours(n.node);
 				for(Square neigh : neighbours){
+					// iterate over valid neighbours
 					if(!neigh.isVisited() && neigh.isSteppable()){
+						// add valid neighbours to queue
 						double costToNeigh = n.costToHere + 1;
 						double estTotal = costToNeigh + distance(neigh, goal);
 						fringe.offer(new AStarNode(neigh, n.node, costToNeigh, estTotal));
@@ -175,8 +177,21 @@ public class Board {
 				
 			}
 		}
-		
-		
+		if(!found){return null;}
+		// follow the links in the path to make a list
+		return pathToList(goal, moves);
+	}
+
+	/**
+	 * Iterates backwards through shortest path nodes to arrange the path
+	 * into a list.
+	 * @param goal The final node in the path
+	 * @param moves The number of moves the path must fit within
+	 * @return A list of the squares in the path excluding the start square,
+	 * or null if there aren't enough moves to follow the path.
+	 */
+	private List<Square> pathToList(Square goal, int moves) {
+		// add all squares to a list in order
 		List<Square> shortestPath = new ArrayList<Square>();
 		Square sq = goal;
 		shortestPath.add(goal);
@@ -184,21 +199,88 @@ public class Board {
 			shortestPath.add(0,sq.getFrom());
 			sq = sq.getFrom();
 		}
+		shortestPath.remove(0);
+//		System.out.println("Path length: "+shortestPath.size());
+		// if the path is too long, set it to null
+		if(shortestPath.size() > moves){
+			shortestPath = null;
+		}
 		return shortestPath;
 	}
+
+	/**
+	 * Prepares all Squares on the board for an A* search.
+	 */
+	private void setupSearchFlags() {
+		for(int r=0; r<ROWS; r++){
+			for(int c=0; c<COLS; c++){
+				Square sq = board[r][c];
+				sq.setVisited(false);
+				sq.setFrom(null);
+			}
+		}
+	}
 	
-	private boolean validRow(int row){
+	/**
+	 * Checks if the given row is within bounds.
+	 * @param row The row to check
+	 * @return True iff the row is within bounds of the board
+	 */
+	public static boolean validRow(int row){
 		return row >= 0 && row < ROWS;
 	}
 	
-	private boolean validCol(int col){
+	/**
+	 * Checks if the given column is within bounds.
+	 * @param col The column to check
+	 * @return True iff the column is within bounds of the board
+	 */
+	public static boolean validCol(int col){
 		return col >= 0 && col < COLS;
 	}
 	
+	/**
+	 * Calculates the Euclidean distance between two squares.
+	 * @param start 
+	 * @param goal
+	 * @return The Euclidean distance between the two given squares.
+	 */
 	private double distance(Square start, Square goal) {
+//		System.out.println(Math.hypot(start.col() - goal.col(), start.row() - goal.row()));
 		return Math.hypot(start.col() - goal.col(), start.row() - goal.row());
 	}
+	
+	/**
+	 * Makes a list of up to four neighbours of a square, that is
+	 * the squares above, below, to the left and to the right of the
+	 * given square.
+	 * @param node The square to find the neighbours of.
+	 * @return A list of squares above, below, to the left and to
+	 * the right of the given square.
+	 */
+	private List<Square> setupNeighbours(Square node){
+		List<Square> neighbours = new ArrayList<Square>();
+		int nodeRow = node.row();
+		int nodeCol = node.col();
+		int leftCol = nodeCol - 1;
+		int rightCol = nodeCol + 1;
+		int upRow = nodeRow - 1;
+		int downRow = nodeRow + 1;
+		if(validCol(leftCol)){
+			neighbours.add(board[nodeRow][leftCol]);}
+		if(validCol(rightCol)){
+			neighbours.add(board[nodeRow][rightCol]);}
+		if(validRow(upRow)){
+			neighbours.add(board[upRow][nodeCol]);}
+		if(validRow(downRow)){
+			neighbours.add(board[downRow][nodeCol]);}
+		return neighbours;
+	}
 
+	/**
+	 * A tuple class used in the A* search algorithm.
+	 *
+	 */
 	private class AStarNode implements Comparable<AStarNode> {
 		public Square node;
 		public Square from;
@@ -215,9 +297,9 @@ public class Board {
 
 		@Override
 		public int compareTo(AStarNode o) {
-			if(o.totalCostToGoal < totalCostToGoal){ return -1;}
+			if(o.totalCostToGoal < totalCostToGoal){ return 1;}
 			else if(o.totalCostToGoal == totalCostToGoal){ return 0;}
-			else { return 1;}
+			else { return -1;}
 		}
 		
 		

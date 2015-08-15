@@ -5,7 +5,7 @@ package cluedogame.sqaures;
  * @author Sarah Dobie, Chris Read.
  *
  */
-public class RoomEntranceSquare extends Square {
+public class RoomSquare extends Square {
 	
 	public enum Dir{
 		NORTH,SOUTH,EAST,WEST;
@@ -18,7 +18,7 @@ public class RoomEntranceSquare extends Square {
 	 * Constructor for class RoomSquare.
 	 * @param room The room being represented
 	 */
-	public RoomEntranceSquare(String room, Dir enterDir, int row, int col){
+	public RoomSquare(String room, Dir enterDir, int row, int col){
 		super(true, row, col);
 		this.room = room;
 		this.enterDir = enterDir;

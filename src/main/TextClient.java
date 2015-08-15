@@ -26,7 +26,7 @@ public class TextClient {
 	 * @param args
 	 */
 	public static void main(String args[]) {
-		GameOfCluedo game = new GameOfCluedo();
+		GameOfCluedo game = new GameOfCluedo(null);
 		TextHelpers.setup();
 //		game.printMurder();
 	
@@ -152,7 +152,7 @@ public class TextClient {
 			options.add("A");
 			
 			// check if the currrent square is a room
-			if(sq instanceof RoomEntranceSquare){
+			if(sq instanceof RoomSquare){
 				// player can make a suggestion if in a room
 				System.out.println("M : Make an accusatory suggestion");
 				options.add("M");
@@ -264,7 +264,7 @@ public class TextClient {
 				options.add("C");
 				
 				// option to make a suggestion if player is in a room
-				if (sq instanceof RoomEntranceSquare && !suggested){
+				if (sq instanceof RoomSquare && !suggested){
 					System.out.println("M : Make an accusatory suggestion");
 					options.add("M");
 				}
@@ -325,7 +325,7 @@ public class TextClient {
 	 */
 	private static void makeSuggestion(Player player, GameOfCluedo game) {
 		System.out.println();
-		RoomEntranceSquare square = (RoomEntranceSquare)game.getBoard().squareAt(player.row(), player.column());
+		RoomSquare square = (RoomSquare)game.getBoard().squareAt(player.row(), player.column());
 		String room = square.getRoom();
 		System.out.println("You're in the " + room);
 		System.out.println("Suggest a character and weapon:");

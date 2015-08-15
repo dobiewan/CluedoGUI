@@ -8,11 +8,13 @@ import javax.swing.GroupLayout.SequentialGroup;
 import cluedogame.Board;
 import cluedogame.GameOfCluedo;
 import cluedogame.Player;
+import cluedogame.sqaures.Square;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Window containing all GUI components.
@@ -51,8 +53,9 @@ public class CluedoFrame extends JFrame implements MouseListener {
      * Constructor for class CluedoFrame
      */
     public CluedoFrame() {
+    	addMouseListener(this);
         initialiseUI();
-        this.game = new GameOfCluedo();
+        this.game = new GameOfCluedo(this);
         selectPlayers();
     }
 
@@ -104,6 +107,7 @@ public class CluedoFrame extends JFrame implements MouseListener {
 	        	suggestBtnActionPerformed(evt);
 	        }
 	    });
+	    enableSuggestBtn(false);
 	
 	    accuseBtn.setText("Accuse");
 	    suggestBtn.addActionListener(new ActionListener() {
@@ -111,6 +115,10 @@ public class CluedoFrame extends JFrame implements MouseListener {
 	        	accuseBtnActionPerformed(evt);
 	        }
 	    });
+	}
+
+	public void enableSuggestBtn(boolean canSuggest) {
+		suggestBtn.setEnabled(canSuggest);
 	}
 
 	/**
@@ -219,7 +227,7 @@ public class CluedoFrame extends JFrame implements MouseListener {
 	        initialiseMenu();
 	        initialiseFrame();
 	        pack();
-	        this.game = new GameOfCluedo();
+	        this.game = new GameOfCluedo(this);
 	        selectPlayers();
 		}
     }
@@ -248,8 +256,8 @@ public class CluedoFrame extends JFrame implements MouseListener {
 	 * Runs when the Roll Dice button is pushed.
 	 * @param evt
 	 */
-    private void rollDiceBtnActionPerformed(ActionEvent evt) {                                         
-        // TODO add your handling code here:
+    private void rollDiceBtnActionPerformed(ActionEvent evt) {   
+        game.playTurn(this);
     }                                           
 
     /**
@@ -257,7 +265,7 @@ public class CluedoFrame extends JFrame implements MouseListener {
 	 * @param evt
 	 */
     private void suggestBtnActionPerformed(ActionEvent evt) {                                         
-        // TODO add your handling code here:
+        game.makeSuggestion();
     }                                        
 
     /**
@@ -282,7 +290,6 @@ public class CluedoFrame extends JFrame implements MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -440,8 +447,83 @@ public class CluedoFrame extends JFrame implements MouseListener {
 			panel.add(whiteBtn);
 		}
 	}
+	
+	public void showDialog(String message, String title){
+		JOptionPane.showConfirmDialog(this, new JLabel(message),
+				title, JOptionPane.DEFAULT_OPTION,
+				JOptionPane.INFORMATION_MESSAGE);
+	}
 
-    /**
+    public GameOfCluedo getGame() {
+		return game;
+	}
+    
+    public void showSuggestionDialog(String room){ //TODO
+    	showCharacterSuggestions(room);
+        showWeaponSuggestions(room);
+    }
+
+	public void showWeaponSuggestions(String room) {
+		ButtonGroup weaponButtons = new ButtonGroup();
+		JRadioButton candlestickBtn = new JRadioButton(GameOfCluedo.CANDLESTICK);
+		JRadioButton daggerBtn = new JRadioButton(GameOfCluedo.DAGGER);
+		JRadioButton leadpipeBtn = new JRadioButton(GameOfCluedo.LEAD_PIPE); 
+		JRadioButton revolverBtn = new JRadioButton(GameOfCluedo.REVOLVER); 
+		JRadioButton ropeBtn = new JRadioButton(GameOfCluedo.ROPE); 
+        JRadioButton spannerBtn = new JRadioButton(GameOfCluedo.SPANNER); 
+        weaponButtons.add(candlestickBtn);
+        weaponButtons.add(daggerBtn);
+        weaponButtons.add(leadpipeBtn);
+        weaponButtons.add(revolverBtn);
+        weaponButtons.add(ropeBtn);
+        weaponButtons.add(spannerBtn);
+        candlestickBtn.setSelected(true);
+        
+        JPanel weaponPanel = new JPanel(new GridLayout(0, 1));
+		JLabel lbl = new JLabel("You are in the "+room+"."
+				+ "\n Select the weapon that you suspect.");
+		weaponPanel.add(lbl);
+		weaponPanel.add(candlestickBtn);
+		weaponPanel.add(daggerBtn);
+		weaponPanel.add(leadpipeBtn);
+		weaponPanel.add(revolverBtn);
+		weaponPanel.add(ropeBtn);
+		weaponPanel.add(spannerBtn);
+		
+        JOptionPane.showMessageDialog(this, weaponPanel);
+	}
+
+	public void showCharacterSuggestions(String room) {
+		ButtonGroup characterButtons = new ButtonGroup();
+		JRadioButton greenBtn = new JRadioButton(GameOfCluedo.GREEN);
+		JRadioButton mustardBtn = new JRadioButton(GameOfCluedo.MUSTARD);
+		JRadioButton peacockBtn = new JRadioButton(GameOfCluedo.PEACOCK); 
+		JRadioButton plumBtn = new JRadioButton(GameOfCluedo.PLUM); 
+		JRadioButton scarlettBtn = new JRadioButton(GameOfCluedo.SCARLETT); 
+        JRadioButton whiteBtn = new JRadioButton(GameOfCluedo.WHITE); 
+        characterButtons.add(greenBtn);
+        characterButtons.add(mustardBtn);
+        characterButtons.add(peacockBtn);
+        characterButtons.add(plumBtn);
+        characterButtons.add(scarlettBtn);
+        characterButtons.add(whiteBtn);
+        greenBtn.setSelected(true);
+        
+		JPanel characterPanel = new JPanel(new GridLayout(0, 1));
+		JLabel lbl = new JLabel("You are in the "+room+"."
+				+ "\n Select the character that you suspect.");
+		characterPanel.add(lbl);
+		characterPanel.add(greenBtn);
+		characterPanel.add(mustardBtn);
+		characterPanel.add(peacockBtn);
+		characterPanel.add(plumBtn);
+		characterPanel.add(scarlettBtn);
+		characterPanel.add(whiteBtn);
+		
+        JOptionPane.showMessageDialog(this, characterPanel);
+	}
+
+	/**
      * Main method for CluedoFrame
      */
     public static void main(String args[]) {
@@ -455,6 +537,15 @@ public class CluedoFrame extends JFrame implements MouseListener {
      */
     public static int convertColToX(int c){
     	return (int)(squareWidth()*c);
+    }
+    
+    /**
+     * Converts an x position to a column position.
+     * @param x The x position to convert
+     * @return The column containing the x position
+     */
+    public static int convertXToCol(int x){
+    	return (int)((double)x/squareWidth());
     }
 
     /**
@@ -473,6 +564,15 @@ public class CluedoFrame extends JFrame implements MouseListener {
      */
     public static int convertRowToY(int r){
     	return (int)(squareHeight()*r);
+    }
+    
+    /**
+     * Converts an y position to a row position.
+     * @param y The y position to convert
+     * @return The row containing the y position
+     */
+    public static int convertYToRow(int y){
+    	return (int)((double)y/squareHeight());
     }
 
     /**
