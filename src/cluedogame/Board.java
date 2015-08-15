@@ -142,7 +142,7 @@ public class Board {
 	 * @return A List of all the squares in the path, or null if it cannot be
 	 * taken within the given number of moves.
 	 */
-	public List<Square> shortestPath(Square start, Square goal, int moves){
+	public List<Square> shortestPath(Square start, Square goal, int moves, GameOfCluedo game){
 		if(!goal.isSteppable()){return null;} // goal out of bounds
 		// prepare nodes and queue
 		setupSearchFlags();
@@ -164,7 +164,7 @@ public class Board {
 					break;
 				}
 				//make list of neighbours
-				List<Square> neighbours = setupNeighbours(n.node);
+				List<Square> neighbours = setupNeighbours(n.node, game);
 				for(Square neigh : neighbours){
 					// iterate over valid neighbours
 					if(!neigh.isVisited() && neigh.isSteppable()){
@@ -258,7 +258,7 @@ public class Board {
 	 * @return A list of squares above, below, to the left and to
 	 * the right of the given square.
 	 */
-	private List<Square> setupNeighbours(Square node){
+	private List<Square> setupNeighbours(Square node, GameOfCluedo game){
 		List<Square> neighbours = new ArrayList<Square>();
 		int nodeRow = node.row();
 		int nodeCol = node.col();
@@ -266,13 +266,22 @@ public class Board {
 		int rightCol = nodeCol + 1;
 		int upRow = nodeRow - 1;
 		int downRow = nodeRow + 1;
-		if(validCol(leftCol)){
+//		if(validCol(leftCol)){
+//			neighbours.add(board[nodeRow][leftCol]);}
+//		if(validCol(rightCol)){
+//			neighbours.add(board[nodeRow][rightCol]);}
+//		if(validCol(upRow)){
+//			neighbours.add(board[upRow][nodeCol]);}
+//		if(validCol(downRow)){
+//			neighbours.add(board[downRow][nodeCol]);}
+		Player mock = new Player(node.row(), node.col());
+		if(mock.canMoveLeft(this, game)){
 			neighbours.add(board[nodeRow][leftCol]);}
-		if(validCol(rightCol)){
+		if(mock.canMoveRight(this, game)){
 			neighbours.add(board[nodeRow][rightCol]);}
-		if(validRow(upRow)){
+		if(mock.canMoveUp(this, game)){
 			neighbours.add(board[upRow][nodeCol]);}
-		if(validRow(downRow)){
+		if(mock.canMoveDown(this, game)){
 			neighbours.add(board[downRow][nodeCol]);}
 		return neighbours;
 	}

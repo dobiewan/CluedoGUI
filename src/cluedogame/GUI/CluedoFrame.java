@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * 
  * @author Sarah Dobie, Chris Read
  */
-public class CluedoFrame extends JFrame implements MouseListener {
+public class CluedoFrame extends JFrame {
 	
 	public static int PREF_BUTTON_SIZE = GroupLayout.DEFAULT_SIZE;
 	public static int MAX_BUTTON_SIZE = Short.MAX_VALUE;
@@ -53,10 +53,10 @@ public class CluedoFrame extends JFrame implements MouseListener {
      * Constructor for class CluedoFrame
      */
     public CluedoFrame() {
-    	addMouseListener(this);
         initialiseUI();
         this.game = new GameOfCluedo(this);
         selectPlayers();
+        game.dealCards();
     }
 
     /**
@@ -110,15 +110,24 @@ public class CluedoFrame extends JFrame implements MouseListener {
 	    enableSuggestBtn(false);
 	
 	    accuseBtn.setText("Accuse");
-	    suggestBtn.addActionListener(new ActionListener() {
+	    accuseBtn.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent evt) {
 	        	accuseBtnActionPerformed(evt);
 	        }
 	    });
+	    enableAccuseBtn(false);
 	}
 
 	public void enableSuggestBtn(boolean canSuggest) {
 		suggestBtn.setEnabled(canSuggest);
+	}
+
+	public void enableAccuseBtn(boolean canAccuse) {
+		accuseBtn.setEnabled(canAccuse);
+	}
+
+	public void enableDiceBtn(boolean canRoll) {
+		rollDiceBtn.setEnabled(canRoll);
 	}
 
 	/**
@@ -256,7 +265,8 @@ public class CluedoFrame extends JFrame implements MouseListener {
 	 * Runs when the Roll Dice button is pushed.
 	 * @param evt
 	 */
-    private void rollDiceBtnActionPerformed(ActionEvent evt) {   
+    private void rollDiceBtnActionPerformed(ActionEvent evt) { 
+    	enableAccuseBtn(true);
         game.playTurn(this);
     }                                           
 
@@ -273,37 +283,8 @@ public class CluedoFrame extends JFrame implements MouseListener {
 	 * @param evt
 	 */
     private void accuseBtnActionPerformed(ActionEvent evt) {                                         
-        // TODO add your handling code here:
+        game.makeAccusation();
     }         
-    
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) { //TODO use this for hovering
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}    
 	
 	/**
 	 * Allows users to set up their tokens
@@ -458,69 +439,204 @@ public class CluedoFrame extends JFrame implements MouseListener {
 		return game;
 	}
     
-    public void showSuggestionDialog(String room){ //TODO
-    	showCharacterSuggestions(room);
-        showWeaponSuggestions(room);
+    /**
+     * Allows the player to select a character and room for a suggestion.
+     * @param room The room the player is in.
+     * @return A String array of length 2, where the item at index 0
+     * is the suggested character, and the item at index 1 is the 
+     * suggested weapon.
+     */
+    public String[] showSuggestionDialog(String room){
+    	enableSuggestBtn(false);
+    	game.endTurn();
+    	String characterSuggestion = showCharacterSuggestions(room);
+    	String weaponSuggestion = showWeaponSuggestions(room);
+    	return new String[]{characterSuggestion, weaponSuggestion};
     }
 
-	public void showWeaponSuggestions(String room) {
+	public String showWeaponSuggestions(String room) {
 		ButtonGroup weaponButtons = new ButtonGroup();
+		List<JRadioButton> btns = setupWeaponButtons();
+        
+        JPanel weaponPanel = new JPanel(new GridLayout(0, 1));
+		JLabel lbl = new JLabel("You are in the "+room+"."
+				+ "\n Select the weapon that you suspect.");
+		weaponPanel.add(lbl);
+        
+        for(JRadioButton b : btns){
+        	weaponButtons.add(b);
+        	weaponPanel.add(b);
+        }
+		
+        JOptionPane.showMessageDialog(this, weaponPanel);
+        
+//        ButtonModel model = weaponButtons.getSelection();
+//        return model.getActionCommand();
+        for(JRadioButton b : btns){
+        	if(b.isSelected()){
+        		return b.getText();
+        	}
+        }
+        return null;
+	}
+
+	public List<JRadioButton> setupWeaponButtons() {
 		JRadioButton candlestickBtn = new JRadioButton(GameOfCluedo.CANDLESTICK);
 		JRadioButton daggerBtn = new JRadioButton(GameOfCluedo.DAGGER);
 		JRadioButton leadpipeBtn = new JRadioButton(GameOfCluedo.LEAD_PIPE); 
 		JRadioButton revolverBtn = new JRadioButton(GameOfCluedo.REVOLVER); 
 		JRadioButton ropeBtn = new JRadioButton(GameOfCluedo.ROPE); 
         JRadioButton spannerBtn = new JRadioButton(GameOfCluedo.SPANNER); 
-        weaponButtons.add(candlestickBtn);
-        weaponButtons.add(daggerBtn);
-        weaponButtons.add(leadpipeBtn);
-        weaponButtons.add(revolverBtn);
-        weaponButtons.add(ropeBtn);
-        weaponButtons.add(spannerBtn);
+        List<JRadioButton> btns = new ArrayList<JRadioButton>();
+        btns.add(candlestickBtn);
+        btns.add(daggerBtn);
+        btns.add(leadpipeBtn);
+        btns.add(revolverBtn);
+        btns.add(ropeBtn);
+        btns.add(spannerBtn);
         candlestickBtn.setSelected(true);
-        
-        JPanel weaponPanel = new JPanel(new GridLayout(0, 1));
-		JLabel lbl = new JLabel("You are in the "+room+"."
-				+ "\n Select the weapon that you suspect.");
-		weaponPanel.add(lbl);
-		weaponPanel.add(candlestickBtn);
-		weaponPanel.add(daggerBtn);
-		weaponPanel.add(leadpipeBtn);
-		weaponPanel.add(revolverBtn);
-		weaponPanel.add(ropeBtn);
-		weaponPanel.add(spannerBtn);
-		
-        JOptionPane.showMessageDialog(this, weaponPanel);
+		return btns;
 	}
 
-	public void showCharacterSuggestions(String room) {
+	public String showCharacterSuggestions(String room) {
 		ButtonGroup characterButtons = new ButtonGroup();
+		List<JRadioButton> btns = setupCharacterButtons();
+        
+		JPanel characterPanel = new JPanel(new GridLayout(0, 1));
+		JLabel lbl = new JLabel("You are in the "+room+"."
+				+ "\n Select the character that you suspect.");
+		characterPanel.add(lbl);
+        
+        for(JRadioButton b : btns){
+        	characterButtons.add(b);
+        	characterPanel.add(b);
+        }
+		
+        JOptionPane.showMessageDialog(this, characterPanel);
+        
+        for(JRadioButton b : btns){
+        	if(b.isSelected()){
+        		return b.getText();
+        	}
+        }
+        return null;
+	}
+
+	public List<JRadioButton> setupCharacterButtons() {
 		JRadioButton greenBtn = new JRadioButton(GameOfCluedo.GREEN);
 		JRadioButton mustardBtn = new JRadioButton(GameOfCluedo.MUSTARD);
 		JRadioButton peacockBtn = new JRadioButton(GameOfCluedo.PEACOCK); 
 		JRadioButton plumBtn = new JRadioButton(GameOfCluedo.PLUM); 
 		JRadioButton scarlettBtn = new JRadioButton(GameOfCluedo.SCARLETT); 
         JRadioButton whiteBtn = new JRadioButton(GameOfCluedo.WHITE); 
-        characterButtons.add(greenBtn);
-        characterButtons.add(mustardBtn);
-        characterButtons.add(peacockBtn);
-        characterButtons.add(plumBtn);
-        characterButtons.add(scarlettBtn);
-        characterButtons.add(whiteBtn);
+        List<JRadioButton> btns = new ArrayList<JRadioButton>();
+        btns.add(greenBtn);
+        btns.add(mustardBtn);
+        btns.add(peacockBtn);
+        btns.add(plumBtn);
+        btns.add(scarlettBtn);
+        btns.add(whiteBtn);
         greenBtn.setSelected(true);
+		return btns;
+	}
+
+	public String[] showAccusationDialog() {
+		enableAccuseBtn(false);
+		return new String[]{showCharacterAccusations(),
+				showWeaponAccusations(),showRoomAccusations()};
+	}
+	
+	public String showWeaponAccusations() {
+		ButtonGroup weaponButtons = new ButtonGroup();
+		List<JRadioButton> btns = setupWeaponButtons();
+        
+        JPanel weaponPanel = new JPanel(new GridLayout(0, 1));
+		JLabel lbl = new JLabel("Select the weapon that you suspect.");
+		weaponPanel.add(lbl);
+        
+        for(JRadioButton b : btns){
+        	weaponButtons.add(b);
+        	weaponPanel.add(b);
+        }
+		
+        JOptionPane.showMessageDialog(this, weaponPanel);
+        
+        for(JRadioButton b : btns){
+        	if(b.isSelected()){
+        		return b.getText();
+        	}
+        }
+        return null;
+	}
+	
+	public String showCharacterAccusations() {
+		ButtonGroup characterButtons = new ButtonGroup();
+		List<JRadioButton> btns = setupCharacterButtons();
         
 		JPanel characterPanel = new JPanel(new GridLayout(0, 1));
-		JLabel lbl = new JLabel("You are in the "+room+"."
-				+ "\n Select the character that you suspect.");
+		JLabel lbl = new JLabel("Select the character that you suspect.");
 		characterPanel.add(lbl);
-		characterPanel.add(greenBtn);
-		characterPanel.add(mustardBtn);
-		characterPanel.add(peacockBtn);
-		characterPanel.add(plumBtn);
-		characterPanel.add(scarlettBtn);
-		characterPanel.add(whiteBtn);
+        
+        for(JRadioButton b : btns){
+        	characterButtons.add(b);
+        	characterPanel.add(b);
+        }
 		
         JOptionPane.showMessageDialog(this, characterPanel);
+        
+        for(JRadioButton b : btns){
+        	if(b.isSelected()){
+        		return b.getText();
+        	}
+        }
+        return null;
+	}
+	
+	public String showRoomAccusations() {
+		ButtonGroup characterButtons = new ButtonGroup();
+		List<JRadioButton> btns = setupRoomButtons();
+        
+		JPanel roomPanel = new JPanel(new GridLayout(0, 1));
+		JLabel lbl = new JLabel("Select the room that you suspect.");
+		roomPanel.add(lbl);
+        
+        for(JRadioButton b : btns){
+        	characterButtons.add(b);
+        	roomPanel.add(b);
+        }
+		
+        JOptionPane.showMessageDialog(this, roomPanel);
+        
+        for(JRadioButton b : btns){
+        	if(b.isSelected()){
+        		return b.getText();
+        	}
+        }
+        return null;
+	}
+	
+	public List<JRadioButton> setupRoomButtons() {
+		JRadioButton kitchenBtn = new JRadioButton(GameOfCluedo.KITCHEN);
+		JRadioButton ballroomBtn = new JRadioButton(GameOfCluedo.BALL_ROOM);
+		JRadioButton conservatoryBtn = new JRadioButton(GameOfCluedo.CONSERVATORY); 
+		JRadioButton billiardRoomBtn = new JRadioButton(GameOfCluedo.BILLIARD_ROOM); 
+		JRadioButton libraryBtn = new JRadioButton(GameOfCluedo.LIBRARY); 
+        JRadioButton studyBtn = new JRadioButton(GameOfCluedo.STUDY); 
+		JRadioButton hallBtn = new JRadioButton(GameOfCluedo.HALL); 
+		JRadioButton loungeBtn = new JRadioButton(GameOfCluedo.LOUNGE); 
+        JRadioButton diningRoomBtn = new JRadioButton(GameOfCluedo.DINING_ROOM); 
+        List<JRadioButton> btns = new ArrayList<JRadioButton>();
+        btns.add(kitchenBtn);
+        btns.add(ballroomBtn);
+        btns.add(conservatoryBtn);
+        btns.add(billiardRoomBtn);
+        btns.add(libraryBtn);
+        btns.add(studyBtn);
+        btns.add(hallBtn);
+        btns.add(loungeBtn);
+        btns.add(diningRoomBtn);
+        kitchenBtn.setSelected(true);
+		return btns;
 	}
 
 	/**

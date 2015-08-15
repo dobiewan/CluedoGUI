@@ -74,15 +74,16 @@ public class BoardCanvas extends JPanel implements MouseListener {
 		if(Board.validRow(row) && Board.validCol(col)){
 			Board board = game.getBoard();
 			// check if the current player is valid
-			Player current = game.getCurrentPlayer();
-			if(current == null){
+			Player currentPlayer = game.getCurrentPlayer();
+			if(currentPlayer == null){
 				frame.showDialog("Roll the dice first!", "Invalid move");
 				return;
 			}
 			// determine shortest path
-			Square start = board.squareAt(current.row(), current.column());
+			Square start = board.squareAt(currentPlayer.row(), currentPlayer.column());
 			Square goal = board.squareAt(row, col);
-			List<Square> shortestPath = board.shortestPath(start, goal, game.getRoll());
+			List<Square> shortestPath = board.shortestPath(start, goal,
+					game.getRoll(), game);
 			// check for invalid path
 			if(shortestPath == null){
 				if(!goal.isSteppable()){
@@ -93,7 +94,7 @@ public class BoardCanvas extends JPanel implements MouseListener {
 			} else {
 				// move the player
 				for(Square sq : shortestPath){
-					current.moveTo(sq);
+					currentPlayer.moveTo(sq);
 					repaint();
 				}
 				game.useMoves(shortestPath.size());

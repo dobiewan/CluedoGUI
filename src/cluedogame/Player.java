@@ -47,6 +47,16 @@ public class Player {
 		this.rPosition = startRow(this.name);
 	}
 	
+	/**
+	 * Mock constructor used in the A* search.
+	 * @param r
+	 * @param c
+	 */
+	public Player(int r, int c){
+		rPosition = r;
+		cPosition = c;
+	}
+	
 	private BufferedImage chooseImage() {
 		try {
 			return img = ImageIO.read(new File(name+".jpg"));

@@ -3,7 +3,9 @@ package cluedogame;
 import java.util.LinkedList;
 import java.util.List;
 
-import main.TextHelpers;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import cluedogame.GUI.CluedoFrame;
 import cluedogame.cards.Card;
 import cluedogame.sqaures.RoomSquare;
@@ -47,60 +49,62 @@ public class GameController {
 		Player player = game.getCurrentPlayer();
 		RoomSquare square = (RoomSquare)game.getBoard().squareAt(player.row(), player.column());
 		String room = square.getRoom();
-		frame.showSuggestionDialog(room);
+		String[] suggestions = frame.showSuggestionDialog(room);
+		String character = suggestions[0];
+		String weapon = suggestions[1];
 		
-//		// iterate over players' hands to find a matching card
-//		for (Player otherPlayer : game.getPlayers()){
-//			if (otherPlayer != player){
-//				for (Card c : otherPlayer.getHand()){
-//					String cardName = c.getName();
-//					if ((cardName.equals(character) || cardName.equals(weapon) || cardName.equals(room))
-//							&& !player.hasSeenCard(c)){
-//						System.out.println(otherPlayer.getName() + " has the card: " + cardName);
-//						player.addCardSeen(c);
-//						TextHelpers.waitToContinue();
-//						return;
-//					}
-//				}
-//			}
-//		}
-//		System.out.println();
-//		System.out.println("No matching cards were found...");
-//		System.out.println();
+		// iterate over players' hands to find a matching card
+		for (Player otherPlayer : game.getPlayers()){
+			if (otherPlayer != player){
+				for (Card c : otherPlayer.getHand()){
+					String cardName = c.getName();
+					if ((cardName.equals(character) || cardName.equals(weapon) || cardName.equals(room))
+							&& !player.hasSeenCard(c)){
+						frame.showDialog(otherPlayer.getName() + " has the card: " + cardName, "Suggestion results");
+						player.addCardSeen(c);
+						return;
+					}
+				}
+			}
+		}
+		frame.showDialog("No matching cards were found...", "Suggestion results");
 	}
 
 	
-//	private void makeAccusation(Player player, List<Player> playersInGame,
-//			GameOfCluedo game) {
-//		// Print ominous message
-//		System.out.println();
-//		System.out.println("This is serious business... One of us could be the murderer!");
-//		System.out.println();
-//		// Prompt player to select cards
-//		String[] accusation = new String[3];
-//		accusation[0] = TextHelpers.selectCharacter();
-//		System.out.println();
-//		accusation[1] = TextHelpers.selectWeapon();
-//		System.out.println();
-//		accusation[2] = TextHelpers.selectRoom();
-//		System.out.println();
-//		// make accusation
-//		if (game.accuse(accusation)){
-//			// player made a correct accusation and won the game
-//			System.out.println("You are correct!");
-//			TextHelpers.waitToContinue();
-//			System.out.println();
-//			game.printMurder();
-//			System.out.println();
-//			gameOver = true;
-//		} else {
-//			// accusation was incorrect, insult player
-//			System.out.println("You were wrong!\n ...you didn't really think this through...");
-//			playersInGame.remove(player);
-//			System.out.println();
-//			System.out.println(player.getName() +" is out of the game!");
-//			System.out.println();
-//		}
-//	}
+	public void makeAccusation() {
+		Player player = game.getCurrentPlayer();
+		// confirm that the player wants to do this
+		int r = JOptionPane.showConfirmDialog(frame, new JLabel("Making an accusation is a serious "
+				+ "business.\n If you get it wrong, you are out of the game! \nAre you sure you want "
+				+ "to make an accusation?"),
+				"Make accusation?", JOptionPane.YES_NO_OPTION,
+				JOptionPane.WARNING_MESSAGE);
+		if(r == 1){
+			return;
+		}
+		// Prompt player to select cards
+		String[] accusation = frame.showAccusationDialog();
+		// make accusation
+		if (game.accuse(accusation)){
+			// player made a correct accusation and won the game
+			frame.showDialog("You are correct! \n"
+					+ "It was "+accusation[0]+" in the "+accusation[2]+
+					" with the "+accusation[1]+"!", "Accusation results");
+			frame.showDialog("--GAME OVER--", "Game over");
+			gameOver = true;
+			frame.enableDiceBtn(false);
+		} else {
+			// accusation was incorrect, insult player
+			frame.showDialog("You were wrong!\n ...you didn't really think this through...\n"
+					+ player.getName()+" is out of the game!", "Accusation results");
+			playersInGame.remove(player);
+			if(playersInGame.size() == 0){
+				frame.showDialog("--GAME OVER-- \n" //TODO check if they want to play again
+						+ "It was "+accusation[0]+" in the "+accusation[2]+
+						" with the "+accusation[1]+"!", "Game over");
+			}
+			frame.enableDiceBtn(false);
+		}
+	}
 	
 }

@@ -120,6 +120,7 @@ public class GameOfCluedo {
 		// choose a weapon card
 		randomIndex = (int) (Math.random()*(roomCards.size()-1));
 		this.murderCards[2] = this.roomCards.remove(randomIndex);
+		System.out.println(murderCards[0].getName()+","+murderCards[1].getName()+","+murderCards[2].getName());
 	}
 	
 	/**
@@ -254,6 +255,15 @@ public class GameOfCluedo {
 
 	public void makeSuggestion() {
 		control.makeSuggestion();
+	}
+
+	public void endTurn() {
+		roll = 0;
+	}
+
+	public void makeAccusation() {
+		control.makeAccusation();
+		
 	}
 	
 }
