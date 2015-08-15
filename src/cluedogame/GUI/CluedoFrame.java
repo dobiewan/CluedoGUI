@@ -35,6 +35,7 @@ public class CluedoFrame extends JFrame {
     private DashboardCanvas dashboardCanvas; // the canvas which displays the cards and dice
     private Panel btnPanel; // panel containing the buttons
     private JButton rollDiceBtn;
+    private JButton takeShortcutBtn;
     private JButton suggestBtn;
     private JButton accuseBtn;
     private JMenuBar menuBar; // top menu bar
@@ -82,6 +83,7 @@ public class CluedoFrame extends JFrame {
 	    dashboardCanvas = new DashboardCanvas();
 	    btnPanel = new Panel();
 	    rollDiceBtn = new JButton();
+	    takeShortcutBtn = new JButton();
 	    suggestBtn = new JButton();
 	    accuseBtn = new JButton();
 	    menuBar = new JMenuBar();
@@ -100,6 +102,14 @@ public class CluedoFrame extends JFrame {
 	            rollDiceBtnActionPerformed(evt);
 	        }
 	    });
+	    
+	    takeShortcutBtn.setText("Take Shortcut");
+	    takeShortcutBtn.addActionListener(new ActionListener() {
+	        public void actionPerformed(ActionEvent evt) {
+	        	shortcutBtnActionPerformed(evt);
+	        }
+	    });
+	    enableShortcutBtn(false);
 	
 	    suggestBtn.setText("Suggest");
 	    suggestBtn.addActionListener(new ActionListener() {
@@ -126,6 +136,10 @@ public class CluedoFrame extends JFrame {
 		accuseBtn.setEnabled(canAccuse);
 	}
 
+	public void enableShortcutBtn(boolean canTakeShortcut) {
+		takeShortcutBtn.setEnabled(canTakeShortcut);
+	}
+
 	public void enableDiceBtn(boolean canRoll) {
 		rollDiceBtn.setEnabled(canRoll);
 	}
@@ -140,6 +154,7 @@ public class CluedoFrame extends JFrame {
         // Set up the horizontal alignment
         ParallelGroup hzGroup = panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING);
         hzGroup.addComponent(accuseBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
+        hzGroup.addComponent(takeShortcutBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
         hzGroup.addComponent(rollDiceBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
         hzGroup.addComponent(suggestBtn, /*GroupLayout.Alignment.TRAILING,*/ PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
         panelLayout.setHorizontalGroup(hzGroup);
@@ -149,6 +164,7 @@ public class CluedoFrame extends JFrame {
         SequentialGroup sqGroup = panelLayout.createSequentialGroup();
         vtGroup.addGroup(sqGroup);
         sqGroup.addComponent(rollDiceBtn);
+        sqGroup.addComponent(takeShortcutBtn);
         sqGroup.addComponent(accuseBtn);
         sqGroup.addComponent(suggestBtn);
 //        sqGroup.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
@@ -268,7 +284,15 @@ public class CluedoFrame extends JFrame {
     private void rollDiceBtnActionPerformed(ActionEvent evt) { 
     	enableAccuseBtn(true);
         game.playTurn(this);
-    }                                           
+    }                                            
+
+    /**
+	 * Runs when the Suggest button is pushed.
+	 * @param evt
+	 */
+    private void shortcutBtnActionPerformed(ActionEvent evt) {   
+        game.takeShortcut();
+    }                                               
 
     /**
 	 * Runs when the Suggest button is pushed.
@@ -314,7 +338,7 @@ public class CluedoFrame extends JFrame {
 	        addAvailableCharacterOptions(panel, playerNames, bg, greenBtn,
 					mustardBtn, peacockBtn, plumBtn, scarlettBtn, whiteBtn);
 			
-			JOptionPane.showMessageDialog(this, panel);
+			JOptionPane.showMessageDialog(this, panel, "Character select", JOptionPane.QUESTION_MESSAGE);
 			generatePlayerFromInput(panel, greenBtn, mustardBtn, peacockBtn,
 					plumBtn, scarlettBtn, whiteBtn);
 			

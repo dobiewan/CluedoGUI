@@ -18,6 +18,7 @@ import cluedogame.Board;
 import cluedogame.GameOfCluedo;
 import cluedogame.Player;
 import cluedogame.sqaures.RoomSquare;
+import cluedogame.sqaures.ShortcutSquare;
 import cluedogame.sqaures.Square;
 
 public class BoardCanvas extends JPanel implements MouseListener {
@@ -99,10 +100,16 @@ public class BoardCanvas extends JPanel implements MouseListener {
 				}
 				game.useMoves(shortestPath.size());
 				// check if player is in room or not
-				if(goal instanceof RoomSquare){
+				if(goal instanceof RoomSquare || goal instanceof ShortcutSquare){
 					frame.enableSuggestBtn(true);
 				} else {
 					frame.enableSuggestBtn(false);
+				}
+				// check if player is on shortcut or not
+				if(goal instanceof ShortcutSquare && game.getRoll() > 0){
+					frame.enableShortcutBtn(true);
+				} else {
+					frame.enableShortcutBtn(false);
 				}
 			}
 		}

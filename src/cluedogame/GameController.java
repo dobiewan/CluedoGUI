@@ -9,6 +9,8 @@ import javax.swing.JOptionPane;
 import cluedogame.GUI.CluedoFrame;
 import cluedogame.cards.Card;
 import cluedogame.sqaures.RoomSquare;
+import cluedogame.sqaures.ShortcutSquare;
+import cluedogame.sqaures.Square;
 
 public class GameController {
 	
@@ -32,23 +34,46 @@ public class GameController {
 			Player player = playersInGame.peek();
 			game.setCurrentPlayer(player);
 			game.rollDice();
-			frame.showDialog(player.getName()+" rolls a "+game.getRoll(), "Dice roll");
-			// check if player can suggest or not
-			if(game.getBoard().squareAt(player.row(), player.column()) instanceof RoomSquare){
-				frame.enableSuggestBtn(true);
-			} else {
-				frame.enableSuggestBtn(false);
-			}
+			frame.showDialog(player.getName()+" rolls "+game.getRoll(), "Dice roll");
+			enableButtons(player);
 			// put player on end of queue
 			playersInGame.add(playersInGame.poll());
 		}
+	}
+
+	public void enableButtons(Player player) {
+		Square playerSquare = getPlayerSquare(player);
+		// check if player is starting on a shortcut
+		if(playerSquare instanceof ShortcutSquare){
+			frame.enableShortcutBtn(true);
+		} else {
+			frame.enableShortcutBtn(false);
+		}
+		// check if player can suggest or not
+		if(playerSquare instanceof RoomSquare ||
+				playerSquare instanceof ShortcutSquare){
+			frame.enableSuggestBtn(true);
+		} else {
+			frame.enableSuggestBtn(false);
+		}
+	}
+
+	public Square getPlayerSquare(Player player) {
+		return game.getBoard().squareAt(player.row(), player.column());
 	}
 	
 	
 	public void makeSuggestion() {
 		Player player = game.getCurrentPlayer();
-		RoomSquare square = (RoomSquare)game.getBoard().squareAt(player.row(), player.column());
-		String room = square.getRoom();
+		String room = null;
+		if(getPlayerSquare(player) instanceof RoomSquare){
+			RoomSquare square = (RoomSquare)getPlayerSquare(player);
+			room = square.getRoom();
+		} else {
+			ShortcutSquare square = (ShortcutSquare)getPlayerSquare(player);
+			room = square.startRoom();
+		}
+		
 		String[] suggestions = frame.showSuggestionDialog(room);
 		String character = suggestions[0];
 		String weapon = suggestions[1];
@@ -104,6 +129,24 @@ public class GameController {
 						" with the "+accusation[1]+"!", "Game over");
 			}
 			frame.enableDiceBtn(false);
+		}
+	}
+	
+	public void takeShortcut(Player player) {
+		try{
+			if(game.getRoll() > 0){
+				ShortcutSquare shortcut = (ShortcutSquare)getPlayerSquare(player);
+				player.setPos(shortcut.toRow(), shortcut.toCol());
+				game.useMoves(1);
+				frame.repaint();
+				if(game.getRoll() <= 0){
+					frame.enableShortcutBtn(false);
+				}
+			} else {
+				frame.showDialog("Not enough moves!", "Invalid move");
+			}
+		} catch(ClassCastException e){
+			return;
 		}
 	}
 	

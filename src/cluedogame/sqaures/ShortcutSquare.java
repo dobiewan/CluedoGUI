@@ -10,6 +10,7 @@ import cluedogame.GameOfCluedo;
  */
 public class ShortcutSquare extends Square {
 	
+	private String startRoom; // the room this shortcut starts in
 	private String toRoom; // the room the shortcut goes to
 	private int toRow; // the row this shortcut goes to
 	private int toCol; // the col this shortcut goes to
@@ -22,10 +23,21 @@ public class ShortcutSquare extends Square {
 	public ShortcutSquare(String toRoom, Board board, int row, int col){
 		super(true, row, col);
 		this.toRoom = toRoom;
+		this.startRoom = findStartRoom();
 		toRow = findRow(toRoom);
 		toCol = findCol(toRoom);
 	}
 	
+	private String findStartRoom() {
+		switch(toRoom){
+		case GameOfCluedo.KITCHEN : return GameOfCluedo.STUDY;
+		case GameOfCluedo.STUDY : return GameOfCluedo.KITCHEN;
+		case GameOfCluedo.LOUNGE : return GameOfCluedo.CONSERVATORY;
+		case GameOfCluedo.CONSERVATORY : return GameOfCluedo.LOUNGE;
+		default : return null;
+		}
+	}
+
 	/**
 	 * Finds the row of the shortcut in the given room
 	 * @param room The room with the shortcut
@@ -34,10 +46,10 @@ public class ShortcutSquare extends Square {
 	 */
 	private static int findRow(String room) {
 		switch(room){
-		case GameOfCluedo.KITCHEN : return 2;
+		case GameOfCluedo.KITCHEN : return 1;
 		case GameOfCluedo.STUDY : return 21;
-		case GameOfCluedo.LOUNGE : return 20;
-		case GameOfCluedo.CONSERVATORY : return 4;
+		case GameOfCluedo.LOUNGE : return 19;
+		case GameOfCluedo.CONSERVATORY : return 5;
 		default : return -1;
 		}
 	}
@@ -50,12 +62,16 @@ public class ShortcutSquare extends Square {
 	 */
 	private static int findCol(String room) {
 		switch(room){
-		case GameOfCluedo.KITCHEN : return 4;
-		case GameOfCluedo.STUDY : return 22;
-		case GameOfCluedo.LOUNGE : return 1;
+		case GameOfCluedo.KITCHEN : return 5;
+		case GameOfCluedo.STUDY : return 23;
+		case GameOfCluedo.LOUNGE : return 0;
 		case GameOfCluedo.CONSERVATORY : return 22;
 		default : return -1;
 		}
+	}
+
+	public String startRoom() {
+		return startRoom;
 	}
 
 	/**

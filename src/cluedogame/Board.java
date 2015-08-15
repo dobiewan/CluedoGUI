@@ -164,7 +164,7 @@ public class Board {
 					break;
 				}
 				//make list of neighbours
-				List<Square> neighbours = setupNeighbours(n.node, game);
+				List<Square> neighbours = setupNeighbours(n.node, goal, game);
 				for(Square neigh : neighbours){
 					// iterate over valid neighbours
 					if(!neigh.isVisited() && neigh.isSteppable()){
@@ -258,7 +258,7 @@ public class Board {
 	 * @return A list of squares above, below, to the left and to
 	 * the right of the given square.
 	 */
-	private List<Square> setupNeighbours(Square node, GameOfCluedo game){
+	private List<Square> setupNeighbours(Square node, Square goal, GameOfCluedo game){
 		List<Square> neighbours = new ArrayList<Square>();
 		int nodeRow = node.row();
 		int nodeCol = node.col();
@@ -266,14 +266,6 @@ public class Board {
 		int rightCol = nodeCol + 1;
 		int upRow = nodeRow - 1;
 		int downRow = nodeRow + 1;
-//		if(validCol(leftCol)){
-//			neighbours.add(board[nodeRow][leftCol]);}
-//		if(validCol(rightCol)){
-//			neighbours.add(board[nodeRow][rightCol]);}
-//		if(validCol(upRow)){
-//			neighbours.add(board[upRow][nodeCol]);}
-//		if(validCol(downRow)){
-//			neighbours.add(board[downRow][nodeCol]);}
 		Player mock = new Player(node.row(), node.col());
 		if(mock.canMoveLeft(this, game)){
 			neighbours.add(board[nodeRow][leftCol]);}
@@ -283,6 +275,16 @@ public class Board {
 			neighbours.add(board[upRow][nodeCol]);}
 		if(mock.canMoveDown(this, game)){
 			neighbours.add(board[downRow][nodeCol]);}
+		// check for shortcuts
+		if(goal instanceof ShortcutSquare){
+			ShortcutSquare shortcutSq = (ShortcutSquare)goal;
+			if(node instanceof RoomSquare){
+				RoomSquare roomSq = (RoomSquare)node;
+				if(roomSq.getRoom().equals(shortcutSq.startRoom())){
+					neighbours.add(goal);
+				}
+			}
+		}
 		return neighbours;
 	}
 
