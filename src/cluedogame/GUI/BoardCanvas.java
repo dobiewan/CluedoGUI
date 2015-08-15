@@ -21,12 +21,21 @@ import cluedogame.sqaures.RoomSquare;
 import cluedogame.sqaures.ShortcutSquare;
 import cluedogame.sqaures.Square;
 
+/**
+ * A canvas which shows the Cluedo playing board.
+ * @author Sarah Dobie and Christ Read
+ *
+ */
 public class BoardCanvas extends JPanel implements MouseListener {
 	
 	private Image boardImage;
 	private Image resizedImage;
 	private CluedoFrame frame;
 	
+	/**
+	 * Constructor for class BoardCanvas.
+	 * @param frame The CluedoFrame containing this canvas.
+	 */
 	public BoardCanvas(CluedoFrame frame){
 		addMouseListener(this);
 		this.frame = frame;
@@ -72,9 +81,21 @@ public class BoardCanvas extends JPanel implements MouseListener {
 		int col = CluedoFrame.convertXToCol(e.getX());
 //		System.out.println("Mouse released at ("+e.getX()+","+e.getY()+")");
 //		System.out.println("Mouse released at ("+row+","+col+")");
-		if(Board.validRow(row) && Board.validCol(col)){
+		movePlayer(game, row, col);
+	}
+
+	/**
+	 * Determines the shortest path between the player and the square they clicked on.
+	 * If this path is valid, the player is moved down that path.
+	 * If the path is invalid, a message is displayed.
+	 * @param game The current GameOfCluedo being played
+	 * @param goalRow The row that the mouse was clicked in
+	 * @param goalCol The column that the mouse was clicked in
+	 */
+	public void movePlayer(GameOfCluedo game, int goalRow, int goalCol) {
+		if(Board.validRow(goalRow) && Board.validCol(goalCol)){
 			Board board = game.getBoard();
-			// check if the current player is valid
+			// check if there is a current player
 			Player currentPlayer = game.getCurrentPlayer();
 			if(currentPlayer == null){
 				frame.showDialog("Roll the dice first!", "Invalid move");
@@ -82,7 +103,7 @@ public class BoardCanvas extends JPanel implements MouseListener {
 			}
 			// determine shortest path
 			Square start = board.squareAt(currentPlayer.row(), currentPlayer.column());
-			Square goal = board.squareAt(row, col);
+			Square goal = board.squareAt(goalRow, goalCol);
 			List<Square> shortestPath = board.shortestPath(start, goal,
 					game.getRoll(), game);
 			// check for invalid path
@@ -105,7 +126,7 @@ public class BoardCanvas extends JPanel implements MouseListener {
 				} else {
 					frame.enableSuggestBtn(false);
 				}
-				// check if player is on shortcut or not
+				// check if player is on a shortcut or not
 				if(goal instanceof ShortcutSquare && game.getRoll() > 0){
 					frame.enableShortcutBtn(true);
 				} else {

@@ -183,6 +183,19 @@ public class Board {
 	}
 
 	/**
+	 * Prepares all Squares on the board for an A* search.
+	 */
+	private void setupSearchFlags() {
+		for(int r=0; r<ROWS; r++){
+			for(int c=0; c<COLS; c++){
+				Square sq = board[r][c];
+				sq.setVisited(false);
+				sq.setFrom(null);
+			}
+		}
+	}
+
+	/**
 	 * Iterates backwards through shortest path nodes to arrange the path
 	 * into a list.
 	 * @param goal The final node in the path
@@ -209,54 +222,23 @@ public class Board {
 	}
 
 	/**
-	 * Prepares all Squares on the board for an A* search.
-	 */
-	private void setupSearchFlags() {
-		for(int r=0; r<ROWS; r++){
-			for(int c=0; c<COLS; c++){
-				Square sq = board[r][c];
-				sq.setVisited(false);
-				sq.setFrom(null);
-			}
-		}
-	}
-	
-	/**
-	 * Checks if the given row is within bounds.
-	 * @param row The row to check
-	 * @return True iff the row is within bounds of the board
-	 */
-	public static boolean validRow(int row){
-		return row >= 0 && row < ROWS;
-	}
-	
-	/**
-	 * Checks if the given column is within bounds.
-	 * @param col The column to check
-	 * @return True iff the column is within bounds of the board
-	 */
-	public static boolean validCol(int col){
-		return col >= 0 && col < COLS;
-	}
-	
-	/**
 	 * Calculates the Euclidean distance between two squares.
-	 * @param start 
-	 * @param goal
+	 * @param square1 
+	 * @param square2
 	 * @return The Euclidean distance between the two given squares.
 	 */
-	private double distance(Square start, Square goal) {
+	private double distance(Square square1, Square square2) {
 //		System.out.println(Math.hypot(start.col() - goal.col(), start.row() - goal.row()));
-		return Math.hypot(start.col() - goal.col(), start.row() - goal.row());
+		return Math.hypot(square1.col() - square2.col(), square1.row() - square2.row());
 	}
 	
 	/**
 	 * Makes a list of up to four neighbours of a square, that is
 	 * the squares above, below, to the left and to the right of the
-	 * given square.
+	 * given square, as well as any available shortcut squares.
 	 * @param node The square to find the neighbours of.
 	 * @return A list of squares above, below, to the left and to
-	 * the right of the given square.
+	 * the right of the given square, as well as any available shortcut squares.
 	 */
 	private List<Square> setupNeighbours(Square node, Square goal, GameOfCluedo game){
 		List<Square> neighbours = new ArrayList<Square>();
@@ -286,6 +268,24 @@ public class Board {
 			}
 		}
 		return neighbours;
+	}
+
+	/**
+	 * Checks if the given row is within bounds.
+	 * @param row The row to check
+	 * @return True iff the row is within bounds of the board
+	 */
+	public static boolean validRow(int row){
+		return row >= 0 && row < ROWS;
+	}
+
+	/**
+	 * Checks if the given column is within bounds.
+	 * @param col The column to check
+	 * @return True iff the column is within bounds of the board
+	 */
+	public static boolean validCol(int col){
+		return col >= 0 && col < COLS;
 	}
 
 	/**

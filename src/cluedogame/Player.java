@@ -288,6 +288,15 @@ public class Player {
 	}
 	
 	/**
+	 * Moves the player onto the given square.
+	 * @param sq The square to move the player to.
+	 */
+	public void moveTo(Square sq){
+		rPosition = sq.row();
+		cPosition = sq.col();
+	}
+
+	/**
 	 * Adds a card to the player's hand
 	 * @param c Card to add
 	 */
@@ -311,11 +320,6 @@ public class Player {
 	 */
 	public boolean hasSeenCard(Card c){
 		return cardsSeen.contains(c);
-	}
-	
-	public void moveTo(Square sq){
-		rPosition = sq.row();
-		cPosition = sq.col();
 	}
 	
 	/**

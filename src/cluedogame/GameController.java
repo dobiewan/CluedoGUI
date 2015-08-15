@@ -12,26 +12,46 @@ import cluedogame.sqaures.RoomSquare;
 import cluedogame.sqaures.ShortcutSquare;
 import cluedogame.sqaures.Square;
 
+/**
+ * A class which controls the gameplay, containing the methods
+ * required each time a player takes their turn.
+ * @author Sarah Dobie, Chris Read
+ *
+ */
 public class GameController {
 	
-	private GameOfCluedo game;
-	private CluedoFrame frame;
-	private boolean gameOver = false;
+	private GameOfCluedo game; // the game this controller is associated with
+	private CluedoFrame frame; // the frame the game is being played in
+//	private boolean gameOver = false; 
 	LinkedList<Player> playersInGame = new LinkedList<Player>(); //players still in game
 	
+	/**
+	 * Constructor for class GameController.
+	 * @param game The game this controller is associated with
+	 * @param frame The frame interfacing the game
+	 */
 	public GameController(GameOfCluedo game, CluedoFrame frame) {
 		this.game = game;
 		this.frame = frame;
 		playersInGame.addAll(game.getPlayers());
 	}
 	
+	/**
+	 * Adds a player to the game.
+	 * @param p The player to add
+	 */
 	public void addPlayer(Player p){
 		playersInGame.add(p);
 	}
 	
+	/**
+	 * Stars the turn for the next player.
+	 */
 	public void playTurn(){
-		if (!gameOver && playersInGame.size() > 0) {
+		if (/*!gameOver && */playersInGame.size() > 0) {
+			// get the next player
 			Player player = playersInGame.peek();
+			// roll the dice
 			game.setCurrentPlayer(player);
 			game.rollDice();
 			frame.showDialog(player.getName()+" rolls "+game.getRoll(), "Dice roll");
@@ -41,6 +61,10 @@ public class GameController {
 		}
 	}
 
+	/**
+	 * Enables the appropriate buttons in the frame.
+	 * @param player The current player
+	 */
 	public void enableButtons(Player player) {
 		Square playerSquare = getPlayerSquare(player);
 		// check if player is starting on a shortcut
@@ -58,13 +82,24 @@ public class GameController {
 		}
 	}
 
-	public Square getPlayerSquare(Player player) {
+	/**
+	 * Gets the square that a player is currently on.
+	 * @param player The player to find the position of
+	 * @return The Square that the given player is currently located at.
+	 */
+	private Square getPlayerSquare(Player player) {
 		return game.getBoard().squareAt(player.row(), player.column());
 	}
 	
-	
+	/**
+	 * Allows the player to make a suggestion, and checks the suggestion
+	 * against any cards the other players have, reporting the matching cards
+	 * if there are any.
+	 * Can only be used if a player is in a room.
+	 */
 	public void makeSuggestion() {
 		Player player = game.getCurrentPlayer();
+		// determine which room the player is in
 		String room = null;
 		if(getPlayerSquare(player) instanceof RoomSquare){
 			RoomSquare square = (RoomSquare)getPlayerSquare(player);
@@ -74,6 +109,7 @@ public class GameController {
 			room = square.startRoom();
 		}
 		
+		// get the suggestion info from the player
 		String[] suggestions = frame.showSuggestionDialog(room);
 		String character = suggestions[0];
 		String weapon = suggestions[1];
@@ -92,10 +128,16 @@ public class GameController {
 				}
 			}
 		}
+		// if no matches found, diaplay a message
 		frame.showDialog("No matching cards were found...", "Suggestion results");
 	}
 
-	
+	/**
+	 * Allows the player to make an accusation.
+	 * First confirms that the player is sure they want to make an accusation.
+	 * Checks their accusation against the murder cards, and if they're correct,
+	 * end the game. If they're incorrect, they are out of the game.
+	 */
 	public void makeAccusation() {
 		Player player = game.getCurrentPlayer();
 		// confirm that the player wants to do this
@@ -116,25 +158,32 @@ public class GameController {
 					+ "It was "+accusation[0]+" in the "+accusation[2]+
 					" with the "+accusation[1]+"!", "Accusation results");
 			frame.showDialog("--GAME OVER--", "Game over");
-			gameOver = true;
+//			gameOver = true;
 			frame.enableDiceBtn(false);
 		} else {
 			// accusation was incorrect, insult player
 			frame.showDialog("You were wrong!\n ...you didn't really think this through...\n"
 					+ player.getName()+" is out of the game!", "Accusation results");
+			// remove player from game
 			playersInGame.remove(player);
+			// check if the game is over
 			if(playersInGame.size() == 0){
 				frame.showDialog("--GAME OVER-- \n" //TODO check if they want to play again
 						+ "It was "+accusation[0]+" in the "+accusation[2]+
 						" with the "+accusation[1]+"!", "Game over");
+				frame.enableDiceBtn(false);
 			}
-			frame.enableDiceBtn(false);
 		}
 	}
 	
+	/**
+	 * Takes the player to the other side of the shortcut they are
+	 * standing on.
+	 * @param player
+	 */
 	public void takeShortcut(Player player) {
 		try{
-			if(game.getRoll() > 0){
+			if(game.getRoll() > 0){ // if there are any moves left
 				ShortcutSquare shortcut = (ShortcutSquare)getPlayerSquare(player);
 				player.setPos(shortcut.toRow(), shortcut.toCol());
 				game.useMoves(1);
@@ -146,6 +195,7 @@ public class GameController {
 				frame.showDialog("Not enough moves!", "Invalid move");
 			}
 		} catch(ClassCastException e){
+			// the player wasn't standing on a shortcut
 			return;
 		}
 	}

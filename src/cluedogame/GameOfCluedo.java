@@ -152,6 +152,59 @@ public class GameOfCluedo {
 	}
 
 	/**
+	 * Rolls two dice.
+	 */
+	public void rollDice(){
+		roll = new Random().nextInt(10) + 2;
+	}
+
+	/**
+	 * Gets the number of moves remaining in the turn.
+	 * @return The number of moves remaining in the turn (0-12 inclusive).
+	 */
+	public int getRoll() {
+		return roll;
+	}
+
+	/**
+	 * Uses up the given number of moves.
+	 * @param movesUsed The moves to use up.
+	 */
+	public void useMoves(int movesUsed){
+		roll -= movesUsed;
+	}
+
+	/**
+	 * Takes away any remaining moves, so the turn is over.
+	 */
+	public void endTurn() {
+		roll = 0;
+	}
+
+	/**
+	 * Start the next turn.
+	 * @param frame The frame the game is being played in
+	 */
+	public void playTurn(CluedoFrame frame) {
+		control.playTurn();
+	}
+
+	/**
+	 * Allow the player to make a suggestion.
+	 */
+	public void makeSuggestion() {
+		control.makeSuggestion();
+	}
+
+	/**
+	 * Allow the player to make an accusation.
+	 */
+	public void makeAccusation() {
+		control.makeAccusation();
+		
+	}
+
+	/**
 	 * Checks an accusation against the murder cards.
 	 * @param accusation String array containing the character, weapon and room in that order.
 	 * @return True if only if all three cards are correct
@@ -166,6 +219,13 @@ public class GameOfCluedo {
 	}
 	
 	/**
+	 * Allows the player to take a shortcut.
+	 */
+	public void takeShortcut() {
+		control.takeShortcut(currentPlayer);
+	}
+
+	/**
 	 * Testing method used when checking a correct accusation
 	 * @return the murder cards
 	 */
@@ -173,15 +233,6 @@ public class GameOfCluedo {
 		return murderCards;
 	}
 	
-	/**
-	 * Prints out the murderer, their weapon and room.
-	 */
-	public void printMurder(){
-		System.out.println(murderCards[0].getName() +
-				" used the " + murderCards[1].getName() +
-				" in the " + murderCards[2].getName() + "!");
-	}
-
 	/**
 	 * Gets this game's board.
 	 * @return The board being used by the game.
@@ -222,14 +273,6 @@ public class GameOfCluedo {
 		this.currentPlayer = currentPlayer;
 	}
 	
-	public void rollDice(){
-		roll = new Random().nextInt(10) + 2;
-	}
-
-	public int getRoll() {
-		return roll;
-	}
-
 	/**
 	 * Determines whether there is a player at the given position.
 	 * @param row The row of the position
@@ -243,31 +286,6 @@ public class GameOfCluedo {
 			}
 		}
 		return false;
-	}
-	
-	public void useMoves(int movesUsed){
-		roll -= movesUsed;
-	}
-
-	public void playTurn(CluedoFrame frame) {
-		control.playTurn();
-	}
-
-	public void makeSuggestion() {
-		control.makeSuggestion();
-	}
-
-	public void endTurn() {
-		roll = 0;
-	}
-
-	public void makeAccusation() {
-		control.makeAccusation();
-		
-	}
-
-	public void takeShortcut() {
-		control.takeShortcut(currentPlayer);
 	}
 	
 }

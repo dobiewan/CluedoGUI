@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Window containing all GUI components.
+ * Window containing all GUI components for Cluedo.
  * 
  * @author Sarah Dobie, Chris Read
  */
@@ -45,10 +45,6 @@ public class CluedoFrame extends JFrame {
     
     // Game info
     private GameOfCluedo game;
-    
-    public List<Player> getPlayers(){
-    	return game.getPlayers();
-    }
     
     /**
      * Constructor for class CluedoFrame
@@ -96,6 +92,7 @@ public class CluedoFrame extends JFrame {
 	 * Sets up the buttons that will be on the button panel
 	 */
 	private void initialiseButtons() {
+		// Roll Dice button
 		rollDiceBtn.setText("Roll Dice");
 	    rollDiceBtn.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent evt) {
@@ -103,6 +100,7 @@ public class CluedoFrame extends JFrame {
 	        }
 	    });
 	    
+	    // Take Shortcut button
 	    takeShortcutBtn.setText("Take Shortcut");
 	    takeShortcutBtn.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent evt) {
@@ -111,6 +109,7 @@ public class CluedoFrame extends JFrame {
 	    });
 	    enableShortcutBtn(false);
 	
+	    // Suggest button
 	    suggestBtn.setText("Suggest");
 	    suggestBtn.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent evt) {
@@ -119,6 +118,7 @@ public class CluedoFrame extends JFrame {
 	    });
 	    enableSuggestBtn(false);
 	
+	    // Accuse button
 	    accuseBtn.setText("Accuse");
 	    accuseBtn.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent evt) {
@@ -126,22 +126,6 @@ public class CluedoFrame extends JFrame {
 	        }
 	    });
 	    enableAccuseBtn(false);
-	}
-
-	public void enableSuggestBtn(boolean canSuggest) {
-		suggestBtn.setEnabled(canSuggest);
-	}
-
-	public void enableAccuseBtn(boolean canAccuse) {
-		accuseBtn.setEnabled(canAccuse);
-	}
-
-	public void enableShortcutBtn(boolean canTakeShortcut) {
-		takeShortcutBtn.setEnabled(canTakeShortcut);
-	}
-
-	public void enableDiceBtn(boolean canRoll) {
-		rollDiceBtn.setEnabled(canRoll);
 	}
 
 	/**
@@ -195,13 +179,13 @@ public class CluedoFrame extends JFrame {
 	    });
 	    menuFile.add(fileExit);
 	    
-	    
+	    // add File to menu bar
 	    menuBar.add(menuFile);
 	    setJMenuBar(menuBar);
 	}
 
 	/**
-     * Adds all components to the frame.
+     * Adds all GUI components to the frame.
      */
 	private void initialiseFrame() {
 		GroupLayout layout = new GroupLayout(getContentPane());
@@ -287,7 +271,7 @@ public class CluedoFrame extends JFrame {
     }                                            
 
     /**
-	 * Runs when the Suggest button is pushed.
+	 * Runs when the Take Shortcut button is pushed.
 	 * @param evt
 	 */
     private void shortcutBtnActionPerformed(ActionEvent evt) {   
@@ -311,7 +295,7 @@ public class CluedoFrame extends JFrame {
     }         
 	
 	/**
-	 * Allows users to set up their tokens
+	 * Allows users to set up their characters
 	 */
 	public void selectPlayers(){
 		int numPlayers = inputNumPlayers();
@@ -347,78 +331,49 @@ public class CluedoFrame extends JFrame {
 	}
 
 	/**
-	 * Determines which button is selected and makes a new player
-	 * based on the appropriate button
-	 */
-	private void generatePlayerFromInput(JPanel panel, JRadioButton greenBtn,
-			JRadioButton mustardBtn, JRadioButton peacockBtn,
-			JRadioButton plumBtn, JRadioButton scarlettBtn,
-			JRadioButton whiteBtn) {
-		if(greenBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.GREEN));
-		} else if(mustardBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.MUSTARD));
-		} else if(peacockBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.PEACOCK));
-		} else if(plumBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.PLUM));
-		} else if(scarlettBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.SCARLETT));
-		} else if(whiteBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.WHITE));
-		} else {
-			// the player hasn't selected an option
-			JOptionPane.showMessageDialog(this, panel);
-			generatePlayerFromInput(panel, greenBtn, mustardBtn, peacockBtn,
-					plumBtn, scarlettBtn, whiteBtn);
-		}
-	}
-
-	/**
-	 * Gets the number of players from the user.
-	 * @return The number of players in the game.
-	 * (Between 2 and 6 inclusive.)
-	 */
-	private int inputNumPlayers() {
-		// set up dialog box
-		String[] options = {"OK"};
-		JPanel panel = new JPanel(new GridLayout(0, 1));
-		JLabel lbl = new JLabel("How many players? (2-6)");
-		JTextField txt = new JTextField(10);
-		panel.add(lbl);
-		panel.add(txt);
-		
-		// show dialog box
-		JOptionPane.showOptionDialog(this, panel, "# Players",
-				JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
-		String numPlayersResponse = txt.getText();
-//		String numPlayersResponse = JOptionPane.showInputDialog(this, "How many players? (2-6)");
-		
-		// determine input validity
-		int numPlayers = 0;
-		try{
-			numPlayers = Integer.parseInt(numPlayersResponse);
-			// check for out of bounds number
-			while(numPlayers < 2 || numPlayers > 6){
-//				numPlayers = Integer.parseInt(JOptionPane.showInputDialog(this, "Invalid number. Must be 2-6 players."));
-				panel.remove(lbl);
-				txt.setText("");
-				lbl = new JLabel("Invalid number. Must be 2-6 players.");
-				panel.add(lbl);
-				JOptionPane.showOptionDialog(this, panel, "# Players",
-						JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
-				numPlayersResponse = txt.getText();
+		 * Gets the number of players from the user.
+		 * @return The number of players in the game. (Between 2 and 6 inclusive.)
+		 */
+		private int inputNumPlayers() {
+			// set up dialog box
+			String[] options = {"OK"};
+			JPanel panel = new JPanel(new GridLayout(0, 1));
+			JLabel lbl = new JLabel("How many players? (2-6)");
+			JTextField txt = new JTextField(10);
+			panel.add(lbl);
+			panel.add(txt);
+			
+			// show dialog box
+			JOptionPane.showOptionDialog(this, panel, "# Players",
+					JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
+			String numPlayersResponse = txt.getText();
+	//		String numPlayersResponse = JOptionPane.showInputDialog(this, "How many players? (2-6)");
+			
+			// determine input validity
+			int numPlayers = 0;
+			try{
 				numPlayers = Integer.parseInt(numPlayersResponse);
+				// check for out of bounds number
+				while(numPlayers < 2 || numPlayers > 6){
+	//				numPlayers = Integer.parseInt(JOptionPane.showInputDialog(this, "Invalid number. Must be 2-6 players."));
+					panel.remove(lbl);
+					txt.setText("");
+					lbl = new JLabel("Invalid number. Must be 2-6 players.");
+					panel.add(lbl);
+					JOptionPane.showOptionDialog(this, panel, "# Players",
+							JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
+					numPlayersResponse = txt.getText();
+					numPlayers = Integer.parseInt(numPlayersResponse);
+				}
+			} catch(NumberFormatException e){
+				// player entered nothing or a non-numeric string
+				return inputNumPlayers();
 			}
-		} catch(NumberFormatException e){
-			// player entered nothing or a non-numeric string
-			return inputNumPlayers();
+			return numPlayers;
 		}
-		return numPlayers;
-	}
 
 	/**
-	 * Adds the adds the remaining character options to the character select
+	 * Adds the remaining available character options to the character select
 	 * panel.
 	 */
 	private void addAvailableCharacterOptions(JPanel panel,
@@ -452,18 +407,36 @@ public class CluedoFrame extends JFrame {
 			panel.add(whiteBtn);
 		}
 	}
-	
-	public void showDialog(String message, String title){
-		JOptionPane.showConfirmDialog(this, new JLabel(message),
-				title, JOptionPane.DEFAULT_OPTION,
-				JOptionPane.INFORMATION_MESSAGE);
+
+	/**
+	 * Determines which button is selected and makes a new player
+	 * based on the appropriate button.
+	 */
+	private void generatePlayerFromInput(JPanel panel, JRadioButton greenBtn,
+			JRadioButton mustardBtn, JRadioButton peacockBtn,
+			JRadioButton plumBtn, JRadioButton scarlettBtn,
+			JRadioButton whiteBtn) {
+		if(greenBtn.isSelected()){
+			game.addPlayer(new Player(GameOfCluedo.GREEN));
+		} else if(mustardBtn.isSelected()){
+			game.addPlayer(new Player(GameOfCluedo.MUSTARD));
+		} else if(peacockBtn.isSelected()){
+			game.addPlayer(new Player(GameOfCluedo.PEACOCK));
+		} else if(plumBtn.isSelected()){
+			game.addPlayer(new Player(GameOfCluedo.PLUM));
+		} else if(scarlettBtn.isSelected()){
+			game.addPlayer(new Player(GameOfCluedo.SCARLETT));
+		} else if(whiteBtn.isSelected()){
+			game.addPlayer(new Player(GameOfCluedo.WHITE));
+		} else {
+			// the player hasn't selected an option
+			JOptionPane.showMessageDialog(this, panel);
+			generatePlayerFromInput(panel, greenBtn, mustardBtn, peacockBtn,
+					plumBtn, scarlettBtn, whiteBtn);
+		}
 	}
 
-    public GameOfCluedo getGame() {
-		return game;
-	}
-    
-    /**
+	/**
      * Allows the player to select a character and room for a suggestion.
      * @param room The room the player is in.
      * @return A String array of length 2, where the item at index 0
@@ -478,7 +451,13 @@ public class CluedoFrame extends JFrame {
     	return new String[]{characterSuggestion, weaponSuggestion};
     }
 
-	public String showWeaponSuggestions(String room) {
+    /**
+     * Shows a dialog box with radio buttons to allow the user to select
+     * a weapon for the purpose of making a suggestion.
+     * @param room The room the player is currently in
+     * @return The name of the selected weapon
+     */
+	private String showWeaponSuggestions(String room) {
 		ButtonGroup weaponButtons = new ButtonGroup();
 		List<JRadioButton> btns = setupWeaponButtons();
         
@@ -504,40 +483,31 @@ public class CluedoFrame extends JFrame {
         return null;
 	}
 
-	public List<JRadioButton> setupWeaponButtons() {
-		JRadioButton candlestickBtn = new JRadioButton(GameOfCluedo.CANDLESTICK);
-		JRadioButton daggerBtn = new JRadioButton(GameOfCluedo.DAGGER);
-		JRadioButton leadpipeBtn = new JRadioButton(GameOfCluedo.LEAD_PIPE); 
-		JRadioButton revolverBtn = new JRadioButton(GameOfCluedo.REVOLVER); 
-		JRadioButton ropeBtn = new JRadioButton(GameOfCluedo.ROPE); 
-        JRadioButton spannerBtn = new JRadioButton(GameOfCluedo.SPANNER); 
-        List<JRadioButton> btns = new ArrayList<JRadioButton>();
-        btns.add(candlestickBtn);
-        btns.add(daggerBtn);
-        btns.add(leadpipeBtn);
-        btns.add(revolverBtn);
-        btns.add(ropeBtn);
-        btns.add(spannerBtn);
-        candlestickBtn.setSelected(true);
-		return btns;
-	}
-
-	public String showCharacterSuggestions(String room) {
+	/**
+     * Shows a dialog box with radio buttons to allow the user to select
+     * a character for the purpose of making a suggestion.
+     * @param room The room the player is currently in
+     * @return The name of the selected character
+     */
+	private String showCharacterSuggestions(String room) {
 		ButtonGroup characterButtons = new ButtonGroup();
 		List<JRadioButton> btns = setupCharacterButtons();
-        
+		
+        // set up dialog box
 		JPanel characterPanel = new JPanel(new GridLayout(0, 1));
 		JLabel lbl = new JLabel("You are in the "+room+"."
 				+ "\n Select the character that you suspect.");
 		characterPanel.add(lbl);
-        
+		
+        // add the buttons to the panel
         for(JRadioButton b : btns){
         	characterButtons.add(b);
         	characterPanel.add(b);
         }
-		
-        JOptionPane.showMessageDialog(this, characterPanel);
         
+		// show dialog
+        JOptionPane.showMessageDialog(this, characterPanel);
+        // decide which button has been selected
         for(JRadioButton b : btns){
         	if(b.isSelected()){
         		return b.getText();
@@ -546,45 +516,41 @@ public class CluedoFrame extends JFrame {
         return null;
 	}
 
-	public List<JRadioButton> setupCharacterButtons() {
-		JRadioButton greenBtn = new JRadioButton(GameOfCluedo.GREEN);
-		JRadioButton mustardBtn = new JRadioButton(GameOfCluedo.MUSTARD);
-		JRadioButton peacockBtn = new JRadioButton(GameOfCluedo.PEACOCK); 
-		JRadioButton plumBtn = new JRadioButton(GameOfCluedo.PLUM); 
-		JRadioButton scarlettBtn = new JRadioButton(GameOfCluedo.SCARLETT); 
-        JRadioButton whiteBtn = new JRadioButton(GameOfCluedo.WHITE); 
-        List<JRadioButton> btns = new ArrayList<JRadioButton>();
-        btns.add(greenBtn);
-        btns.add(mustardBtn);
-        btns.add(peacockBtn);
-        btns.add(plumBtn);
-        btns.add(scarlettBtn);
-        btns.add(whiteBtn);
-        greenBtn.setSelected(true);
-		return btns;
-	}
-
+	/**
+     * Allows the player to select a character, weapon and room for an accusation.
+     * @param room The room the player is in.
+     * @return A String array of length 3, where the item at index 0
+     * is the selected character, the item at index 1 is the 
+     * selected weapon, and the item at index 2 is the selected room.
+     */
 	public String[] showAccusationDialog() {
 		enableAccuseBtn(false);
 		return new String[]{showCharacterAccusations(),
 				showWeaponAccusations(),showRoomAccusations()};
 	}
 	
-	public String showWeaponAccusations() {
+	/**
+     * Shows a dialog box with radio buttons to allow the user to select
+     * a weapon for the purpose of making an accusation.
+     * @return The name of the selected weapon
+     */
+	private String showWeaponAccusations() {
 		ButtonGroup weaponButtons = new ButtonGroup();
 		List<JRadioButton> btns = setupWeaponButtons();
         
+		// set up the dialog box
         JPanel weaponPanel = new JPanel(new GridLayout(0, 1));
 		JLabel lbl = new JLabel("Select the weapon that you suspect.");
 		weaponPanel.add(lbl);
-        
+        // add the buttons to the panel
         for(JRadioButton b : btns){
         	weaponButtons.add(b);
         	weaponPanel.add(b);
         }
-		
-        JOptionPane.showMessageDialog(this, weaponPanel);
         
+		// display the dialog box
+        JOptionPane.showMessageDialog(this, weaponPanel);
+        // decide which button was selected
         for(JRadioButton b : btns){
         	if(b.isSelected()){
         		return b.getText();
@@ -593,21 +559,28 @@ public class CluedoFrame extends JFrame {
         return null;
 	}
 	
-	public String showCharacterAccusations() {
+	/**
+     * Shows a dialog box with radio buttons to allow the user to select
+     * a character for the purpose of making an accusation.
+     * @return The name of the selected character
+     */
+	private String showCharacterAccusations() {
 		ButtonGroup characterButtons = new ButtonGroup();
 		List<JRadioButton> btns = setupCharacterButtons();
         
+		// set up dialog box
 		JPanel characterPanel = new JPanel(new GridLayout(0, 1));
 		JLabel lbl = new JLabel("Select the character that you suspect.");
 		characterPanel.add(lbl);
-        
+        // add buttons to panel
         for(JRadioButton b : btns){
         	characterButtons.add(b);
         	characterPanel.add(b);
         }
 		
+        // show dialog box
         JOptionPane.showMessageDialog(this, characterPanel);
-        
+        // decide which button was selected
         for(JRadioButton b : btns){
         	if(b.isSelected()){
         		return b.getText();
@@ -616,21 +589,28 @@ public class CluedoFrame extends JFrame {
         return null;
 	}
 	
-	public String showRoomAccusations() {
+	/**
+     * Shows a dialog box with radio buttons to allow the user to select
+     * a room for the purpose of making an accusation.
+     * @return The name of the selected room
+     */
+	private String showRoomAccusations() {
 		ButtonGroup characterButtons = new ButtonGroup();
 		List<JRadioButton> btns = setupRoomButtons();
         
+		// set up the dialog box
 		JPanel roomPanel = new JPanel(new GridLayout(0, 1));
 		JLabel lbl = new JLabel("Select the room that you suspect.");
 		roomPanel.add(lbl);
-        
+        // add the buttons to the panel
         for(JRadioButton b : btns){
         	characterButtons.add(b);
         	roomPanel.add(b);
         }
 		
+        // display dialog box
         JOptionPane.showMessageDialog(this, roomPanel);
-        
+        // decide which button was selected
         for(JRadioButton b : btns){
         	if(b.isSelected()){
         		return b.getText();
@@ -639,28 +619,130 @@ public class CluedoFrame extends JFrame {
         return null;
 	}
 	
-	public List<JRadioButton> setupRoomButtons() {
-		JRadioButton kitchenBtn = new JRadioButton(GameOfCluedo.KITCHEN);
-		JRadioButton ballroomBtn = new JRadioButton(GameOfCluedo.BALL_ROOM);
-		JRadioButton conservatoryBtn = new JRadioButton(GameOfCluedo.CONSERVATORY); 
-		JRadioButton billiardRoomBtn = new JRadioButton(GameOfCluedo.BILLIARD_ROOM); 
-		JRadioButton libraryBtn = new JRadioButton(GameOfCluedo.LIBRARY); 
-        JRadioButton studyBtn = new JRadioButton(GameOfCluedo.STUDY); 
-		JRadioButton hallBtn = new JRadioButton(GameOfCluedo.HALL); 
-		JRadioButton loungeBtn = new JRadioButton(GameOfCluedo.LOUNGE); 
-        JRadioButton diningRoomBtn = new JRadioButton(GameOfCluedo.DINING_ROOM); 
-        List<JRadioButton> btns = new ArrayList<JRadioButton>();
-        btns.add(kitchenBtn);
-        btns.add(ballroomBtn);
-        btns.add(conservatoryBtn);
-        btns.add(billiardRoomBtn);
-        btns.add(libraryBtn);
-        btns.add(studyBtn);
-        btns.add(hallBtn);
-        btns.add(loungeBtn);
-        btns.add(diningRoomBtn);
-        kitchenBtn.setSelected(true);
+	/**
+	 * Creates a list of radio buttons, each of which is labeled with one of
+	 * the six possible characters. The first button is selected.
+	 * @return A List of radio buttons representing each character.
+	 */
+	private List<JRadioButton> setupCharacterButtons() {
+		List<JRadioButton> btns = new ArrayList<JRadioButton>();
+		// select the first button
+		JRadioButton greenBtn = new JRadioButton(GameOfCluedo.GREEN);
+		greenBtn.setSelected(true);
+		// add buttons to list
+		btns.add(greenBtn);
+		btns.add(new JRadioButton(GameOfCluedo.MUSTARD));
+		btns.add(new JRadioButton(GameOfCluedo.PEACOCK)); 
+		btns.add(new JRadioButton(GameOfCluedo.PLUM)); 
+		btns.add(new JRadioButton(GameOfCluedo.SCARLETT)); 
+		btns.add(new JRadioButton(GameOfCluedo.WHITE)); 
 		return btns;
+	}
+
+	/**
+	 * Creates a list of radio buttons, each of which is labeled with one of
+	 * the six possible weapons. The first button is selected.
+	 * @return A List of radio buttons representing each weapon.
+	 */
+	private List<JRadioButton> setupWeaponButtons() {
+	    List<JRadioButton> btns = new ArrayList<JRadioButton>();
+	    // select top button
+	    JRadioButton candlestickBtn = new JRadioButton(GameOfCluedo.CANDLESTICK);
+	    candlestickBtn.setSelected(true);
+	    // add buttons to list
+		btns.add(candlestickBtn);
+		btns.add(new JRadioButton(GameOfCluedo.DAGGER));
+		btns.add(new JRadioButton(GameOfCluedo.LEAD_PIPE)); 
+		btns.add(new JRadioButton(GameOfCluedo.REVOLVER)); 
+		btns.add(new JRadioButton(GameOfCluedo.ROPE)); 
+		btns.add(new JRadioButton(GameOfCluedo.SPANNER));
+		return btns;
+	}
+
+	/**
+	 * Creates a list of radio buttons, each of which is labeled with one of
+	 * the nine possible rooms. The first button is selected.
+	 * @return A List of radio buttons representing each character.
+	 */
+	private List<JRadioButton> setupRoomButtons() {
+        List<JRadioButton> btns = new ArrayList<JRadioButton>();
+        // select the top button
+		JRadioButton kitchenBtn = new JRadioButton(GameOfCluedo.KITCHEN);
+        kitchenBtn.setSelected(true);
+        // add buttons to list
+        btns.add(kitchenBtn);
+        btns.add(new JRadioButton(GameOfCluedo.BALL_ROOM));
+        btns.add(new JRadioButton(GameOfCluedo.CONSERVATORY)); 
+        btns.add(new JRadioButton(GameOfCluedo.BILLIARD_ROOM)); 
+        btns.add(new JRadioButton(GameOfCluedo.LIBRARY)); 
+        btns.add(new JRadioButton(GameOfCluedo.STUDY)); 
+        btns.add(new JRadioButton(GameOfCluedo.HALL)); 
+        btns.add(new JRadioButton(GameOfCluedo.LOUNGE)); 
+        btns.add(new JRadioButton(GameOfCluedo.DINING_ROOM)); 
+		return btns;
+	}
+
+	/**
+	 * Shows a basic dialog window with an OK button.
+	 * @param message The text to be displayed in the dialog
+	 * @param title The title of the dialog box
+	 */
+	public void showDialog(String message, String title){
+		JOptionPane.showConfirmDialog(this, new JLabel(message),
+				title, JOptionPane.DEFAULT_OPTION,
+				JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	/**
+	 * Enable or disable the Suggest button.
+	 * When a button is disabled, it appears greyed out and cannot
+	 * be pressed by the user.
+	 * @param canSuggest True to enable the button, false to disable.
+	 */
+	public void enableSuggestBtn(boolean canSuggest) {
+		suggestBtn.setEnabled(canSuggest);
+	}
+
+	/**
+	 * Enable or disable the Accuse button.
+	 * When a button is disabled, it appears greyed out and cannot
+	 * be pressed by the user.
+	 * @param canAccuse True to enable the button, false to disable.
+	 */
+	public void enableAccuseBtn(boolean canAccuse) {
+		accuseBtn.setEnabled(canAccuse);
+	}
+
+	/**
+	 * Enable or disable the Take Shortcut button.
+	 * When a button is disabled, it appears greyed out and cannot
+	 * be pressed by the user.
+	 * @param canTakeShortcut True to enable the button, false to disable.
+	 */
+	public void enableShortcutBtn(boolean canTakeShortcut) {
+		takeShortcutBtn.setEnabled(canTakeShortcut);
+	}
+
+	/**
+	 * Enable or disable the Roll Dice button.
+	 * When a button is disabled, it appears greyed out and cannot
+	 * be pressed by the user.
+	 * @param canRoll True to enable the button, false to disable.
+	 */
+	public void enableDiceBtn(boolean canRoll) {
+		rollDiceBtn.setEnabled(canRoll);
+	}
+
+	/**
+	 * Returns the current GameOfCluedo being played.
+	 * @return The current GameOfCluedo
+	 */
+	public GameOfCluedo getGame() {
+		return game;
+	}
+
+	public List<Player> getPlayers(){
+		return game.getPlayers();
 	}
 
 	/**
