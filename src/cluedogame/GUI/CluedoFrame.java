@@ -328,7 +328,7 @@ public class CluedoFrame extends JFrame {
 			// determine which characters are available
 			List<String> playerNames = new ArrayList<String>();
 			for(Player p : game.getPlayers()){
-				playerNames.add(p.getName());
+				playerNames.add(p.getCharacter());
 			}
 			
 			// create buttons
@@ -340,15 +340,39 @@ public class CluedoFrame extends JFrame {
 			JRadioButton scarlettBtn = new JRadioButton(GameOfCluedo.SCARLETT); 
 	        JRadioButton whiteBtn = new JRadioButton(GameOfCluedo.WHITE); 
 	        
+	        String playerName = getPlayerName();
+	        
+	        panel.add(new JLabel("Who will "+playerName+" play as?"));
 	        addAvailableCharacterOptions(panel, playerNames, bg, greenBtn,
 					mustardBtn, peacockBtn, plumBtn, scarlettBtn, whiteBtn);
-			
 			JOptionPane.showMessageDialog(this, panel, "Character select", JOptionPane.QUESTION_MESSAGE);
-			generatePlayerFromInput(panel, greenBtn, mustardBtn, peacockBtn,
+			generatePlayerFromInput(panel, playerName, greenBtn, mustardBtn, peacockBtn,
 					plumBtn, scarlettBtn, whiteBtn);
 			
 	        repaintAll();
 		}
+	}
+
+	private String getPlayerName() {
+		// set up dialog box
+		String[] options = {"OK"};
+		JPanel namePanel = new JPanel(new GridLayout(0, 1));
+		JLabel lbl = new JLabel("Next player, what is your name?");
+		JTextField txt = new JTextField(10);
+		namePanel.add(lbl);
+		namePanel.add(txt);
+		
+		// show dialog box
+		JOptionPane.showOptionDialog(this, namePanel, "Player name",
+				JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
+		String playerName = txt.getText();
+		while(playerName.length() < 1){
+			lbl.setText("Name must be at least one character long.");
+			JOptionPane.showOptionDialog(this, namePanel, "Player name",
+					JOptionPane.NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options , options[0]);
+			playerName = txt.getText();
+		}
+		return playerName;
 	}
 
 	/**
@@ -433,26 +457,26 @@ public class CluedoFrame extends JFrame {
 	 * Determines which button is selected and makes a new player
 	 * based on the appropriate button.
 	 */
-	private void generatePlayerFromInput(JPanel panel, JRadioButton greenBtn,
+	private void generatePlayerFromInput(JPanel panel, String playerName, JRadioButton greenBtn,
 			JRadioButton mustardBtn, JRadioButton peacockBtn,
 			JRadioButton plumBtn, JRadioButton scarlettBtn,
 			JRadioButton whiteBtn) {
 		if(greenBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.GREEN));
+			game.addPlayer(new Player(GameOfCluedo.GREEN, playerName));
 		} else if(mustardBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.MUSTARD));
+			game.addPlayer(new Player(GameOfCluedo.MUSTARD, playerName));
 		} else if(peacockBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.PEACOCK));
+			game.addPlayer(new Player(GameOfCluedo.PEACOCK, playerName));
 		} else if(plumBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.PLUM));
+			game.addPlayer(new Player(GameOfCluedo.PLUM, playerName));
 		} else if(scarlettBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.SCARLETT));
+			game.addPlayer(new Player(GameOfCluedo.SCARLETT, playerName));
 		} else if(whiteBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.WHITE));
+			game.addPlayer(new Player(GameOfCluedo.WHITE, playerName));
 		} else {
 			// the player hasn't selected an option
 			JOptionPane.showMessageDialog(this, panel);
-			generatePlayerFromInput(panel, greenBtn, mustardBtn, peacockBtn,
+			generatePlayerFromInput(panel, playerName, greenBtn, mustardBtn, peacockBtn,
 					plumBtn, scarlettBtn, whiteBtn);
 		}
 	}

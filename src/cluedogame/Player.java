@@ -26,7 +26,8 @@ import cluedogame.sqaures.Square;
  */
 public class Player {
 	
-	private String name; // which character playing as
+	private String character; // which character playing as
+	private String userName; // the name of the user
 	private BufferedImage img; // the image representing this player
 	private List<Card> hand; // cards in the player's hand
 	private List<Card> cardsSeen; // cards the player has seen
@@ -39,14 +40,13 @@ public class Player {
 	 * @param simpleName The simplified name for the chosen character.
 	 * @param number The player's id.
 	 */
-	public Player(String name) {
-		super();
-		this.name = name;
+	public Player(String character, String userName) {
+		this.character = character;
 		this.img = chooseImage();
 		this.hand = new ArrayList<Card>();
 		this.cardsSeen = new ArrayList<Card>();
-		this.cPosition = startCol(this.name);
-		this.rPosition = startRow(this.name);
+		this.cPosition = startCol(this.character);
+		this.rPosition = startRow(this.character);
 	}
 	
 	/**
@@ -61,7 +61,7 @@ public class Player {
 	
 	private BufferedImage chooseImage() {
 		try {
-			return img = ImageIO.read(new File("Images\\"+name+".jpg"));
+			return img = ImageIO.read(new File("Images\\"+character+".jpg"));
 		} catch (IOException e) {
 			System.out.println("Could not read image file: "+e.getMessage());
 			return null;
@@ -117,11 +117,19 @@ public class Player {
 	}
 	
 	/**
-	 * Gets the name of the player character.
+	 * Gets the name of the player's character.
 	 * @return Player character name
 	 */
-	public String getName(){
-		return name;
+	public String getCharacter(){
+		return character;
+	}
+	
+	/**
+	 * Gets the name of the user.
+	 * @return The name of the user
+	 */
+	public String getUserName(){
+		return userName;
 	}
 	
 	
