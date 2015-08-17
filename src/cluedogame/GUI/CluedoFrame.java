@@ -27,8 +27,8 @@ public class CluedoFrame extends JFrame {
 	public static int MAX_BUTTON_SIZE = Short.MAX_VALUE;
 	public static int BOARD_CANVAS_WIDTH = 500;
 	public static int BOARD_CANVAS_HEIGHT = 500;
-	public static int DASH_CANVAS_WIDTH = BOARD_CANVAS_WIDTH - PREF_BUTTON_SIZE;
-	public static int DASH_CANVAS_HEIGHT = 100;
+	public static int DASH_CANVAS_WIDTH = 200;
+	public static int DASH_CANVAS_HEIGHT = BOARD_CANVAS_HEIGHT;
 
 	// GUI components
     private BoardCanvas boardCanvas; // the canvas which displays the playing board
@@ -65,7 +65,7 @@ public class CluedoFrame extends JFrame {
         initialiseFields();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         initialiseButtons();
-        initialisePanel();
+        initialiseButtonPanel();
         initialiseMenu();
         initialiseFrame();
         pack();
@@ -76,7 +76,7 @@ public class CluedoFrame extends JFrame {
 	 */
 	private void initialiseFields() {
 		boardCanvas = new BoardCanvas(this);
-	    dashboardCanvas = new DashboardCanvas();
+	    dashboardCanvas = new DashboardCanvas(this);
 	    btnPanel = new Panel();
 	    rollDiceBtn = new JButton();
 	    takeShortcutBtn = new JButton();
@@ -131,26 +131,29 @@ public class CluedoFrame extends JFrame {
 	/**
 	 * Sets up the button panel
 	 */
-	private void initialisePanel() {
+	private void initialiseButtonPanel() {
 		GroupLayout panelLayout = new GroupLayout(btnPanel);
         btnPanel.setLayout(panelLayout);
         
         // Set up the horizontal alignment
         ParallelGroup hzGroup = panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING);
-        hzGroup.addComponent(accuseBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
-        hzGroup.addComponent(takeShortcutBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
-        hzGroup.addComponent(rollDiceBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
-        hzGroup.addComponent(suggestBtn, /*GroupLayout.Alignment.TRAILING,*/ PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
+        SequentialGroup hzSqGroup = panelLayout.createSequentialGroup();
+        hzSqGroup.addComponent(rollDiceBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
+        hzSqGroup.addComponent(takeShortcutBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
+        hzSqGroup.addComponent(suggestBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
+        hzSqGroup.addComponent(accuseBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
+
+        hzGroup.addGroup(hzSqGroup);
         panelLayout.setHorizontalGroup(hzGroup);
         
         // set up the vertical alignment
         ParallelGroup vtGroup = panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING);
-        SequentialGroup sqGroup = panelLayout.createSequentialGroup();
-        vtGroup.addGroup(sqGroup);
-        sqGroup.addComponent(rollDiceBtn);
-        sqGroup.addComponent(takeShortcutBtn);
-        sqGroup.addComponent(accuseBtn);
-        sqGroup.addComponent(suggestBtn);
+//        SequentialGroup sqGroup = panelLayout.createSequentialGroup();
+//        vtGroup.addGroup(sqGroup);
+        vtGroup.addComponent(rollDiceBtn);
+        vtGroup.addComponent(takeShortcutBtn);
+        vtGroup.addComponent(accuseBtn);
+        vtGroup.addComponent(suggestBtn);
 //        sqGroup.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
         panelLayout.setVerticalGroup(vtGroup);
 	}
@@ -193,25 +196,29 @@ public class CluedoFrame extends JFrame {
         
         // set up horizontal alignment
         ParallelGroup hzGroup = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
-        hzGroup.addComponent(boardCanvas, BOARD_CANVAS_WIDTH, BOARD_CANVAS_WIDTH, BOARD_CANVAS_WIDTH);
         SequentialGroup sqGroupHz = layout.createSequentialGroup();
-        hzGroup.addGroup(sqGroupHz);
+        
         sqGroupHz.addComponent(dashboardCanvas, DASH_CANVAS_WIDTH, DASH_CANVAS_WIDTH, DASH_CANVAS_WIDTH);
+        sqGroupHz.addComponent(boardCanvas, BOARD_CANVAS_WIDTH, BOARD_CANVAS_WIDTH, BOARD_CANVAS_WIDTH);
+        hzGroup.addGroup(sqGroupHz);
+        
 //        sqGroupHz.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
-        sqGroupHz.addComponent(btnPanel, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE);
+        hzGroup.addComponent(btnPanel, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE);
         layout.setHorizontalGroup(hzGroup);
         
         // set up vertical alignment
-        ParallelGroup vtGroup = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
+//        ParallelGroup vtGroup = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
         SequentialGroup sqGroupVt = layout.createSequentialGroup();
-        vtGroup.addGroup(sqGroupVt);
-        sqGroupVt.addComponent(boardCanvas, BOARD_CANVAS_HEIGHT, BOARD_CANVAS_HEIGHT, BOARD_CANVAS_HEIGHT);
-//        sqGroupVt.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED);
+//        vtGroup.addGroup(sqGroupVt);
+        
         ParallelGroup dashboardGroup = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
-        sqGroupVt.addGroup(dashboardGroup);
         dashboardGroup.addComponent(dashboardCanvas, DASH_CANVAS_HEIGHT, DASH_CANVAS_HEIGHT, DASH_CANVAS_HEIGHT);
-        dashboardGroup.addComponent(btnPanel, DASH_CANVAS_HEIGHT, DASH_CANVAS_HEIGHT, DASH_CANVAS_HEIGHT);
-        layout.setVerticalGroup(vtGroup);
+        sqGroupVt.addComponent(boardCanvas, BOARD_CANVAS_HEIGHT, BOARD_CANVAS_HEIGHT, BOARD_CANVAS_HEIGHT);
+        sqGroupVt.addComponent(btnPanel, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
+        dashboardGroup.addGroup(sqGroupVt);
+        
+//        sqGroupVt.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED);
+        layout.setVerticalGroup(dashboardGroup);
 	}
 
 	/**
@@ -232,7 +239,7 @@ public class CluedoFrame extends JFrame {
 		if(r == 0){
 	        initialiseFields();
 	        initialiseButtons();
-	        initialisePanel();
+	        initialiseButtonPanel();
 	        initialiseMenu();
 	        initialiseFrame();
 	        pack();

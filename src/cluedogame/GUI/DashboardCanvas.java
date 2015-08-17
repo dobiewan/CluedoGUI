@@ -6,6 +6,12 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 public class DashboardCanvas extends JPanel {
+	
+	private CluedoFrame frame;
+	
+	public DashboardCanvas(CluedoFrame frame){
+		this.frame = frame;
+	}
 
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -13,6 +19,7 @@ public class DashboardCanvas extends JPanel {
 
 	@Override
 	public void paint(Graphics g){
-		//TODO
+		g.setColor(Color.GREEN);
+		g.fillRect(0,0,CluedoFrame.DASH_CANVAS_WIDTH,CluedoFrame.DASH_CANVAS_HEIGHT);
 	}
 }

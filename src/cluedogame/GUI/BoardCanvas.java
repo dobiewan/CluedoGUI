@@ -117,7 +117,13 @@ public class BoardCanvas extends JPanel implements MouseListener {
 				// move the player
 				for(Square sq : shortestPath){
 					currentPlayer.moveTo(sq);
-					repaint();
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					frame.repaint();
 				}
 				game.useMoves(shortestPath.size());
 				// check if player is in room or not
