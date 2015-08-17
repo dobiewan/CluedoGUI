@@ -78,12 +78,12 @@ public class GameOfCluedo {
 		// add character cards
 		List<Card> cCards = new ArrayList<Card>();
 		try {	
-		cCards.add(new CharacterCard(SCARLETT, ImageIO.read(new File("Images/CharacterCard.png"))));
-		cCards.add(new CharacterCard(MUSTARD, ImageIO.read(new File("Images/CharacterCard.png"))));
-		cCards.add(new CharacterCard(WHITE, ImageIO.read(new File("Images/CharacterCard.png"))));
-		cCards.add(new CharacterCard(GREEN, ImageIO.read(new File("Images/CharacterCard.png"))));
-		cCards.add(new CharacterCard(PEACOCK, ImageIO.read(new File("Images/CharacterCard.png"))));
-		cCards.add(new CharacterCard(PLUM, ImageIO.read(new File("Images/CharacterCard.png"))));
+		cCards.add(new CharacterCard(SCARLETT, ImageIO.read(new File("Images/ScarlettCard.png"))));
+		cCards.add(new CharacterCard(MUSTARD, ImageIO.read(new File("Images/MustardCard.png"))));
+		cCards.add(new CharacterCard(WHITE, ImageIO.read(new File("Images/WhiteCard.png"))));
+		cCards.add(new CharacterCard(GREEN, ImageIO.read(new File("Images/GreenCard.png"))));
+		cCards.add(new CharacterCard(PEACOCK, ImageIO.read(new File("Images/PeacockCard.png"))));
+		cCards.add(new CharacterCard(PLUM, ImageIO.read(new File("Images/PlumCard.png"))));
 		Collections.shuffle(cCards);
 		this.characterCards = cCards;
 		

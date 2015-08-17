@@ -117,15 +117,13 @@ public class BoardCanvas extends JPanel implements MouseListener {
 				// move the player
 				for(Square sq : shortestPath){
 					currentPlayer.moveTo(sq);
+					game.useMoves(1);
+					frame.repaintAll();
 					try {
 						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					frame.repaintAll();
+					} catch (InterruptedException e) {e.printStackTrace();}
 				}
-				game.useMoves(shortestPath.size());
+//				game.useMoves(shortestPath.size());
 				// check if player is in room or not
 				if(goal instanceof RoomSquare || goal instanceof ShortcutSquare){
 					frame.enableSuggestBtn(true);
