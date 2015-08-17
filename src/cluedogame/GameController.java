@@ -53,6 +53,7 @@ public class GameController {
 			Player player = playersInGame.peek();
 			// roll the dice
 			game.setCurrentPlayer(player);
+			frame.repaintAll();
 			game.rollDice();
 			frame.showDialog(player.getName()+" rolls "+game.getRoll(), "Dice roll");
 			enableButtons(player);
@@ -187,7 +188,7 @@ public class GameController {
 				ShortcutSquare shortcut = (ShortcutSquare)getPlayerSquare(player);
 				player.setPos(shortcut.toRow(), shortcut.toCol());
 				game.useMoves(1);
-				frame.repaint();
+				frame.repaintAll();
 				if(game.getRoll() <= 0){
 					frame.enableShortcutBtn(false);
 				}

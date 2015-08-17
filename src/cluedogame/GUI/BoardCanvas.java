@@ -123,7 +123,7 @@ public class BoardCanvas extends JPanel implements MouseListener {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					frame.repaint();
+					frame.repaintAll();
 				}
 				game.useMoves(shortestPath.size());
 				// check if player is in room or not

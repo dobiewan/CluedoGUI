@@ -1,5 +1,7 @@
 package cluedogame.cards;
 
+import java.awt.Image;
+
 /**
  * Represents either a character, weapon, or room card in a
  * game of Cluedo.
@@ -9,14 +11,16 @@ package cluedogame.cards;
 public abstract class Card {
 	
 	String name; // the item on the card
+	Image image;
 	
 	/**
 	 * Constructor for class card.
 	 * @param name A String representing the item on
 	 * the card
 	 */
-	public Card(String name){
+	public Card(String name, Image image){
 		this.name = name;
+		this.image = image;
 	}
 	
 	/**
@@ -25,6 +29,10 @@ public abstract class Card {
 	 * @return The name of the item on this card.
 	 */
 	public abstract String getName();
+	
+	public Image getImage(){
+		return image;
+	}
 	
 	@Override
 	public boolean equals(Object o){

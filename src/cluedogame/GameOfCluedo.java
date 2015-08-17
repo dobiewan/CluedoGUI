@@ -1,6 +1,10 @@
 package cluedogame;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+
+import javax.imageio.ImageIO;
 
 import cluedogame.GUI.CluedoFrame;
 import cluedogame.cards.*;
@@ -51,6 +55,7 @@ public class GameOfCluedo {
 	private Board board;
 	private int roll;
 	private GameController control;
+	private boolean isReady = false;
 	
 	/**
 	 * Constructor for class GameOfCluedo
@@ -71,39 +76,43 @@ public class GameOfCluedo {
 		
 		// add character cards
 		List<Card> cCards = new ArrayList<Card>();
-		cCards.add(new CharacterCard(SCARLETT));
-		cCards.add(new CharacterCard(MUSTARD));
-		cCards.add(new CharacterCard(WHITE));
-		cCards.add(new CharacterCard(GREEN));
-		cCards.add(new CharacterCard(PEACOCK));
-		cCards.add(new CharacterCard(PLUM));
+		try {	
+		cCards.add(new CharacterCard(SCARLETT, ImageIO.read(new File("Images/CharacterCard.png"))));
+		cCards.add(new CharacterCard(MUSTARD, ImageIO.read(new File("Images/CharacterCard.png"))));
+		cCards.add(new CharacterCard(WHITE, ImageIO.read(new File("Images/CharacterCard.png"))));
+		cCards.add(new CharacterCard(GREEN, ImageIO.read(new File("Images/CharacterCard.png"))));
+		cCards.add(new CharacterCard(PEACOCK, ImageIO.read(new File("Images/CharacterCard.png"))));
+		cCards.add(new CharacterCard(PLUM, ImageIO.read(new File("Images/CharacterCard.png"))));
 		Collections.shuffle(cCards);
 		this.characterCards = cCards;
 		
 		// add room cards
 		List<Card> rCards = new ArrayList<Card>();
-		rCards.add(new RoomCard("Conservatory"));
-		rCards.add(new RoomCard("Billiard Room"));
-		rCards.add(new RoomCard("Library"));
-		rCards.add(new RoomCard("Study"));
-		rCards.add(new RoomCard("Hall"));
-		rCards.add(new RoomCard("Lounge"));
-		rCards.add(new RoomCard("Dining Room"));
-		rCards.add(new RoomCard("Kitchen"));
-		rCards.add(new RoomCard("Ball Room"));
+		rCards.add(new RoomCard("Conservatory", ImageIO.read(new File("Images/RoomCard.png"))));
+		rCards.add(new RoomCard("Billiard Room", ImageIO.read(new File("Images/RoomCard.png"))));
+		rCards.add(new RoomCard("Library", ImageIO.read(new File("Images/RoomCard.png"))));
+		rCards.add(new RoomCard("Study", ImageIO.read(new File("Images/RoomCard.png"))));
+		rCards.add(new RoomCard("Hall", ImageIO.read(new File("Images/RoomCard.png"))));
+		rCards.add(new RoomCard("Lounge", ImageIO.read(new File("Images/RoomCard.png"))));
+		rCards.add(new RoomCard("Dining Room", ImageIO.read(new File("Images/RoomCard.png"))));
+		rCards.add(new RoomCard("Kitchen", ImageIO.read(new File("Images/RoomCard.png"))));
+		rCards.add(new RoomCard("Ball Room", ImageIO.read(new File("Images/RoomCard.png"))));
 		Collections.shuffle(rCards);
 		this.roomCards = rCards;
 		
 		// add weapon cards
 		List<Card> wCards = new ArrayList<Card>();
-		wCards.add(new WeaponCard("Candlestick"));
-		wCards.add(new WeaponCard("Dagger"));
-		wCards.add(new WeaponCard("Lead Pipe"));
-		wCards.add(new WeaponCard("Revolver"));
-		wCards.add(new WeaponCard("Rope"));
-		wCards.add(new WeaponCard("Spanner"));
+		wCards.add(new WeaponCard("Candlestick", ImageIO.read(new File("Images/WeaponCard.png"))));
+		wCards.add(new WeaponCard("Dagger", ImageIO.read(new File("Images/WeaponCard.png"))));
+		wCards.add(new WeaponCard("Lead Pipe", ImageIO.read(new File("Images/WeaponCard.png"))));
+		wCards.add(new WeaponCard("Revolver", ImageIO.read(new File("Images/WeaponCard.png"))));
+		wCards.add(new WeaponCard("Rope", ImageIO.read(new File("Images/WeaponCard.png"))));
+		wCards.add(new WeaponCard("Spanner", ImageIO.read(new File("Images/WeaponCard.png"))));
 		Collections.shuffle(wCards);
 		this.weaponCards = wCards;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -271,6 +280,18 @@ public class GameOfCluedo {
 
 	public void setCurrentPlayer(Player currentPlayer) {
 		this.currentPlayer = currentPlayer;
+	}
+	
+	/**
+	 * checks if the game is set up, returns true if it has been
+	 * @return
+	 */
+	public boolean isReady(){
+		return isReady;
+	}
+	
+	public void isReady(boolean ready){
+		isReady = ready;
 	}
 	
 	/**

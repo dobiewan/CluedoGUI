@@ -25,8 +25,8 @@ public class CluedoFrame extends JFrame {
 	
 	public static int PREF_BUTTON_SIZE = GroupLayout.DEFAULT_SIZE;
 	public static int MAX_BUTTON_SIZE = Short.MAX_VALUE;
-	public static int BOARD_CANVAS_WIDTH = 500;
-	public static int BOARD_CANVAS_HEIGHT = 500;
+	public static int BOARD_CANVAS_WIDTH = 600;
+	public static int BOARD_CANVAS_HEIGHT = 600;
 	public static int DASH_CANVAS_WIDTH = 200;
 	public static int DASH_CANVAS_HEIGHT = BOARD_CANVAS_HEIGHT;
 
@@ -50,10 +50,11 @@ public class CluedoFrame extends JFrame {
      * Constructor for class CluedoFrame
      */
     public CluedoFrame() {
+    	this.game = new GameOfCluedo(this);
         initialiseUI();
-        this.game = new GameOfCluedo(this);
         selectPlayers();
         game.dealCards();
+        game.isReady(true);
     }
 
     /**
@@ -70,13 +71,18 @@ public class CluedoFrame extends JFrame {
         initialiseFrame();
         pack();
     }
+    
+    public void repaintAll(){
+    	boardCanvas.repaint();
+    	dashboardCanvas.repaint();
+    }
 
     /**
 	 * Initialises all fields (components of the GUI)
 	 */
 	private void initialiseFields() {
 		boardCanvas = new BoardCanvas(this);
-	    dashboardCanvas = new DashboardCanvas(this);
+	    dashboardCanvas = new DashboardCanvas(this, game);
 	    btnPanel = new Panel();
 	    rollDiceBtn = new JButton();
 	    takeShortcutBtn = new JButton();
@@ -93,7 +99,7 @@ public class CluedoFrame extends JFrame {
 	 */
 	private void initialiseButtons() {
 		// Roll Dice button
-		rollDiceBtn.setText("Roll Dice");
+		rollDiceBtn.setText("Next Turn");
 	    rollDiceBtn.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent evt) {
 	            rollDiceBtnActionPerformed(evt);
@@ -237,13 +243,13 @@ public class CluedoFrame extends JFrame {
 				"Start New Game?", JOptionPane.YES_NO_OPTION,
 				JOptionPane.WARNING_MESSAGE);
 		if(r == 0){
+			this.game = new GameOfCluedo(this);
 	        initialiseFields();
 	        initialiseButtons();
 	        initialiseButtonPanel();
 	        initialiseMenu();
 	        initialiseFrame();
 	        pack();
-	        this.game = new GameOfCluedo(this);
 	        selectPlayers();
 		}
     }
@@ -333,7 +339,7 @@ public class CluedoFrame extends JFrame {
 			generatePlayerFromInput(panel, greenBtn, mustardBtn, peacockBtn,
 					plumBtn, scarlettBtn, whiteBtn);
 			
-	        boardCanvas.repaint();
+	        repaintAll();
 		}
 	}
 
