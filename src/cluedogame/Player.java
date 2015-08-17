@@ -59,7 +59,7 @@ public class Player {
 	
 	private BufferedImage chooseImage() {
 		try {
-			return img = ImageIO.read(new File(name+".jpg"));
+			return img = ImageIO.read(new File("Images\\"+name+".jpg"));
 		} catch (IOException e) {
 			System.out.println("Could not read image file: "+e.getMessage());
 			return null;

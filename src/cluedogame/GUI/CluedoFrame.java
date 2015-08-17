@@ -250,7 +250,14 @@ public class CluedoFrame extends JFrame {
 	        initialiseMenu();
 	        initialiseFrame();
 	        pack();
+	        enableAccuseBtn(false);
+	        repaintAll();
 	        selectPlayers();
+//	        this.game = new GameOfCluedo(this);
+//	        initialiseUI();
+//	        selectPlayers();
+	        game.dealCards();
+	        game.isReady(true);
 		}
     }
 
@@ -311,6 +318,7 @@ public class CluedoFrame extends JFrame {
 	 * Allows users to set up their characters
 	 */
 	public void selectPlayers(){
+		repaintAll();
 		int numPlayers = inputNumPlayers();
 		
 		// let each player choose a character

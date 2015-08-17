@@ -65,6 +65,7 @@ public class GameOfCluedo {
 		setupCards();
 		setMurderCards();
 		control = new GameController(this, frame);
+		isReady = false;
 	}
 	
 	/**

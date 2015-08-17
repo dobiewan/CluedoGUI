@@ -40,7 +40,7 @@ public class BoardCanvas extends JPanel implements MouseListener {
 		addMouseListener(this);
 		this.frame = frame;
 		try {
-			boardImage = ImageIO.read(new File("board.jpg"));
+			boardImage = ImageIO.read(new File("Images\\board.jpg"));
 			resizedImage = boardImage.getScaledInstance(CluedoFrame.BOARD_CANVAS_WIDTH,
 					CluedoFrame.BOARD_CANVAS_HEIGHT, Image.SCALE_SMOOTH);
 		} catch (IOException e) {
@@ -98,7 +98,7 @@ public class BoardCanvas extends JPanel implements MouseListener {
 			// check if there is a current player
 			Player currentPlayer = game.getCurrentPlayer();
 			if(currentPlayer == null){
-				frame.showDialog("Roll the dice first!", "Invalid move");
+				frame.showDialog("Click 'Next Turn' first!", "Invalid move");
 				return;
 			}
 			// determine shortest path

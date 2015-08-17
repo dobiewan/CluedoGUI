@@ -27,7 +27,7 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 		this.frame = frame;
 		this.game = game;
 		try {
-			DashBoardImage = ImageIO.read(new File("DashBoard.jpg"));
+			DashBoardImage = ImageIO.read(new File("Images\\DashBoard.jpg"));
 			resizedImage = DashBoardImage.getScaledInstance(CluedoFrame.DASH_CANVAS_WIDTH,
 					CluedoFrame.DASH_CANVAS_HEIGHT, Image.SCALE_SMOOTH);
 		} catch (IOException e) {
