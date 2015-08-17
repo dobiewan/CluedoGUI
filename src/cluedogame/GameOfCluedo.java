@@ -78,37 +78,37 @@ public class GameOfCluedo {
 		// add character cards
 		List<Card> cCards = new ArrayList<Card>();
 		try {	
-		cCards.add(new CharacterCard(SCARLETT, ImageIO.read(new File("Images\\ScarlettCard.png"))));
-		cCards.add(new CharacterCard(MUSTARD, ImageIO.read(new File("Images\\MustardCard.png"))));
-		cCards.add(new CharacterCard(WHITE, ImageIO.read(new File("Images\\WhiteCard.png"))));
-		cCards.add(new CharacterCard(GREEN, ImageIO.read(new File("Images\\GreenCard.png"))));
-		cCards.add(new CharacterCard(PEACOCK, ImageIO.read(new File("Images\\PeacockCard.png"))));
-		cCards.add(new CharacterCard(PLUM, ImageIO.read(new File("Images\\PlumCard.png"))));
+		cCards.add(new CharacterCard(SCARLETT, ImageIO.read(new File("Images"+File.separator+"ScarlettCard.png"))));
+		cCards.add(new CharacterCard(MUSTARD, ImageIO.read(new File("Images"+File.separator+"MustardCard.png"))));
+		cCards.add(new CharacterCard(WHITE, ImageIO.read(new File("Images"+File.separator+"WhiteCard.png"))));
+		cCards.add(new CharacterCard(GREEN, ImageIO.read(new File("Images"+File.separator+"GreenCard.png"))));
+		cCards.add(new CharacterCard(PEACOCK, ImageIO.read(new File("Images"+File.separator+"PeacockCard.png"))));
+		cCards.add(new CharacterCard(PLUM, ImageIO.read(new File("Images"+File.separator+"PlumCard.png"))));
 		Collections.shuffle(cCards);
 		this.characterCards = cCards;
 		
 		// add room cards
 		List<Card> rCards = new ArrayList<Card>();
-		rCards.add(new RoomCard("Conservatory", ImageIO.read(new File("Images\\RoomCard.png"))));
-		rCards.add(new RoomCard("Billiard Room", ImageIO.read(new File("Images\\RoomCard.png"))));
-		rCards.add(new RoomCard("Library", ImageIO.read(new File("Images\\RoomCard.png"))));
-		rCards.add(new RoomCard("Study", ImageIO.read(new File("Images\\RoomCard.png"))));
-		rCards.add(new RoomCard("Hall", ImageIO.read(new File("Images\\RoomCard.png"))));
-		rCards.add(new RoomCard("Lounge", ImageIO.read(new File("Images\\RoomCard.png"))));
-		rCards.add(new RoomCard("Dining Room", ImageIO.read(new File("Images\\RoomCard.png"))));
-		rCards.add(new RoomCard("Kitchen", ImageIO.read(new File("Images\\RoomCard.png"))));
-		rCards.add(new RoomCard("Ball Room", ImageIO.read(new File("Images\\RoomCard.png"))));
+		rCards.add(new RoomCard("Conservatory", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
+		rCards.add(new RoomCard("Billiard Room", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
+		rCards.add(new RoomCard("Library", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
+		rCards.add(new RoomCard("Study", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
+		rCards.add(new RoomCard("Hall", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
+		rCards.add(new RoomCard("Lounge", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
+		rCards.add(new RoomCard("Dining Room", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
+		rCards.add(new RoomCard("Kitchen", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
+		rCards.add(new RoomCard("Ball Room", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
 		Collections.shuffle(rCards);
 		this.roomCards = rCards;
 		
 		// add weapon cards
 		List<Card> wCards = new ArrayList<Card>();
-		wCards.add(new WeaponCard("Candlestick", ImageIO.read(new File("Images\\WeaponCard.png"))));
-		wCards.add(new WeaponCard("Dagger", ImageIO.read(new File("Images\\WeaponCard.png"))));
-		wCards.add(new WeaponCard("Lead Pipe", ImageIO.read(new File("Images\\WeaponCard.png"))));
-		wCards.add(new WeaponCard("Revolver", ImageIO.read(new File("Images\\WeaponCard.png"))));
-		wCards.add(new WeaponCard("Rope", ImageIO.read(new File("Images\\WeaponCard.png"))));
-		wCards.add(new WeaponCard("Spanner", ImageIO.read(new File("Images\\WeaponCard.png"))));
+		wCards.add(new WeaponCard("Candlestick", ImageIO.read(new File("Images"+File.separator+"WeaponCard.png"))));
+		wCards.add(new WeaponCard("Dagger", ImageIO.read(new File("Images"+File.separator+"WeaponCard.png"))));
+		wCards.add(new WeaponCard("Lead Pipe", ImageIO.read(new File("Images"+File.separator+"WeaponCard.png"))));
+		wCards.add(new WeaponCard("Revolver", ImageIO.read(new File("Images"+File.separator+"WeaponCard.png"))));
+		wCards.add(new WeaponCard("Rope", ImageIO.read(new File("Images"+File.separator+"WeaponCard.png"))));
+		wCards.add(new WeaponCard("Spanner", ImageIO.read(new File("Images"+File.separator+"WeaponCard.png"))));
 		Collections.shuffle(wCards);
 		this.weaponCards = wCards;
 		} catch (IOException e) {

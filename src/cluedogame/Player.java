@@ -42,6 +42,7 @@ public class Player {
 	 */
 	public Player(String character, String userName) {
 		this.character = character;
+		this.userName = userName;
 		this.img = chooseImage();
 		this.hand = new ArrayList<Card>();
 		this.cardsSeen = new ArrayList<Card>();
@@ -61,7 +62,7 @@ public class Player {
 	
 	private BufferedImage chooseImage() {
 		try {
-			return img = ImageIO.read(new File("Images\\"+character+".jpg"));
+			return img = ImageIO.read(new File("Images"+File.separator+character+".jpg"));
 		} catch (IOException e) {
 			System.out.println("Could not read image file: "+e.getMessage());
 			return null;
