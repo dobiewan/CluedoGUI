@@ -10,7 +10,7 @@ import java.util.Queue;
 import java.util.Scanner;
 
 import cluedogame.sqaures.*;
-import cluedogame.sqaures.RoomSquare.Dir;
+import cluedogame.sqaures.DoorSquare.Dir;
 
 /**
  * A 2D array representation of the Cluedo playing board.
@@ -36,7 +36,7 @@ public class Board {
 	 */
 	public void parse(){
 		try{
-			Scanner s = new Scanner(new File("boardFile.txt"));
+			Scanner s = new Scanner(new File("boardFileV2.txt"));
 			// create queues of special squares
 			Queue<String> shortcuts = shortcutRooms();
 			Queue<String> roomDoors = roomDoors();
@@ -72,10 +72,19 @@ public class Board {
 		case '/' : sq = new BlankSquare(row, col); break;
 		case '_' : sq = new GridSquare(row, col); break;
 		case '~' : sq = new ShortcutSquare(shortcuts.poll(), this, row, col); break;
-		case 'N' : sq = new RoomSquare(roomDoors.poll(), Dir.NORTH, row, col); break;
-		case 'E' : sq = new RoomSquare(roomDoors.poll(), Dir.EAST, row, col); break;
-		case 'S' : sq = new RoomSquare(roomDoors.poll(), Dir.SOUTH, row, col); break;
-		case 'W' : sq = new RoomSquare(roomDoors.poll(), Dir.WEST, row, col); break;
+		case 'K' : sq = new RoomSquare(GameOfCluedo.KITCHEN, row, col); break;
+		case 'B' : sq = new RoomSquare(GameOfCluedo.BALL_ROOM, row, col); break;
+		case 'D' : sq = new RoomSquare(GameOfCluedo.DINING_ROOM, row, col); break;
+		case 'C' : sq = new RoomSquare(GameOfCluedo.CONSERVATORY, row, col); break;
+		case 'b' : sq = new RoomSquare(GameOfCluedo.BILLIARD_ROOM, row, col); break;
+		case 'l' : sq = new RoomSquare(GameOfCluedo.LIBRARY, row, col); break;
+		case 'L' : sq = new RoomSquare(GameOfCluedo.LOUNGE, row, col); break;
+		case 'H' : sq = new RoomSquare(GameOfCluedo.HALL, row, col); break;
+		case 's' : sq = new RoomSquare(GameOfCluedo.STUDY, row, col); break;
+		case 'N' : sq = new DoorSquare(roomDoors.poll(), /*Dir.NORTH, */row, col); break;
+		case 'E' : sq = new DoorSquare(roomDoors.poll(), /*Dir.EAST, */row, col); break;
+		case 'S' : sq = new DoorSquare(roomDoors.poll(), /*Dir.SOUTH,*/ row, col); break;
+		case 'W' : sq = new DoorSquare(roomDoors.poll(), /*Dir.WEST,*/ row, col); break;
 		}
 		return sq;
 	}
@@ -103,16 +112,16 @@ public class Board {
 	 */
 	private Queue<String> roomDoors(){
 		Queue<String> rooms = new LinkedList<String>();
+		rooms.add(GameOfCluedo.BALL_ROOM);
+		rooms.add(GameOfCluedo.BALL_ROOM);
 		rooms.add(GameOfCluedo.CONSERVATORY);
-		rooms.add(GameOfCluedo.BALL_ROOM);
-		rooms.add(GameOfCluedo.BALL_ROOM);
 		rooms.add(GameOfCluedo.KITCHEN);
 		rooms.add(GameOfCluedo.BALL_ROOM);
 		rooms.add(GameOfCluedo.BALL_ROOM);
 		rooms.add(GameOfCluedo.BILLIARD_ROOM);
 		rooms.add(GameOfCluedo.DINING_ROOM);
-		rooms.add(GameOfCluedo.BILLIARD_ROOM);
 		rooms.add(GameOfCluedo.LIBRARY);
+		rooms.add(GameOfCluedo.BILLIARD_ROOM);
 		rooms.add(GameOfCluedo.DINING_ROOM);
 		rooms.add(GameOfCluedo.LIBRARY);
 		rooms.add(GameOfCluedo.HALL);
@@ -207,15 +216,23 @@ public class Board {
 		// add all squares to a list in order
 		List<Square> shortestPath = new ArrayList<Square>();
 		Square sq = goal;
+		int movesTaken = 0;
+		Square fromSquare = null;
 		shortestPath.add(goal);
 		while(sq.getFrom() != null){
 			shortestPath.add(0,sq.getFrom());
+			if(!(sq instanceof RoomSquare)){
+				movesTaken++;
+			} else if(fromSquare instanceof DoorSquare){
+				movesTaken++;;
+			}
+			fromSquare = sq;
 			sq = sq.getFrom();
 		}
 		shortestPath.remove(0);
 //		System.out.println("Path length: "+shortestPath.size());
 		// if the path is too long, set it to null
-		if(shortestPath.size() > moves){
+		if(movesTaken > moves){
 			shortestPath = null;
 		}
 		return shortestPath;
@@ -258,15 +275,15 @@ public class Board {
 		if(mock.canMoveDown(this, game)){
 			neighbours.add(board[downRow][nodeCol]);}
 		// check for shortcuts
-		if(goal instanceof ShortcutSquare){
-			ShortcutSquare shortcutSq = (ShortcutSquare)goal;
-			if(node instanceof RoomSquare){
-				RoomSquare roomSq = (RoomSquare)node;
-				if(roomSq.getRoom().equals(shortcutSq.startRoom())){
-					neighbours.add(goal);
-				}
-			}
-		}
+//		if(goal instanceof ShortcutSquare){
+//			ShortcutSquare shortcutSq = (ShortcutSquare)goal;
+//			if(node instanceof DoorSquare){
+//				DoorSquare roomSq = (DoorSquare)node;
+//				if(roomSq.getRoom().equals(shortcutSq.startRoom())){
+//					neighbours.add(goal);
+//				}
+//			}
+//		}
 		return neighbours;
 	}
 

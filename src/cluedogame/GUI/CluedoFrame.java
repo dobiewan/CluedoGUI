@@ -64,7 +64,7 @@ public class CluedoFrame extends JFrame {
     	setVisible(true);
     	setResizable(false);
         initialiseFields();
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         initialiseButtons();
         initialiseButtonPanel();
         initialiseMenu();
@@ -243,21 +243,21 @@ public class CluedoFrame extends JFrame {
 				"Start New Game?", JOptionPane.YES_NO_OPTION,
 				JOptionPane.WARNING_MESSAGE);
 		if(r == 0){
-			this.game = new GameOfCluedo(this);
-	        initialiseFields();
-	        initialiseButtons();
-	        initialiseButtonPanel();
-	        initialiseMenu();
-	        initialiseFrame();
-	        pack();
-	        enableAccuseBtn(false);
-	        repaintAll();
-	        selectPlayers();
-//	        this.game = new GameOfCluedo(this);
-//	        initialiseUI();
+			dispose();
+			new CluedoFrame();
+			
+//			this.game = new GameOfCluedo(this);
+//	        initialiseFields();
+//	        initialiseButtons();
+//	        initialiseButtonPanel();
+//	        initialiseMenu();
+//	        initialiseFrame();
+//	        pack();
+//	        enableAccuseBtn(false);
+//	        repaintAll();
 //	        selectPlayers();
-	        game.dealCards();
-	        game.isReady(true);
+//	        game.dealCards();
+//	        game.isReady(true);
 		}
     }
 

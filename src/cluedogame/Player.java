@@ -13,8 +13,10 @@ import javax.imageio.ImageIO;
 import cluedogame.GUI.BoardCanvas;
 import cluedogame.GUI.CluedoFrame;
 import cluedogame.cards.*;
+import cluedogame.sqaures.DoorSquare;
+import cluedogame.sqaures.DoorSquare.Dir;
 import cluedogame.sqaures.RoomSquare;
-import cluedogame.sqaures.RoomSquare.Dir;
+import cluedogame.sqaures.ShortcutSquare;
 import cluedogame.sqaures.Square;
 
 /**
@@ -167,12 +169,24 @@ public class Player {
 		try{
 			int leftRow = rPosition;
 			int leftCol = cPosition-1;
+			Square currentSquare = board.squareAt(rPosition, cPosition);
 			Square leftSquare = board.squareAt(leftRow, leftCol);
 			// check if entering a room
 			if(leftSquare instanceof RoomSquare){
-				return ((RoomSquare)leftSquare).getEnterDir() == Dir.EAST;
+				if(currentSquare instanceof DoorSquare){
+					return ((DoorSquare)currentSquare).getRoom().equals(((RoomSquare)leftSquare).getRoom());
+				} else if(currentSquare instanceof RoomSquare){
+					return true;
+				} else {
+					return false;
+				}
 			}
-			return leftSquare.isSteppable() && !game.hasPlayerAt(leftRow, leftCol); //FIXME - test this works, check if players can be in same spot
+			// check if leaving room
+			if(currentSquare instanceof RoomSquare){
+				return leftSquare instanceof RoomSquare || leftSquare instanceof ShortcutSquare
+						|| leftSquare instanceof DoorSquare;
+			}
+			return leftSquare.isSteppable() && !game.hasPlayerAt(leftRow, leftCol);
 		} catch(ArrayIndexOutOfBoundsException e){
 			return false;
 		}
@@ -188,10 +202,22 @@ public class Player {
 		try {
 			int rightRow = rPosition;
 			int rightCol = cPosition+1;
+			Square currentSquare = board.squareAt(rPosition, cPosition);
 			Square rightSquare = board.squareAt(rightRow, rightCol);
 			// check if entering a room
 			if(rightSquare instanceof RoomSquare){
-				return ((RoomSquare)rightSquare).getEnterDir() == Dir.WEST;
+				if(currentSquare instanceof DoorSquare){
+					return ((DoorSquare)currentSquare).getRoom().equals(((RoomSquare)rightSquare).getRoom());
+				} else if(currentSquare instanceof RoomSquare){
+					return true;
+				} else {
+					return false;
+				}
+			}
+			// check if leaving room
+			if(currentSquare instanceof RoomSquare){
+				return rightSquare instanceof RoomSquare || rightSquare instanceof ShortcutSquare
+						|| rightSquare instanceof DoorSquare;
 			}
 			return rightSquare.isSteppable() && !game.hasPlayerAt(rightRow, rightCol);
 		} catch(ArrayIndexOutOfBoundsException e){
@@ -209,10 +235,22 @@ public class Player {
 		try {
 			int upRow = rPosition-1;
 			int upCol = cPosition;
+			Square currentSquare = board.squareAt(rPosition, cPosition);
 			Square upSquare = board.squareAt(upRow, upCol);
 			// check if entering a room
 			if(upSquare instanceof RoomSquare){
-				return ((RoomSquare)upSquare).getEnterDir() == Dir.SOUTH;
+				if(currentSquare instanceof DoorSquare){
+					return ((DoorSquare)currentSquare).getRoom().equals(((RoomSquare)upSquare).getRoom());
+				} else if(currentSquare instanceof RoomSquare){
+					return true;
+				} else {
+					return false;
+				}
+			}
+			// check if leaving room
+			if(currentSquare instanceof RoomSquare){
+				return upSquare instanceof RoomSquare || upSquare instanceof ShortcutSquare
+						|| upSquare instanceof DoorSquare;
 			}
 			return upSquare.isSteppable() && !game.hasPlayerAt(upRow, upCol);
 		} catch(ArrayIndexOutOfBoundsException e){
@@ -230,10 +268,22 @@ public class Player {
 		try {
 			int downRow = rPosition+1;
 			int downCol = cPosition;
+			Square currentSquare = board.squareAt(rPosition, cPosition);
 			Square downSquare = board.squareAt(downRow, downCol);
 			// check if entering a room
 			if(downSquare instanceof RoomSquare){
-				return ((RoomSquare)downSquare).getEnterDir() == Dir.NORTH;
+				if(currentSquare instanceof DoorSquare){
+					return ((DoorSquare)currentSquare).getRoom().equals(((RoomSquare)downSquare).getRoom());
+				} else if(currentSquare instanceof RoomSquare){
+					return true;
+				} else {
+					return false;
+				}
+			}
+			// check if leaving room
+			if(currentSquare instanceof RoomSquare){
+				return downSquare instanceof RoomSquare || downSquare instanceof ShortcutSquare
+						|| downSquare instanceof DoorSquare;
 			}
 			return downSquare.isSteppable() && !game.hasPlayerAt(downRow, downCol);
 		} catch(ArrayIndexOutOfBoundsException e){

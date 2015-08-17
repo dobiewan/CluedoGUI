@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 
 import cluedogame.GUI.CluedoFrame;
 import cluedogame.cards.Card;
-import cluedogame.sqaures.RoomSquare;
+import cluedogame.sqaures.DoorSquare;
 import cluedogame.sqaures.ShortcutSquare;
 import cluedogame.sqaures.Square;
 
@@ -75,7 +75,7 @@ public class GameController {
 			frame.enableShortcutBtn(false);
 		}
 		// check if player can suggest or not
-		if(playerSquare instanceof RoomSquare ||
+		if(playerSquare instanceof DoorSquare ||
 				playerSquare instanceof ShortcutSquare){
 			frame.enableSuggestBtn(true);
 		} else {
@@ -102,8 +102,8 @@ public class GameController {
 		Player player = game.getCurrentPlayer();
 		// determine which room the player is in
 		String room = null;
-		if(getPlayerSquare(player) instanceof RoomSquare){
-			RoomSquare square = (RoomSquare)getPlayerSquare(player);
+		if(getPlayerSquare(player) instanceof DoorSquare){
+			DoorSquare square = (DoorSquare)getPlayerSquare(player);
 			room = square.getRoom();
 		} else {
 			ShortcutSquare square = (ShortcutSquare)getPlayerSquare(player);

@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import cluedogame.Board;
 import cluedogame.GameOfCluedo;
 import cluedogame.Player;
+import cluedogame.sqaures.DoorSquare;
 import cluedogame.sqaures.RoomSquare;
 import cluedogame.sqaures.ShortcutSquare;
 import cluedogame.sqaures.Square;
@@ -116,8 +117,14 @@ public class BoardCanvas extends JPanel implements MouseListener {
 			} else {
 				// move the player
 				for(Square sq : shortestPath){
+					Square fromSquare = board.squareAt(currentPlayer.row(), currentPlayer.column());
 					currentPlayer.moveTo(sq);
-					game.useMoves(1);
+					// use up player moves
+					if(!(sq instanceof RoomSquare)){
+						game.useMoves(1);
+					} else if(fromSquare instanceof DoorSquare){
+						game.useMoves(1);
+					}
 					frame.repaintAll();
 					try {
 						Thread.sleep(100);
@@ -125,7 +132,7 @@ public class BoardCanvas extends JPanel implements MouseListener {
 				}
 //				game.useMoves(shortestPath.size());
 				// check if player is in room or not
-				if(goal instanceof RoomSquare || goal instanceof ShortcutSquare){
+				if(goal instanceof DoorSquare || goal instanceof ShortcutSquare){
 					frame.enableSuggestBtn(true);
 				} else {
 					frame.enableSuggestBtn(false);
