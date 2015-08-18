@@ -12,24 +12,24 @@ public class DoorSquare extends Square {
 	}
 	
 	String room;
-//	Dir enterDir;
+	Dir enterDir; // the direction which the player can enter going in
 	
 	/**
 	 * Constructor for class RoomSquare.
 	 * @param room The room being represented
 	 */
-	public DoorSquare(String room, /*Dir enterDir, */int row, int col){
+	public DoorSquare(String room, Dir enterDir, int row, int col){
 		super(true, row, col);
 		this.room = room;
-//		this.enterDir = enterDir;
+		this.enterDir = enterDir;
 	}
 	
 	public String getRoom(){
 		return room;
 	}
 	
-//	public Dir getEnterDir(){
-//		return enterDir;
-//	}
+	public Dir getEnterDir(){
+		return enterDir;
+	}
 
 }

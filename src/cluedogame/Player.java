@@ -183,7 +183,9 @@ public class Player {
 			// check if entering a room
 			if(leftSquare instanceof RoomSquare){
 				if(currentSquare instanceof DoorSquare){
-					return ((DoorSquare)currentSquare).getRoom().equals(((RoomSquare)leftSquare).getRoom());
+					DoorSquare doorSq = ((DoorSquare)currentSquare);
+					return doorSq.getRoom().equals(((RoomSquare)leftSquare).getRoom())
+							&& doorSq.getEnterDir() == Dir.WEST;
 				} else if(currentSquare instanceof RoomSquare || currentSquare instanceof ShortcutSquare){
 					return true;
 				} else {
@@ -193,9 +195,10 @@ public class Player {
 			// check if leaving room
 			if(currentSquare instanceof RoomSquare){
 				return leftSquare instanceof RoomSquare || leftSquare instanceof ShortcutSquare
-						|| leftSquare instanceof DoorSquare;
+						|| (leftSquare instanceof DoorSquare && ((DoorSquare)leftSquare).getEnterDir() == Dir.EAST);
 			}
-			return leftSquare.isSteppable() && !(leftSquare instanceof ShortcutSquare) && !game.hasPlayerAt(leftRow, leftCol);
+			return leftSquare.isSteppable() && !(leftSquare instanceof ShortcutSquare)
+					&& !game.hasPlayerAt(leftRow, leftCol);
 		} catch(ArrayIndexOutOfBoundsException e){
 			return false;
 		}
@@ -216,7 +219,9 @@ public class Player {
 			// check if entering a room
 			if(rightSquare instanceof RoomSquare){
 				if(currentSquare instanceof DoorSquare){
-					return ((DoorSquare)currentSquare).getRoom().equals(((RoomSquare)rightSquare).getRoom());
+					DoorSquare doorSq = ((DoorSquare)currentSquare);
+					return doorSq.getRoom().equals(((RoomSquare)rightSquare).getRoom())
+							&& doorSq.getEnterDir() == Dir.EAST;
 				} else if(currentSquare instanceof RoomSquare || currentSquare instanceof ShortcutSquare){
 					return true;
 				} else {
@@ -226,7 +231,7 @@ public class Player {
 			// check if leaving room
 			if(currentSquare instanceof RoomSquare){
 				return rightSquare instanceof RoomSquare || rightSquare instanceof ShortcutSquare
-						|| rightSquare instanceof DoorSquare;
+						|| (rightSquare instanceof DoorSquare && ((DoorSquare)rightSquare).getEnterDir() == Dir.WEST);
 			}
 			return rightSquare.isSteppable() && !(rightSquare instanceof ShortcutSquare) && !game.hasPlayerAt(rightRow, rightCol);
 		} catch(ArrayIndexOutOfBoundsException e){
@@ -249,7 +254,9 @@ public class Player {
 			// check if entering a room
 			if(upSquare instanceof RoomSquare){
 				if(currentSquare instanceof DoorSquare){
-					return ((DoorSquare)currentSquare).getRoom().equals(((RoomSquare)upSquare).getRoom());
+					DoorSquare doorSq = ((DoorSquare)currentSquare);
+					return doorSq.getRoom().equals(((RoomSquare)upSquare).getRoom())
+							&& doorSq.getEnterDir() == Dir.NORTH;
 				} else if(currentSquare instanceof RoomSquare || currentSquare instanceof ShortcutSquare){
 					return true;
 				} else {
@@ -259,7 +266,7 @@ public class Player {
 			// check if leaving room
 			if(currentSquare instanceof RoomSquare){
 				return upSquare instanceof RoomSquare || upSquare instanceof ShortcutSquare
-						|| upSquare instanceof DoorSquare;
+						|| (upSquare instanceof DoorSquare && ((DoorSquare)upSquare).getEnterDir() == Dir.SOUTH);
 			}
 			return upSquare.isSteppable() && !(upSquare instanceof ShortcutSquare) && !game.hasPlayerAt(upRow, upCol);
 		} catch(ArrayIndexOutOfBoundsException e){
@@ -282,7 +289,9 @@ public class Player {
 			// check if entering a room
 			if(downSquare instanceof RoomSquare){
 				if(currentSquare instanceof DoorSquare){
-					return ((DoorSquare)currentSquare).getRoom().equals(((RoomSquare)downSquare).getRoom());
+					DoorSquare doorSq = ((DoorSquare)currentSquare);
+					return doorSq.getRoom().equals(((RoomSquare)downSquare).getRoom())
+							&& doorSq.getEnterDir() == Dir.SOUTH;
 				} else if(currentSquare instanceof RoomSquare || currentSquare instanceof ShortcutSquare){
 					return true;
 				} else {
@@ -292,7 +301,7 @@ public class Player {
 			// check if leaving room
 			if(currentSquare instanceof RoomSquare){
 				return downSquare instanceof RoomSquare || downSquare instanceof ShortcutSquare
-						|| downSquare instanceof DoorSquare;
+						|| (downSquare instanceof DoorSquare && ((DoorSquare)downSquare).getEnterDir() == Dir.NORTH);
 			}
 			return downSquare.isSteppable() && !(downSquare instanceof ShortcutSquare) && !game.hasPlayerAt(downRow, downCol);
 		} catch(ArrayIndexOutOfBoundsException e){

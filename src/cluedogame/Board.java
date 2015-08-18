@@ -81,10 +81,10 @@ public class Board {
 		case 'L' : sq = new RoomSquare(GameOfCluedo.LOUNGE, row, col); break;
 		case 'H' : sq = new RoomSquare(GameOfCluedo.HALL, row, col); break;
 		case 's' : sq = new RoomSquare(GameOfCluedo.STUDY, row, col); break;
-		case 'N' : sq = new DoorSquare(roomDoors.poll(), /*Dir.NORTH, */row, col); break;
-		case 'E' : sq = new DoorSquare(roomDoors.poll(), /*Dir.EAST, */row, col); break;
-		case 'S' : sq = new DoorSquare(roomDoors.poll(), /*Dir.SOUTH,*/ row, col); break;
-		case 'W' : sq = new DoorSquare(roomDoors.poll(), /*Dir.WEST,*/ row, col); break;
+		case 'N' : sq = new DoorSquare(roomDoors.poll(), Dir.NORTH, row, col); break;
+		case 'E' : sq = new DoorSquare(roomDoors.poll(), Dir.EAST, row, col); break;
+		case 'S' : sq = new DoorSquare(roomDoors.poll(), Dir.SOUTH, row, col); break;
+		case 'W' : sq = new DoorSquare(roomDoors.poll(), Dir.WEST, row, col); break;
 		}
 		return sq;
 	}
