@@ -103,12 +103,12 @@ public class GameOfCluedo {
 		
 		// add weapon cards
 		List<Card> wCards = new ArrayList<Card>();
-		wCards.add(new WeaponCard("Candlestick", ImageIO.read(new File("Images"+File.separator+"WeaponCard.png"))));
-		wCards.add(new WeaponCard("Dagger", ImageIO.read(new File("Images"+File.separator+"WeaponCard.png"))));
-		wCards.add(new WeaponCard("Lead Pipe", ImageIO.read(new File("Images"+File.separator+"WeaponCard.png"))));
-		wCards.add(new WeaponCard("Revolver", ImageIO.read(new File("Images"+File.separator+"WeaponCard.png"))));
-		wCards.add(new WeaponCard("Rope", ImageIO.read(new File("Images"+File.separator+"WeaponCard.png"))));
-		wCards.add(new WeaponCard("Spanner", ImageIO.read(new File("Images"+File.separator+"WeaponCard.png"))));
+		wCards.add(new WeaponCard("Candlestick", ImageIO.read(new File("Images"+File.separator+"CandlestickCard.png"))));
+		wCards.add(new WeaponCard("Dagger", ImageIO.read(new File("Images"+File.separator+"DaggerCard.png"))));
+		wCards.add(new WeaponCard("Lead Pipe", ImageIO.read(new File("Images"+File.separator+"PipeCard.png"))));
+		wCards.add(new WeaponCard("Revolver", ImageIO.read(new File("Images"+File.separator+"RevolverCard.png"))));
+		wCards.add(new WeaponCard("Rope", ImageIO.read(new File("Images"+File.separator+"RopeCard.png"))));
+		wCards.add(new WeaponCard("Spanner", ImageIO.read(new File("Images"+File.separator+"SpannerCard.png"))));
 		Collections.shuffle(wCards);
 		this.weaponCards = wCards;
 		} catch (IOException e) {

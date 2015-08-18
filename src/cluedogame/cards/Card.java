@@ -2,6 +2,8 @@ package cluedogame.cards;
 
 import java.awt.Image;
 
+import cluedogame.GUI.CluedoFrame;
+
 /**
  * Represents either a character, weapon, or room card in a
  * game of Cluedo.
@@ -20,7 +22,7 @@ public abstract class Card {
 	 */
 	public Card(String name, Image image){
 		this.name = name;
-		this.image = image;
+		this.image = image.getScaledInstance(60,80, Image.SCALE_FAST);
 	}
 	
 	/**
