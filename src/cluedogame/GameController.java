@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import cluedogame.GUI.CluedoFrame;
 import cluedogame.cards.Card;
 import cluedogame.sqaures.DoorSquare;
+import cluedogame.sqaures.RoomSquare;
 import cluedogame.sqaures.ShortcutSquare;
 import cluedogame.sqaures.Square;
 
@@ -75,7 +76,7 @@ public class GameController {
 			frame.enableShortcutBtn(false);
 		}
 		// check if player can suggest or not
-		if(playerSquare instanceof DoorSquare ||
+		if(playerSquare instanceof RoomSquare ||
 				playerSquare instanceof ShortcutSquare){
 			frame.enableSuggestBtn(true);
 		} else {
@@ -102,8 +103,8 @@ public class GameController {
 		Player player = game.getCurrentPlayer();
 		// determine which room the player is in
 		String room = null;
-		if(getPlayerSquare(player) instanceof DoorSquare){
-			DoorSquare square = (DoorSquare)getPlayerSquare(player);
+		if(getPlayerSquare(player) instanceof RoomSquare){
+			RoomSquare square = (RoomSquare)getPlayerSquare(player);
 			room = square.getRoom();
 		} else {
 			ShortcutSquare square = (ShortcutSquare)getPlayerSquare(player);
@@ -114,6 +115,31 @@ public class GameController {
 		String[] suggestions = frame.showSuggestionDialog(room);
 		String character = suggestions[0];
 		String weapon = suggestions[1];
+		
+		Player suggestedPlayer = null;
+		for(Player p : game.getPlayers()){
+			if(p.getCharacter().equals(character)){
+				suggestedPlayer = p;
+				break;
+			}
+		}
+		if(suggestedPlayer != null){
+			Board board = game.getBoard();
+			for(int r=0; r<Board.ROWS; r++){
+				for(int c=0; c<Board.COLS; c++){
+					Square sq = board.squareAt(r, c);
+					if(sq instanceof RoomSquare){
+						RoomSquare roomSq = (RoomSquare)sq;
+						if(roomSq.getRoom().equals(room)){
+							if(!game.hasPlayerAt(r, c)){
+								suggestedPlayer.moveTo(roomSq);
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		
 		// iterate over players' hands to find a matching card
 		for (Player otherPlayer : game.getPlayers()){

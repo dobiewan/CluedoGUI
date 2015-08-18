@@ -144,7 +144,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 				}
 //				game.useMoves(shortestPath.size());
 				// check if player is in room or not
-				if(goal instanceof DoorSquare || goal instanceof ShortcutSquare){
+				if(goal instanceof RoomSquare || goal instanceof ShortcutSquare){
 					frame.enableSuggestBtn(true);
 				} else {
 					frame.enableSuggestBtn(false);
