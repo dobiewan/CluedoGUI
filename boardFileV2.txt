@@ -6,7 +6,7 @@ KKKKKK__BBBBBBBB__CCCCCC
 KKKKKK_EBBBBBBBBW_NCCC~/
 /KKKKK__BBBBBBBB________
 ____N___BBBBBBBB_______/
-_________N____N___bbbbbb
+/________N____N___bbbbbb
 DDDDD_____/////__Ebbbbbb
 DDDDDDDD__/////___bbbbbb
 DDDDDDDD__/////___bbbbbb
@@ -18,7 +18,7 @@ DDDDDDDD__/////__lllllll
 ___________SS____lllllll
 /_____S__HHHHHH___lllll/
 ~LLLLLL__HHHHHHW________
-LLLLLLL__HHHHHH__S______
+LLLLLLL__HHHHHH__S_____/
 LLLLLLL__HHHHHH__ssssss~
 LLLLLLL__HHHHHH__sssssss
 LLLLLLL__HHHHHH__sssssss
