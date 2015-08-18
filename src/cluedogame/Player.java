@@ -184,7 +184,7 @@ public class Player {
 			if(leftSquare instanceof RoomSquare){
 				if(currentSquare instanceof DoorSquare){
 					return ((DoorSquare)currentSquare).getRoom().equals(((RoomSquare)leftSquare).getRoom());
-				} else if(currentSquare instanceof RoomSquare){
+				} else if(currentSquare instanceof RoomSquare || currentSquare instanceof ShortcutSquare){
 					return true;
 				} else {
 					return false;
@@ -195,7 +195,7 @@ public class Player {
 				return leftSquare instanceof RoomSquare || leftSquare instanceof ShortcutSquare
 						|| leftSquare instanceof DoorSquare;
 			}
-			return leftSquare.isSteppable() && !game.hasPlayerAt(leftRow, leftCol);
+			return leftSquare.isSteppable() && !(leftSquare instanceof ShortcutSquare) && !game.hasPlayerAt(leftRow, leftCol);
 		} catch(ArrayIndexOutOfBoundsException e){
 			return false;
 		}
@@ -217,7 +217,7 @@ public class Player {
 			if(rightSquare instanceof RoomSquare){
 				if(currentSquare instanceof DoorSquare){
 					return ((DoorSquare)currentSquare).getRoom().equals(((RoomSquare)rightSquare).getRoom());
-				} else if(currentSquare instanceof RoomSquare){
+				} else if(currentSquare instanceof RoomSquare || currentSquare instanceof ShortcutSquare){
 					return true;
 				} else {
 					return false;
@@ -228,7 +228,7 @@ public class Player {
 				return rightSquare instanceof RoomSquare || rightSquare instanceof ShortcutSquare
 						|| rightSquare instanceof DoorSquare;
 			}
-			return rightSquare.isSteppable() && !game.hasPlayerAt(rightRow, rightCol);
+			return rightSquare.isSteppable() && !(rightSquare instanceof ShortcutSquare) && !game.hasPlayerAt(rightRow, rightCol);
 		} catch(ArrayIndexOutOfBoundsException e){
 			return false;
 		}
@@ -250,7 +250,7 @@ public class Player {
 			if(upSquare instanceof RoomSquare){
 				if(currentSquare instanceof DoorSquare){
 					return ((DoorSquare)currentSquare).getRoom().equals(((RoomSquare)upSquare).getRoom());
-				} else if(currentSquare instanceof RoomSquare){
+				} else if(currentSquare instanceof RoomSquare || currentSquare instanceof ShortcutSquare){
 					return true;
 				} else {
 					return false;
@@ -261,7 +261,7 @@ public class Player {
 				return upSquare instanceof RoomSquare || upSquare instanceof ShortcutSquare
 						|| upSquare instanceof DoorSquare;
 			}
-			return upSquare.isSteppable() && !game.hasPlayerAt(upRow, upCol);
+			return upSquare.isSteppable() && !(upSquare instanceof ShortcutSquare) && !game.hasPlayerAt(upRow, upCol);
 		} catch(ArrayIndexOutOfBoundsException e){
 			return false;
 		}
@@ -283,7 +283,7 @@ public class Player {
 			if(downSquare instanceof RoomSquare){
 				if(currentSquare instanceof DoorSquare){
 					return ((DoorSquare)currentSquare).getRoom().equals(((RoomSquare)downSquare).getRoom());
-				} else if(currentSquare instanceof RoomSquare){
+				} else if(currentSquare instanceof RoomSquare || currentSquare instanceof ShortcutSquare){
 					return true;
 				} else {
 					return false;
@@ -294,7 +294,7 @@ public class Player {
 				return downSquare instanceof RoomSquare || downSquare instanceof ShortcutSquare
 						|| downSquare instanceof DoorSquare;
 			}
-			return downSquare.isSteppable() && !game.hasPlayerAt(downRow, downCol);
+			return downSquare.isSteppable() && !(downSquare instanceof ShortcutSquare) && !game.hasPlayerAt(downRow, downCol);
 		} catch(ArrayIndexOutOfBoundsException e){
 			return false;
 		}

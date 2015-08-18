@@ -176,7 +176,7 @@ public class Board {
 				List<Square> neighbours = setupNeighbours(n.node, goal, game);
 				for(Square neigh : neighbours){
 					// iterate over valid neighbours
-					if(!neigh.isVisited() && neigh.isSteppable()){
+					if(!neigh.isVisited()/* && neigh.isSteppable()*/){
 						// add valid neighbours to queue
 						double costToNeigh = n.costToHere + 1;
 						double estTotal = costToNeigh + distance(neigh, goal);
@@ -188,7 +188,7 @@ public class Board {
 		}
 		if(!found){return null;}
 		// follow the links in the path to make a list
-		return pathToList(goal, moves);
+		return pathToList(start, goal, moves);
 	}
 
 	/**
@@ -212,24 +212,34 @@ public class Board {
 	 * @return A list of the squares in the path excluding the start square,
 	 * or null if there aren't enough moves to follow the path.
 	 */
-	private List<Square> pathToList(Square goal, int moves) {
+	private List<Square> pathToList(Square start, Square goal, int moves) {
 		// add all squares to a list in order
 		List<Square> shortestPath = new ArrayList<Square>();
 		Square sq = goal;
 		int movesTaken = 0;
-		Square fromSquare = null;
-		shortestPath.add(goal);
-		while(sq.getFrom() != null){
-			shortestPath.add(0,sq.getFrom());
-			if(!(sq instanceof RoomSquare)){
+		Square nextSquare = sq.getFrom();
+//		shortestPath.add(goal);
+//		while(sq.getFrom() != null){
+//			shortestPath.add(0,sq.getFrom());
+//			if(!(sq instanceof RoomSquare)){ // RoomSquare moves don't count
+//				movesTaken++;
+//			} else if(fromSquare instanceof DoorSquare){ // unless they are first being entered
+//				movesTaken++;
+//			}
+//			fromSquare = sq;
+//			sq = sq.getFrom();
+//		}
+		while(sq != null && sq != start){
+			shortestPath.add(0,sq);
+			if(!(sq instanceof RoomSquare)){ // RoomSquare moves don't count
 				movesTaken++;
-			} else if(fromSquare instanceof DoorSquare){
-				movesTaken++;;
+			} else if(nextSquare instanceof DoorSquare){ // unless they are first being entered
+				movesTaken++;
 			}
-			fromSquare = sq;
 			sq = sq.getFrom();
+			nextSquare = sq.getFrom();
 		}
-		shortestPath.remove(0);
+//		shortestPath.remove(0);
 //		System.out.println("Path length: "+shortestPath.size());
 		// if the path is too long, set it to null
 		if(movesTaken > moves){

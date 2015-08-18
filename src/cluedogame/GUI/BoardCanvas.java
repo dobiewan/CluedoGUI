@@ -138,9 +138,9 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 						game.useMoves(1);
 					}
 					frame.repaintAll();
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {e.printStackTrace();}
+//					try {
+//						Thread.sleep(100);
+//					} catch (InterruptedException e) {e.printStackTrace();}
 				}
 //				game.useMoves(shortestPath.size());
 				// check if player is in room or not
