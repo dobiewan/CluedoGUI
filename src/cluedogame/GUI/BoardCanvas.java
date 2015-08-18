@@ -200,5 +200,10 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 			}
 		}
 	}
+
+	public void enableDaveMode() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

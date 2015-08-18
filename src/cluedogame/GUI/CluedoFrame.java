@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * 
  * @author Sarah Dobie, Chris Read
  */
-public class CluedoFrame extends JFrame {
+public class CluedoFrame extends JFrame implements KeyListener {
 	
 	public static int PREF_BUTTON_SIZE = GroupLayout.DEFAULT_SIZE;
 	public static int MAX_BUTTON_SIZE = Short.MAX_VALUE;
@@ -34,17 +34,21 @@ public class CluedoFrame extends JFrame {
     private BoardCanvas boardCanvas; // the canvas which displays the playing board
     private DashboardCanvas dashboardCanvas; // the canvas which displays the cards and dice
     private Panel btnPanel; // panel containing the buttons
-    private JButton rollDiceBtn;
+    private JButton nextTurnBtn;
     private JButton takeShortcutBtn;
     private JButton suggestBtn;
     private JButton accuseBtn;
     private JMenuBar menuBar; // top menu bar
     private JMenu menuFile; // 'File' button in menu bar
     private JMenuItem fileNewGame;
+    private JMenuItem fileDaveMode;
     private JMenuItem fileExit;
     
     // Game info
     private GameOfCluedo game;
+    
+    // buttons pressed
+    private List<Integer> keysPressed;
     
     /**
      * Constructor for class CluedoFrame
@@ -55,6 +59,21 @@ public class CluedoFrame extends JFrame {
         selectPlayers();
         game.dealCards();
         game.isReady(true);
+    	keysPressed = new ArrayList<Integer>();
+    	addKeyListener(this);
+    	boardCanvas.addKeyListener(this);
+    	dashboardCanvas.addKeyListener(this);
+    	btnPanel.addKeyListener(this);
+    	nextTurnBtn.addKeyListener(this);
+    	takeShortcutBtn.addKeyListener(this);
+    	suggestBtn.addKeyListener(this);
+    	accuseBtn.addKeyListener(this);
+    	menuBar.addKeyListener(this);
+    	menuFile.addKeyListener(this);
+    	fileNewGame.addKeyListener(this);
+    	fileDaveMode.addKeyListener(this);
+    	fileExit.addKeyListener(this);
+    	requestFocusInWindow();
     }
 
     /**
@@ -84,13 +103,14 @@ public class CluedoFrame extends JFrame {
 		boardCanvas = new BoardCanvas(this);
 	    dashboardCanvas = new DashboardCanvas(this, game);
 	    btnPanel = new Panel();
-	    rollDiceBtn = new JButton();
+	    nextTurnBtn = new JButton();
 	    takeShortcutBtn = new JButton();
 	    suggestBtn = new JButton();
 	    accuseBtn = new JButton();
 	    menuBar = new JMenuBar();
 	    menuFile = new JMenu();
 	    fileNewGame = new JMenuItem();
+	    fileDaveMode = new JMenuItem();
 	    fileExit = new JMenuItem();
 	}
 
@@ -99,8 +119,8 @@ public class CluedoFrame extends JFrame {
 	 */
 	private void initialiseButtons() {
 		// Roll Dice button
-		rollDiceBtn.setText("Next Turn");
-	    rollDiceBtn.addActionListener(new ActionListener() {
+		nextTurnBtn.setText("Next Turn");
+	    nextTurnBtn.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent evt) {
 	            rollDiceBtnActionPerformed(evt);
 	        }
@@ -144,7 +164,7 @@ public class CluedoFrame extends JFrame {
         // Set up the horizontal alignment
         ParallelGroup hzGroup = panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING);
         SequentialGroup hzSqGroup = panelLayout.createSequentialGroup();
-        hzSqGroup.addComponent(rollDiceBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
+        hzSqGroup.addComponent(nextTurnBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
         hzSqGroup.addComponent(takeShortcutBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
         hzSqGroup.addComponent(suggestBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
         hzSqGroup.addComponent(accuseBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
@@ -156,7 +176,7 @@ public class CluedoFrame extends JFrame {
         ParallelGroup vtGroup = panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING);
 //        SequentialGroup sqGroup = panelLayout.createSequentialGroup();
 //        vtGroup.addGroup(sqGroup);
-        vtGroup.addComponent(rollDiceBtn);
+        vtGroup.addComponent(nextTurnBtn);
         vtGroup.addComponent(takeShortcutBtn);
         vtGroup.addComponent(accuseBtn);
         vtGroup.addComponent(suggestBtn);
@@ -178,6 +198,15 @@ public class CluedoFrame extends JFrame {
 	        }
 	    });
 	    menuFile.add(fileNewGame);
+	    
+	    // set up 'Dave Mode' option
+	    fileDaveMode.setText("Dave Mode");
+	    fileDaveMode.addActionListener(new ActionListener() {
+	        public void actionPerformed(ActionEvent evt) {
+	            daveModeActionPerformed(evt);
+	        }
+	    });
+	    menuFile.add(fileDaveMode);
 	
 	    // set up 'Exit' option
 	    fileExit.setText("Exit");
@@ -262,6 +291,14 @@ public class CluedoFrame extends JFrame {
     }
 
 	/**
+	 * Runs when the Dave Mode button is pushed.
+	 * @param evt
+	 */
+	private void daveModeActionPerformed(ActionEvent evt) {                                           
+        boardCanvas.enableDaveMode();
+    }    
+
+	/**
 	 * Runs when the Exit button is pushed.
 	 * @param evt
 	 */
@@ -288,7 +325,42 @@ public class CluedoFrame extends JFrame {
     private void rollDiceBtnActionPerformed(ActionEvent evt) { 
     	enableAccuseBtn(true);
         game.playTurn(this);
-    }                                            
+    }      
+    
+	@Override
+	public void keyTyped(KeyEvent e) {}
+
+	@Override
+	public void keyPressed(KeyEvent e) { //TODO
+		System.out.println(e.getKeyCode());
+		keysPressed.add(e.getKeyCode());
+		boolean foundCtrl = false;
+		for(int i : keysPressed){
+			if(i == KeyEvent.VK_CONTROL){
+				foundCtrl = true;
+				break;
+			}
+		}
+		if(foundCtrl){
+			for(int i : keysPressed){
+				if(i == KeyEvent.VK_N){
+					confirmNewGame();
+//					keysPressed.clear();
+				}
+			}
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		System.out.println("key released");
+		for(int i=0; i<keysPressed.size(); i++){
+			int keyCode = keysPressed.get(i);
+			if(keyCode == e.getKeyCode()){
+				keysPressed.remove(i);
+			}
+		}
+	}
 
     /**
 	 * Runs when the Take Shortcut button is pushed.
@@ -775,7 +847,7 @@ public class CluedoFrame extends JFrame {
 	 * @param canRoll True to enable the button, false to disable.
 	 */
 	public void enableDiceBtn(boolean canRoll) {
-		rollDiceBtn.setEnabled(canRoll);
+		nextTurnBtn.setEnabled(canRoll);
 	}
 
 	/**
