@@ -191,7 +191,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
 		menuFile.setText("File");
 	
 		// set up 'New Game' option
-	    fileNewGame.setText("New Game");
+	    fileNewGame.setText("New Game (Ctrl + N)");
 	    fileNewGame.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent evt) {
 	            newGameActionPerformed(evt);
@@ -200,7 +200,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
 	    menuFile.add(fileNewGame);
 	    
 	    // set up 'Dave Mode' option
-	    fileDaveMode.setText("Dave Mode");
+	    fileDaveMode.setText("Dave Mode (Ctrl + D)");
 	    fileDaveMode.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent evt) {
 	            daveModeActionPerformed(evt);
@@ -332,7 +332,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) { //TODO
-		System.out.println(e.getKeyCode());
+//		System.out.println(e.getKeyCode());
 		keysPressed.add(e.getKeyCode());
 		boolean foundCtrl = false;
 		for(int i : keysPressed){
@@ -345,7 +345,12 @@ public class CluedoFrame extends JFrame implements KeyListener {
 			for(int i : keysPressed){
 				if(i == KeyEvent.VK_N){
 					confirmNewGame();
-//					keysPressed.clear();
+					keysPressed.clear();
+					break;
+				} else if(i == KeyEvent.VK_D){
+					boardCanvas.enableDaveMode();
+					keysPressed.clear();
+					break;
 				}
 			}
 		}
@@ -353,7 +358,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		System.out.println("key released");
+//		System.out.println("key released");
 		for(int i=0; i<keysPressed.size(); i++){
 			int keyCode = keysPressed.get(i);
 			if(keyCode == e.getKeyCode()){
