@@ -49,10 +49,7 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 		Player p = game.getCurrentPlayer();
 		if (p == null){return;}
 		g.setColor(Color.WHITE);
-<<<<<<< HEAD
 		g.drawImage(p.getNameImage(), 0, 0, null);
-=======
->>>>>>> origin/master
 		g.drawString(p.getCharacter() + " ("+p.getUserName()+")", 10, 20);
 		g.drawString(""+game.getRoll(), 20, 40);
 		Image card;

@@ -45,11 +45,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		addMouseMotionListener(this);
 		this.frame = frame;
 		try {
-<<<<<<< HEAD
 			boardImage = ImageIO.read(new File("Images"+File.separator+"board.png"));
-=======
-			boardImage = ImageIO.read(new File("Images"+File.separator+"board.jpg"));
->>>>>>> origin/master
 			resizedImage = boardImage.getScaledInstance(CluedoFrame.BOARD_CANVAS_WIDTH,
 					CluedoFrame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
 		} catch (IOException e) {

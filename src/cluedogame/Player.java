@@ -28,12 +28,8 @@ public class Player {
 	
 	private String character; // which character playing as
 	private String userName; // the name of the user
-<<<<<<< HEAD
 	private Image img; // the image representing this player
 	private Image playerName;
-=======
-	private BufferedImage img; // the image representing this player
->>>>>>> origin/master
 	private List<Card> hand; // cards in the player's hand
 	private List<Card> cardsSeen; // cards the player has seen
 	
@@ -67,14 +63,10 @@ public class Player {
 	
 	private Image chooseImage() {
 		try {
-<<<<<<< HEAD
 			playerName = ImageIO.read(new File("Images"+File.separator+character+"Name.png"))
 					.getScaledInstance(200, 75, Image.SCALE_FAST);
 			return img = ImageIO.read(new File("Images"+File.separator+character+".png"))
 					.getScaledInstance(45, 45, Image.SCALE_FAST);
-=======
-			return img = ImageIO.read(new File("Images"+File.separator+character+".jpg"));
->>>>>>> origin/master
 		} catch (IOException e) {
 			System.out.println("Could not read image file: "+e.getMessage());
 			return null;

@@ -191,7 +191,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
 		menuFile.setText("File");
 	
 		// set up 'New Game' option
-	    fileNewGame.setText("New Game (Ctrl + N)");
+	    fileNewGame.setText("New Game (Ctrl + Shift + N)");
 	    fileNewGame.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent evt) {
 	            newGameActionPerformed(evt);
@@ -331,24 +331,48 @@ public class CluedoFrame extends JFrame implements KeyListener {
 	public void keyTyped(KeyEvent e) {}
 
 	@Override
-	public void keyPressed(KeyEvent e) { //TODO
+	public void keyPressed(KeyEvent e) {
 //		System.out.println(e.getKeyCode());
 		keysPressed.add(e.getKeyCode());
 		boolean foundCtrl = false;
+		boolean foundShift = false;
 		for(int i : keysPressed){
 			if(i == KeyEvent.VK_CONTROL){
 				foundCtrl = true;
-				break;
+//				break;
+			} else if(i == KeyEvent.VK_SHIFT){
+				foundShift = true;
 			}
 		}
 		if(foundCtrl){
 			for(int i : keysPressed){
-				if(i == KeyEvent.VK_N){
+				if(i == KeyEvent.VK_N && foundShift){
 					confirmNewGame();
 					keysPressed.clear();
 					break;
 				} else if(i == KeyEvent.VK_D){
 					boardCanvas.enableDaveMode();
+					keysPressed.clear();
+					break;
+				} else if(i == KeyEvent.VK_I){
+					game.setInfiniteMovement(true);
+					game.setRollToInfinite();
+					keysPressed.clear();
+					break;
+				} else if(i == KeyEvent.VK_N && nextTurnBtn.isEnabled()){
+					rollDiceBtnActionPerformed(null);
+					keysPressed.clear();
+					break;
+				} else if(i == KeyEvent.VK_T && takeShortcutBtn.isEnabled()){
+					shortcutBtnActionPerformed(null);
+					keysPressed.clear();
+					break;
+				} else if(i == KeyEvent.VK_S && suggestBtn.isEnabled()){
+					suggestBtnActionPerformed(null);
+					keysPressed.clear();
+					break;
+				} else if(i == KeyEvent.VK_A && accuseBtn.isEnabled()){
+					accuseBtnActionPerformed(null);
 					keysPressed.clear();
 					break;
 				}

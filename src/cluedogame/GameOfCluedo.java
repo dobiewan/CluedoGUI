@@ -56,6 +56,8 @@ public class GameOfCluedo {
 	private int roll;
 	private GameController control;
 	private boolean isReady = false;
+	private boolean infiniteMovement; // part of a cheat code
+
 	
 	/**
 	 * Constructor for class GameOfCluedo
@@ -165,7 +167,15 @@ public class GameOfCluedo {
 	 * Rolls two dice.
 	 */
 	public void rollDice(){
-		roll = new Random().nextInt(10) + 2;
+		if(infiniteMovement){
+			roll = Integer.MAX_VALUE;
+		} else {
+			roll = new Random().nextInt(10) + 2;
+		}
+	}
+	
+	public void setRollToInfinite(){
+		roll = Integer.MAX_VALUE;
 	}
 
 	/**
@@ -295,6 +305,10 @@ public class GameOfCluedo {
 		isReady = ready;
 	}
 	
+	public void setInfiniteMovement(boolean infiniteMovement) {
+		this.infiniteMovement = infiniteMovement;
+	}
+
 	/**
 	 * Determines whether there is a player at the given position.
 	 * @param row The row of the position
