@@ -67,8 +67,8 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		// load images
 		try {
 			boardImage = ImageIO.read(new File("Images"+File.separator+"board.png"));
-			resizedImage = boardImage.getScaledInstance(CluedoFrame.BOARD_CANVAS_WIDTH,
-					CluedoFrame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
+			resizedImage = boardImage.getScaledInstance(frame.BOARD_CANVAS_WIDTH,
+					frame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
 			moveImage = ImageIO.read(new File("Images"+File.separator+"Move.png"))
 					.getScaledInstance(25,25, Image.SCALE_FAST);
 		} catch (IOException e) {
@@ -89,14 +89,14 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		// draw shortest path
 		if(possiblePath != null){
 			for(Square sq: possiblePath){
-				int x = CluedoFrame.convertColToX(sq.col());
-				int y = CluedoFrame.convertRowToY(sq.row());
+				int x = frame.convertColToX(sq.col());
+				int y = frame.convertRowToY(sq.row());
 				g.drawImage(moveImage, x, y, null);
 			}
 		}
 		// draw players
 		for(Player p : frame.getPlayers()){
-			p.draw(g);
+			p.draw(g, frame);
 		}
 		// draw tooltip
 		if(toolTipLine1 != null){
@@ -113,8 +113,8 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		GameOfCluedo game = frame.getGame();
-		int row = CluedoFrame.convertYToRow(e.getY());
-		int col = CluedoFrame.convertXToCol(e.getX());
+		int row = frame.convertYToRow(e.getY());
+		int col = frame.convertXToCol(e.getX());
 //		System.out.println("Mouse released at ("+e.getX()+","+e.getY()+")");
 //		System.out.println("Mouse released at ("+row+","+col+")");
 		movePlayer(game, row, col);
@@ -196,12 +196,12 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		int line1Y = y+20;
 		int line2Y = y+40;
 		// check if box is too far to right to draw
-		if(x > CluedoFrame.BOARD_CANVAS_WIDTH - maxWidth){ // mouse is too far to the right
+		if(x > frame.BOARD_CANVAS_WIDTH - maxWidth){ // mouse is too far to the right
 			boxX -= maxWidth;
 			lineX -= maxWidth;
 		}
 		// check if box is too close to the bottom to draw
-		if(y > CluedoFrame.BOARD_CANVAS_HEIGHT - TOOLTIP_HEIGHT){ // mouse too far down
+		if(y > frame.BOARD_CANVAS_HEIGHT - TOOLTIP_HEIGHT){ // mouse too far down
 			boxY -= TOOLTIP_HEIGHT;
 			line1Y -= TOOLTIP_HEIGHT;
 			line2Y -= TOOLTIP_HEIGHT;
@@ -218,8 +218,8 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		// determine where the mouse is on the board
-		int row = CluedoFrame.convertYToRow(e.getY());
-		int col = CluedoFrame.convertXToCol(e.getX());
+		int row = frame.convertYToRow(e.getY());
+		int col = frame.convertXToCol(e.getX());
 		if(Board.validRow(row) && Board.validCol(col)){
 			GameOfCluedo game = frame.getGame();
 			if(game != null){

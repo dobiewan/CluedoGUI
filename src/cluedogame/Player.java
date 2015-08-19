@@ -512,9 +512,9 @@ public class Player {
 	 * Draws the player
 	 * @param g The Graphics object to draw on.
 	 */
-	public void draw(Graphics g){
-		int x = CluedoFrame.convertColToX(cPosition);
-		int y = CluedoFrame.convertRowToY(rPosition);
+	public void draw(Graphics g, CluedoFrame frame){
+		int x = frame.convertColToX(cPosition);
+		int y = frame.convertRowToY(rPosition);
 //		Image resizedImage = img.getScaledInstance((int)CluedoFrame.squareWidth(),
 //				(int)CluedoFrame.squareHeight(), Image.SCALE_SMOOTH);
 		g.drawImage(img, x-10, y-10, null);
