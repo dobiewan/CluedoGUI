@@ -324,4 +324,13 @@ public class GameOfCluedo {
 		return false;
 	}
 	
+	public Player getPlayerAt(int row, int col){
+		for(Player p : players){
+			if(p.row() == row && p.column() == col){
+				return p;
+			}
+		}
+		return null;
+	}
+	
 }

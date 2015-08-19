@@ -31,11 +31,19 @@ import cluedogame.sqaures.Square;
  */
 public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener {
 	
+	public static int TOOLTIP_WIDTH = 150;
+	public static int TOOLTIP_HEIGHT = 40;
+	
 	private Image boardImage;
 	private Image resizedImage;
 	private Image moveImage;
 	private CluedoFrame frame;
 	private List<Square> path;
+	private String toolTipLine1;
+	private String toolTipLine2;
+	private int toolTipX;
+	private int toolTipY;
+	private boolean toolTipRight;
 	
 	/**
 	 * Constructor for class BoardCanvas.
@@ -64,36 +72,31 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	public void paint(Graphics g){
 //		Image resizedImage = boardImage.getScaledInstance(CluedoFrame.BOARD_CANVAS_WIDTH,
 //				CluedoFrame.BOARD_CANVAS_HEIGHT, Image.SCALE_SMOOTH);
+		// draw board
 		g.drawImage(resizedImage, 0, 0, null);
+		// draw players
 		for(Player p : frame.getPlayers()){
 			p.draw(g);
 		}
+		// draw shortest path
 		if(path != null){
-//			g.setColor(Color.green);
-//			for(Square sq: path){
-//				int x = CluedoFrame.convertColToX(sq.col());
-//				int y = CluedoFrame.convertRowToY(sq.row());
-//				g.fillRect(x,y,(int)CluedoFrame.squareWidth(),(int)CluedoFrame.squareHeight());
-//			}
 			for(Square sq: path){
 				int x = CluedoFrame.convertColToX(sq.col());
 				int y = CluedoFrame.convertRowToY(sq.row());
 				g.drawImage(moveImage, x, y, null);
 			}
 		}
+		// draw tooltip
+		if(toolTipLine1 != null){
+			showToolTip(toolTipLine1, toolTipLine2, toolTipX, toolTipY, g);
+		}
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseClicked(MouseEvent e) {}
 
 	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mousePressed(MouseEvent e) {}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
@@ -168,21 +171,38 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseEntered(MouseEvent e) {}
 
 	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseExited(MouseEvent e) {}
 
 	@Override
-	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
+	public void mouseDragged(MouseEvent e) {}
 		
+	private void showToolTip(String line1, String line2, int x, int y, Graphics g){ //TODO
+		g.setColor(Color.WHITE);
+		int line1Width = g.getFontMetrics().stringWidth(line1);
+		int line2Width = g.getFontMetrics().stringWidth(line2);
+		int maxWidth = Math.max(line1Width, line2Width);
+		if(x > CluedoFrame.BOARD_CANVAS_WIDTH - maxWidth){
+			g.fillRect(x-maxWidth, y+5, maxWidth+10, TOOLTIP_HEIGHT);
+			g.setColor(Color.BLACK);
+			g.drawRect(x-maxWidth, y+5, maxWidth+10, TOOLTIP_HEIGHT);
+			g.drawString(line1, x+5-maxWidth, y+20);
+			g.drawString(line2, x+5-maxWidth, y+40);
+		} else if(y > CluedoFrame.BOARD_CANVAS_HEIGHT - TOOLTIP_HEIGHT){
+			g.fillRect(x, y+5-TOOLTIP_HEIGHT, maxWidth+10, TOOLTIP_HEIGHT);
+			g.setColor(Color.BLACK);
+			g.drawRect(x, y+5-TOOLTIP_HEIGHT, maxWidth+10, TOOLTIP_HEIGHT);
+			g.drawString(line1, x+5, y+20-TOOLTIP_HEIGHT);
+			g.drawString(line2, x+5, y+40-TOOLTIP_HEIGHT);
+		} else {
+			g.fillRect(x, y+5, maxWidth+10, TOOLTIP_HEIGHT);
+			g.setColor(Color.BLACK);
+			g.drawRect(x, y+5, maxWidth+10, TOOLTIP_HEIGHT);
+			g.drawString(line1, x+5, y+20);
+			g.drawString(line2, x+5, y+40);
+		}
 	}
 
 	@Override
@@ -193,19 +213,40 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		if(Board.validRow(row) && Board.validCol(col)){
 			GameOfCluedo game = frame.getGame();
 			if(game != null){
-				Player player = frame.getGame().getCurrentPlayer();
-				// if ther is a current player, get their location
-				if(player != null){
-					Board board = game.getBoard();
-					Square playerPos = board.squareAt(player.row(), player.column());
-					Square mousePos = board.squareAt(row, col);
-					// find the path between player and mouse
-					List<Square> shortestPath = board.shortestPath(playerPos,
-							mousePos, game.getRoll(), game);
-					this.path = shortestPath;
-					repaint();
+				displayShortestPath(row, col, game);
+				// check if hovering over player
+				if(game.hasPlayerAt(row, col)){
+					Player p = game.getPlayerAt(row, col);
+					toolTipLine1 = p.getCharacter();
+					toolTipLine2 = p.getUserName();
+					toolTipX = e.getX();
+					toolTipY = e.getY();
+				} else {
+					setToolTipToNull();
 				}
 			}
+		}
+	}
+
+	private void setToolTipToNull() {
+		toolTipLine1 = null;
+		toolTipLine2 = null;
+		toolTipX = 0;
+		toolTipY = 0;
+	}
+
+	public void displayShortestPath(int row, int col, GameOfCluedo game) {
+		Player player = frame.getGame().getCurrentPlayer();
+		// if there is a current player, get their location
+		if(player != null){
+			Board board = game.getBoard();
+			Square playerPos = board.squareAt(player.row(), player.column());
+			Square mousePos = board.squareAt(row, col);
+			// find the path between player and mouse
+			List<Square> shortestPath = board.shortestPath(playerPos,
+					mousePos, game.getRoll(), game);
+			this.path = shortestPath;
+			repaint();
 		}
 	}
 

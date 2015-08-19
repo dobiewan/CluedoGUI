@@ -168,9 +168,9 @@ public class GameController {
 	public void makeAccusation() {
 		Player player = game.getCurrentPlayer();
 		// confirm that the player wants to do this
-		int r = JOptionPane.showConfirmDialog(frame, new JLabel("Making an accusation is a serious "
-				+ "business.\n If you get it wrong, you are out of the game! \nAre you sure you want "
-				+ "to make an accusation?"),
+		int r = JOptionPane.showConfirmDialog(frame, new JLabel("<html>Making an accusation is a serious "
+				+ "business. If you get it wrong, you are out of the game! <br />Are you sure you want "
+				+ "to make an accusation?</html>"),
 				"Make accusation?", JOptionPane.YES_NO_OPTION,
 				JOptionPane.WARNING_MESSAGE);
 		if(r == 1){
@@ -181,23 +181,23 @@ public class GameController {
 		// make accusation
 		if (game.accuse(accusation)){
 			// player made a correct accusation and won the game
-			frame.showDialog("You are correct! \n"
+			frame.showDialog("<html>You are correct! <br />"
 					+ "It was "+accusation[0]+" in the "+accusation[2]+
-					" with the "+accusation[1]+"!", "Accusation results");
+					" with the "+accusation[1]+"!</html>", "Accusation results");
 			frame.showDialog("--GAME OVER--", "Game over");
 //			gameOver = true;
 			frame.enableDiceBtn(false);
 		} else {
 			// accusation was incorrect, insult player
-			frame.showDialog("You were wrong!\n ...you didn't really think this through...\n"
-					+ player.getCharacter()+" is out of the game!", "Accusation results");
+			frame.showDialog("<html>You were wrong! ...you didn't really think this through...<br />"
+					+ player.getCharacter()+" is out of the game!</html>", "Accusation results");
 			// remove player from game
 			playersInGame.remove(player);
 			// check if the game is over
 			if(playersInGame.size() == 0){
-				frame.showDialog("--GAME OVER-- \n" //TODO check if they want to play again
+				frame.showDialog("<html>--GAME OVER-- <br />" //TODO check if they want to play again
 						+ "It was "+accusation[0]+" in the "+accusation[2]+
-						" with the "+accusation[1]+"!", "Game over");
+						" with the "+accusation[1]+"!</html>", "Game over");
 				frame.enableDiceBtn(false);
 			}
 		}
