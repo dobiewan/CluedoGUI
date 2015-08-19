@@ -200,6 +200,9 @@ public class GameController {
 						+ "It was "+accusation[0]+" in the "+accusation[2]+
 						" with the "+accusation[1]+"!</html>", "Game over");
 				frame.enableDiceBtn(false);
+				frame.enableShortcutBtn(false);
+				frame.enableSuggestBtn(false);
+				frame.enableAccuseBtn(false);
 			}
 		}
 	}
