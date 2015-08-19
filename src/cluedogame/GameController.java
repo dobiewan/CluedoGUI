@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 
 import cluedogame.GUI.CluedoFrame;
 import cluedogame.cards.Card;
+import cluedogame.sqaures.DoorSquare;
 import cluedogame.sqaures.RoomSquare;
 import cluedogame.sqaures.ShortcutSquare;
 import cluedogame.sqaures.Square;
@@ -55,7 +56,7 @@ public class GameController {
 			game.setCurrentPlayer(player);
 			frame.repaintAll();
 			game.rollDice();
-			frame.showDialog(player.getName()+" rolls "+game.getRoll(), "Dice roll");
+			frame.showDialog(player.getCharacter()+" rolls "+game.getRoll(), "Dice roll");
 			enableButtons(player);
 			// put player on end of queue
 			playersInGame.add(playersInGame.poll());
@@ -115,6 +116,31 @@ public class GameController {
 		String character = suggestions[0];
 		String weapon = suggestions[1];
 		
+		Player suggestedPlayer = null;
+		for(Player p : game.getPlayers()){
+			if(p.getCharacter().equals(character)){
+				suggestedPlayer = p;
+				break;
+			}
+		}
+		if(suggestedPlayer != null){
+			Board board = game.getBoard();
+			for(int r=0; r<Board.ROWS; r++){
+				for(int c=0; c<Board.COLS; c++){
+					Square sq = board.squareAt(r, c);
+					if(sq instanceof RoomSquare){
+						RoomSquare roomSq = (RoomSquare)sq;
+						if(roomSq.getRoom().equals(room)){
+							if(!game.hasPlayerAt(r, c)){
+								suggestedPlayer.moveTo(roomSq);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		
 		// iterate over players' hands to find a matching card
 		for (Player otherPlayer : game.getPlayers()){
 			if (otherPlayer != player){
@@ -122,7 +148,7 @@ public class GameController {
 					String cardName = c.getName();
 					if ((cardName.equals(character) || cardName.equals(weapon) || cardName.equals(room))
 							&& !player.hasSeenCard(c)){
-						frame.showDialog(otherPlayer.getName() + " has the card: " + cardName, "Suggestion results");
+						frame.showDialog(otherPlayer.getCharacter() + " has the card: " + cardName, "Suggestion results");
 						player.addCardSeen(c);
 						return;
 					}
@@ -164,7 +190,7 @@ public class GameController {
 		} else {
 			// accusation was incorrect, insult player
 			frame.showDialog("You were wrong!\n ...you didn't really think this through...\n"
-					+ player.getName()+" is out of the game!", "Accusation results");
+					+ player.getCharacter()+" is out of the game!", "Accusation results");
 			// remove player from game
 			playersInGame.remove(player);
 			// check if the game is over

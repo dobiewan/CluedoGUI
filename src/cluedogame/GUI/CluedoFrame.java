@@ -21,12 +21,12 @@ import java.util.concurrent.TimeUnit;
  * 
  * @author Sarah Dobie, Chris Read
  */
-public class CluedoFrame extends JFrame {
+public class CluedoFrame extends JFrame implements KeyListener {
 	
 	public static int PREF_BUTTON_SIZE = GroupLayout.DEFAULT_SIZE;
 	public static int MAX_BUTTON_SIZE = Short.MAX_VALUE;
 	public static int BOARD_CANVAS_WIDTH = 600;
-	public static int BOARD_CANVAS_HEIGHT = 600;
+	public static int BOARD_CANVAS_HEIGHT = 625;
 	public static int DASH_CANVAS_WIDTH = 200;
 	public static int DASH_CANVAS_HEIGHT = BOARD_CANVAS_HEIGHT;
 
@@ -34,17 +34,21 @@ public class CluedoFrame extends JFrame {
     private BoardCanvas boardCanvas; // the canvas which displays the playing board
     private DashboardCanvas dashboardCanvas; // the canvas which displays the cards and dice
     private Panel btnPanel; // panel containing the buttons
-    private JButton rollDiceBtn;
+    private JButton nextTurnBtn;
     private JButton takeShortcutBtn;
     private JButton suggestBtn;
     private JButton accuseBtn;
     private JMenuBar menuBar; // top menu bar
     private JMenu menuFile; // 'File' button in menu bar
     private JMenuItem fileNewGame;
+    private JMenuItem fileDaveMode;
     private JMenuItem fileExit;
     
     // Game info
     private GameOfCluedo game;
+    
+    // buttons pressed
+    private List<Integer> keysPressed;
     
     /**
      * Constructor for class CluedoFrame
@@ -55,6 +59,21 @@ public class CluedoFrame extends JFrame {
         selectPlayers();
         game.dealCards();
         game.isReady(true);
+    	keysPressed = new ArrayList<Integer>();
+    	addKeyListener(this);
+    	boardCanvas.addKeyListener(this);
+    	dashboardCanvas.addKeyListener(this);
+    	btnPanel.addKeyListener(this);
+    	nextTurnBtn.addKeyListener(this);
+    	takeShortcutBtn.addKeyListener(this);
+    	suggestBtn.addKeyListener(this);
+    	accuseBtn.addKeyListener(this);
+    	menuBar.addKeyListener(this);
+    	menuFile.addKeyListener(this);
+    	fileNewGame.addKeyListener(this);
+    	fileDaveMode.addKeyListener(this);
+    	fileExit.addKeyListener(this);
+    	requestFocusInWindow();
     }
 
     /**
@@ -64,7 +83,7 @@ public class CluedoFrame extends JFrame {
     	setVisible(true);
     	setResizable(false);
         initialiseFields();
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         initialiseButtons();
         initialiseButtonPanel();
         initialiseMenu();
@@ -84,13 +103,14 @@ public class CluedoFrame extends JFrame {
 		boardCanvas = new BoardCanvas(this);
 	    dashboardCanvas = new DashboardCanvas(this, game);
 	    btnPanel = new Panel();
-	    rollDiceBtn = new JButton();
+	    nextTurnBtn = new JButton();
 	    takeShortcutBtn = new JButton();
 	    suggestBtn = new JButton();
 	    accuseBtn = new JButton();
 	    menuBar = new JMenuBar();
 	    menuFile = new JMenu();
 	    fileNewGame = new JMenuItem();
+	    fileDaveMode = new JMenuItem();
 	    fileExit = new JMenuItem();
 	}
 
@@ -99,8 +119,8 @@ public class CluedoFrame extends JFrame {
 	 */
 	private void initialiseButtons() {
 		// Roll Dice button
-		rollDiceBtn.setText("Next Turn");
-	    rollDiceBtn.addActionListener(new ActionListener() {
+		nextTurnBtn.setText("Next Turn");
+	    nextTurnBtn.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent evt) {
 	            rollDiceBtnActionPerformed(evt);
 	        }
@@ -144,7 +164,7 @@ public class CluedoFrame extends JFrame {
         // Set up the horizontal alignment
         ParallelGroup hzGroup = panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING);
         SequentialGroup hzSqGroup = panelLayout.createSequentialGroup();
-        hzSqGroup.addComponent(rollDiceBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
+        hzSqGroup.addComponent(nextTurnBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
         hzSqGroup.addComponent(takeShortcutBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
         hzSqGroup.addComponent(suggestBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
         hzSqGroup.addComponent(accuseBtn, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
@@ -156,7 +176,7 @@ public class CluedoFrame extends JFrame {
         ParallelGroup vtGroup = panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING);
 //        SequentialGroup sqGroup = panelLayout.createSequentialGroup();
 //        vtGroup.addGroup(sqGroup);
-        vtGroup.addComponent(rollDiceBtn);
+        vtGroup.addComponent(nextTurnBtn);
         vtGroup.addComponent(takeShortcutBtn);
         vtGroup.addComponent(accuseBtn);
         vtGroup.addComponent(suggestBtn);
@@ -171,13 +191,22 @@ public class CluedoFrame extends JFrame {
 		menuFile.setText("File");
 	
 		// set up 'New Game' option
-	    fileNewGame.setText("New Game");
+	    fileNewGame.setText("New Game (Ctrl + N)");
 	    fileNewGame.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent evt) {
 	            newGameActionPerformed(evt);
 	        }
 	    });
 	    menuFile.add(fileNewGame);
+	    
+	    // set up 'Dave Mode' option
+	    fileDaveMode.setText("Dave Mode (Ctrl + D)");
+	    fileDaveMode.addActionListener(new ActionListener() {
+	        public void actionPerformed(ActionEvent evt) {
+	            daveModeActionPerformed(evt);
+	        }
+	    });
+	    menuFile.add(fileDaveMode);
 	
 	    // set up 'Exit' option
 	    fileExit.setText("Exit");
@@ -243,23 +272,31 @@ public class CluedoFrame extends JFrame {
 				"Start New Game?", JOptionPane.YES_NO_OPTION,
 				JOptionPane.WARNING_MESSAGE);
 		if(r == 0){
-			this.game = new GameOfCluedo(this);
-	        initialiseFields();
-	        initialiseButtons();
-	        initialiseButtonPanel();
-	        initialiseMenu();
-	        initialiseFrame();
-	        pack();
-	        enableAccuseBtn(false);
-	        repaintAll();
-	        selectPlayers();
-//	        this.game = new GameOfCluedo(this);
-//	        initialiseUI();
+			dispose();
+			new CluedoFrame();
+			
+//			this.game = new GameOfCluedo(this);
+//	        initialiseFields();
+//	        initialiseButtons();
+//	        initialiseButtonPanel();
+//	        initialiseMenu();
+//	        initialiseFrame();
+//	        pack();
+//	        enableAccuseBtn(false);
+//	        repaintAll();
 //	        selectPlayers();
-	        game.dealCards();
-	        game.isReady(true);
+//	        game.dealCards();
+//	        game.isReady(true);
 		}
     }
+
+	/**
+	 * Runs when the Dave Mode button is pushed.
+	 * @param evt
+	 */
+	private void daveModeActionPerformed(ActionEvent evt) {                                           
+        boardCanvas.enableDaveMode();
+    }    
 
 	/**
 	 * Runs when the Exit button is pushed.
@@ -288,7 +325,47 @@ public class CluedoFrame extends JFrame {
     private void rollDiceBtnActionPerformed(ActionEvent evt) { 
     	enableAccuseBtn(true);
         game.playTurn(this);
-    }                                            
+    }      
+    
+	@Override
+	public void keyTyped(KeyEvent e) {}
+
+	@Override
+	public void keyPressed(KeyEvent e) { //TODO
+//		System.out.println(e.getKeyCode());
+		keysPressed.add(e.getKeyCode());
+		boolean foundCtrl = false;
+		for(int i : keysPressed){
+			if(i == KeyEvent.VK_CONTROL){
+				foundCtrl = true;
+				break;
+			}
+		}
+		if(foundCtrl){
+			for(int i : keysPressed){
+				if(i == KeyEvent.VK_N){
+					confirmNewGame();
+					keysPressed.clear();
+					break;
+				} else if(i == KeyEvent.VK_D){
+					boardCanvas.enableDaveMode();
+					keysPressed.clear();
+					break;
+				}
+			}
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+//		System.out.println("key released");
+		for(int i=0; i<keysPressed.size(); i++){
+			int keyCode = keysPressed.get(i);
+			if(keyCode == e.getKeyCode()){
+				keysPressed.remove(i);
+			}
+		}
+	}
 
     /**
 	 * Runs when the Take Shortcut button is pushed.
@@ -328,7 +405,7 @@ public class CluedoFrame extends JFrame {
 			// determine which characters are available
 			List<String> playerNames = new ArrayList<String>();
 			for(Player p : game.getPlayers()){
-				playerNames.add(p.getName());
+				playerNames.add(p.getCharacter());
 			}
 			
 			// create buttons
@@ -340,15 +417,39 @@ public class CluedoFrame extends JFrame {
 			JRadioButton scarlettBtn = new JRadioButton(GameOfCluedo.SCARLETT); 
 	        JRadioButton whiteBtn = new JRadioButton(GameOfCluedo.WHITE); 
 	        
+	        String playerName = getPlayerName();
+	        
+	        panel.add(new JLabel("Who will "+playerName+" play as?"));
 	        addAvailableCharacterOptions(panel, playerNames, bg, greenBtn,
 					mustardBtn, peacockBtn, plumBtn, scarlettBtn, whiteBtn);
-			
 			JOptionPane.showMessageDialog(this, panel, "Character select", JOptionPane.QUESTION_MESSAGE);
-			generatePlayerFromInput(panel, greenBtn, mustardBtn, peacockBtn,
+			generatePlayerFromInput(panel, playerName, greenBtn, mustardBtn, peacockBtn,
 					plumBtn, scarlettBtn, whiteBtn);
 			
 	        repaintAll();
 		}
+	}
+
+	private String getPlayerName() {
+		// set up dialog box
+		String[] options = {"OK"};
+		JPanel namePanel = new JPanel(new GridLayout(0, 1));
+		JLabel lbl = new JLabel("Next player, what is your name?");
+		JTextField txt = new JTextField(10);
+		namePanel.add(lbl);
+		namePanel.add(txt);
+		
+		// show dialog box
+		JOptionPane.showOptionDialog(this, namePanel, "Player name",
+				JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
+		String playerName = txt.getText();
+		while(playerName.length() < 1){
+			lbl.setText("Name must be at least one character long.");
+			JOptionPane.showOptionDialog(this, namePanel, "Player name",
+					JOptionPane.NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options , options[0]);
+			playerName = txt.getText();
+		}
+		return playerName;
 	}
 
 	/**
@@ -433,26 +534,26 @@ public class CluedoFrame extends JFrame {
 	 * Determines which button is selected and makes a new player
 	 * based on the appropriate button.
 	 */
-	private void generatePlayerFromInput(JPanel panel, JRadioButton greenBtn,
+	private void generatePlayerFromInput(JPanel panel, String playerName, JRadioButton greenBtn,
 			JRadioButton mustardBtn, JRadioButton peacockBtn,
 			JRadioButton plumBtn, JRadioButton scarlettBtn,
 			JRadioButton whiteBtn) {
 		if(greenBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.GREEN));
+			game.addPlayer(new Player(GameOfCluedo.GREEN, playerName));
 		} else if(mustardBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.MUSTARD));
+			game.addPlayer(new Player(GameOfCluedo.MUSTARD, playerName));
 		} else if(peacockBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.PEACOCK));
+			game.addPlayer(new Player(GameOfCluedo.PEACOCK, playerName));
 		} else if(plumBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.PLUM));
+			game.addPlayer(new Player(GameOfCluedo.PLUM, playerName));
 		} else if(scarlettBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.SCARLETT));
+			game.addPlayer(new Player(GameOfCluedo.SCARLETT, playerName));
 		} else if(whiteBtn.isSelected()){
-			game.addPlayer(new Player(GameOfCluedo.WHITE));
+			game.addPlayer(new Player(GameOfCluedo.WHITE, playerName));
 		} else {
 			// the player hasn't selected an option
 			JOptionPane.showMessageDialog(this, panel);
-			generatePlayerFromInput(panel, greenBtn, mustardBtn, peacockBtn,
+			generatePlayerFromInput(panel, playerName, greenBtn, mustardBtn, peacockBtn,
 					plumBtn, scarlettBtn, whiteBtn);
 		}
 	}
@@ -751,7 +852,7 @@ public class CluedoFrame extends JFrame {
 	 * @param canRoll True to enable the button, false to disable.
 	 */
 	public void enableDiceBtn(boolean canRoll) {
-		rollDiceBtn.setEnabled(canRoll);
+		nextTurnBtn.setEnabled(canRoll);
 	}
 
 	/**

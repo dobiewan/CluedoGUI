@@ -1,9 +1,11 @@
 package cluedogame.GUI;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +19,7 @@ import javax.swing.JPanel;
 import cluedogame.Board;
 import cluedogame.GameOfCluedo;
 import cluedogame.Player;
+import cluedogame.sqaures.DoorSquare;
 import cluedogame.sqaures.RoomSquare;
 import cluedogame.sqaures.ShortcutSquare;
 import cluedogame.sqaures.Square;
@@ -26,11 +29,12 @@ import cluedogame.sqaures.Square;
  * @author Sarah Dobie and Christ Read
  *
  */
-public class BoardCanvas extends JPanel implements MouseListener {
+public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener {
 	
 	private Image boardImage;
 	private Image resizedImage;
 	private CluedoFrame frame;
+	private List<Square> path;
 	
 	/**
 	 * Constructor for class BoardCanvas.
@@ -38,11 +42,12 @@ public class BoardCanvas extends JPanel implements MouseListener {
 	 */
 	public BoardCanvas(CluedoFrame frame){
 		addMouseListener(this);
+		addMouseMotionListener(this);
 		this.frame = frame;
 		try {
-			boardImage = ImageIO.read(new File("Images\\board.jpg"));
+			boardImage = ImageIO.read(new File("Images"+File.separator+"board.png"));
 			resizedImage = boardImage.getScaledInstance(CluedoFrame.BOARD_CANVAS_WIDTH,
-					CluedoFrame.BOARD_CANVAS_HEIGHT, Image.SCALE_SMOOTH);
+					CluedoFrame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
 		} catch (IOException e) {
 			System.out.println("Could not read image file: "+e.getMessage());
 		}
@@ -59,6 +64,14 @@ public class BoardCanvas extends JPanel implements MouseListener {
 		g.drawImage(resizedImage, 0, 0, null);
 		for(Player p : frame.getPlayers()){
 			p.draw(g);
+		}
+		if(path != null){
+			g.setColor(Color.green);
+			for(Square sq: path){
+				int x = CluedoFrame.convertColToX(sq.col());
+				int y = CluedoFrame.convertRowToY(sq.row());
+				g.fillRect(x,y,(int)CluedoFrame.squareWidth(),(int)CluedoFrame.squareHeight());
+			}
 		}
 	}
 
@@ -116,16 +129,20 @@ public class BoardCanvas extends JPanel implements MouseListener {
 			} else {
 				// move the player
 				for(Square sq : shortestPath){
+					Square fromSquare = board.squareAt(currentPlayer.row(), currentPlayer.column());
 					currentPlayer.moveTo(sq);
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					// use up player moves
+					if(!(sq instanceof RoomSquare)){
+						game.useMoves(1);
+					} else if(fromSquare instanceof DoorSquare){
+						game.useMoves(1);
 					}
 					frame.repaintAll();
+//					try {
+//						Thread.sleep(100);
+//					} catch (InterruptedException e) {e.printStackTrace();}
 				}
-				game.useMoves(shortestPath.size());
+//				game.useMoves(shortestPath.size());
 				// check if player is in room or not
 				if(goal instanceof RoomSquare || goal instanceof ShortcutSquare){
 					frame.enableSuggestBtn(true);
@@ -150,6 +167,41 @@ public class BoardCanvas extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// determine where the mouse is on the board
+		int row = CluedoFrame.convertYToRow(e.getY());
+		int col = CluedoFrame.convertXToCol(e.getX());
+		if(Board.validRow(row) && Board.validCol(col)){
+			GameOfCluedo game = frame.getGame();
+			if(game != null){
+				Player player = frame.getGame().getCurrentPlayer();
+				// if ther is a current player, get their location
+				if(player != null){
+					Board board = game.getBoard();
+					Square playerPos = board.squareAt(player.row(), player.column());
+					Square mousePos = board.squareAt(row, col);
+					// find the path between player and mouse
+					List<Square> shortestPath = board.shortestPath(playerPos,
+							mousePos, game.getRoll(), game);
+					this.path = shortestPath;
+					repaint();
+				}
+			}
+		}
+	}
+
+	public void enableDaveMode() {
 		// TODO Auto-generated method stub
 		
 	}

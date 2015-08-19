@@ -27,9 +27,9 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 		this.frame = frame;
 		this.game = game;
 		try {
-			DashBoardImage = ImageIO.read(new File("Images\\DashBoard.jpg"));
+			DashBoardImage = ImageIO.read(new File("Images"+File.separator+"DashBoard.png"));
 			resizedImage = DashBoardImage.getScaledInstance(CluedoFrame.DASH_CANVAS_WIDTH,
-					CluedoFrame.DASH_CANVAS_HEIGHT, Image.SCALE_SMOOTH);
+					CluedoFrame.DASH_CANVAS_HEIGHT, Image.SCALE_FAST);
 		} catch (IOException e) {
 			System.out.println("Could not read image file: "+e.getMessage());
 		}
@@ -49,7 +49,9 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 		Player p = game.getCurrentPlayer();
 		if (p == null){return;}
 		g.setColor(Color.WHITE);
-		g.drawString(p.getName(), 10, 20);
+		g.drawImage(p.getNameImage(), 0, 0, null);
+		g.drawString(p.getCharacter() + " ("+p.getUserName()+")", 10, 20);
+		g.drawString(""+game.getRoll(), 20, 40);
 		Image card;
 		int x = 35;
 		int y = 70;
