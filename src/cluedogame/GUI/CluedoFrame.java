@@ -357,6 +357,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
 				} else if(i == KeyEvent.VK_I){
 					game.setInfiniteMovement(true);
 					game.setRollToInfinite();
+					repaintAll();
 					keysPressed.clear();
 					break;
 				} else if(i == KeyEvent.VK_N && nextTurnBtn.isEnabled()){

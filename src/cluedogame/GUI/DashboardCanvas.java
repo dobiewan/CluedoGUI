@@ -19,6 +19,7 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 	
 	private Image DashBoardImage;
 	private Image resizedImage;
+	private Image numbers[];
 	private CluedoFrame frame;
 	private GameOfCluedo game;
 	
@@ -27,6 +28,11 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 		this.frame = frame;
 		this.game = game;
 		try {
+			numbers = new Image[14];
+			for (int i = 0; i<=13; i++){
+				numbers[i] = ImageIO.read(new File("Images"+File.separator+"Numbers"+File.separator+i+".png"))
+						.getScaledInstance(45, 30, Image.SCALE_FAST);
+			}
 			DashBoardImage = ImageIO.read(new File("Images"+File.separator+"DashBoard.png"));
 			resizedImage = DashBoardImage.getScaledInstance(CluedoFrame.DASH_CANVAS_WIDTH,
 					CluedoFrame.DASH_CANVAS_HEIGHT, Image.SCALE_FAST);
@@ -50,8 +56,15 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 		if (p == null){return;}
 		g.setColor(Color.WHITE);
 		g.drawImage(p.getNameImage(), 0, 0, null);
-		g.drawString(p.getCharacter() + " ("+p.getUserName()+")", 10, 20);
-		g.drawString(""+game.getRoll(), 20, 40);
+//		g.drawString(p.getCharacter() + " ("+p.getUserName()+")", 10, 20);
+//		g.drawString(""+game.getRoll(), 20, 40);
+		int roll = game.getRoll();
+		if (roll > 12){
+			g.drawImage(numbers[13], 15, CluedoFrame.BOARD_CANVAS_HEIGHT-45, null);
+		} else {
+			g.drawImage(numbers[roll], 15, CluedoFrame.BOARD_CANVAS_HEIGHT-45, null);
+		}
+		
 		Image card;
 		int x = 35;
 		int y = 70;
