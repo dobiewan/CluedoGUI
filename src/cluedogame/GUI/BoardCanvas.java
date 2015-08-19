@@ -33,6 +33,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	
 	private Image boardImage;
 	private Image resizedImage;
+	private Image moveImage;
 	private CluedoFrame frame;
 	private List<Square> path;
 	
@@ -48,6 +49,8 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 			boardImage = ImageIO.read(new File("Images"+File.separator+"board.png"));
 			resizedImage = boardImage.getScaledInstance(CluedoFrame.BOARD_CANVAS_WIDTH,
 					CluedoFrame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
+			moveImage = ImageIO.read(new File("Images"+File.separator+"Move.png"))
+					.getScaledInstance(25,25, Image.SCALE_FAST);
 		} catch (IOException e) {
 			System.out.println("Could not read image file: "+e.getMessage());
 		}
@@ -66,11 +69,16 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 			p.draw(g);
 		}
 		if(path != null){
-			g.setColor(Color.green);
+//			g.setColor(Color.green);
+//			for(Square sq: path){
+//				int x = CluedoFrame.convertColToX(sq.col());
+//				int y = CluedoFrame.convertRowToY(sq.row());
+//				g.fillRect(x,y,(int)CluedoFrame.squareWidth(),(int)CluedoFrame.squareHeight());
+//			}
 			for(Square sq: path){
 				int x = CluedoFrame.convertColToX(sq.col());
 				int y = CluedoFrame.convertRowToY(sq.row());
-				g.fillRect(x,y,(int)CluedoFrame.squareWidth(),(int)CluedoFrame.squareHeight());
+				g.drawImage(moveImage, x, y, null);
 			}
 		}
 	}
