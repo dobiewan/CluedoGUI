@@ -58,7 +58,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
         initialiseUI();
         selectPlayers();
         game.dealCards();
-        game.isReady(true);
+        game.setReady(true);
     	keysPressed = new ArrayList<Integer>();
     	addKeyListeners();
     	requestFocusInWindow();
@@ -87,7 +87,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
     	setVisible(true);
     	setResizable(false);
         initialiseFields();
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         initialiseButtons();
         initialiseButtonPanel();
         initialiseMenu();
@@ -903,7 +903,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
     	try{
     		new CluedoFrame();
     	} catch(IllegalStateException e){
-    		System.out.println("Startup error. Restarting game...");
+    		System.out.println("Launch error. Restarting game...");
     		CluedoFrame.main(args);
     	}
     }   

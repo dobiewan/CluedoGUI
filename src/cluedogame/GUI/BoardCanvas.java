@@ -39,20 +39,21 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	public static int TOOLTIP_WIDTH = 150;
 	public static int TOOLTIP_HEIGHT = 40;
 	
-	private Image boardImage;
-	private Image resizedImage;
-	private Image moveImage;
-	private CluedoFrame frame;
-	private List<Square> path;
-	private Queue<Square> shortestPathQueue = new LinkedList<Square>();
-	private Player currentPlayer;
-	private Timer timer = new Timer(250, this);
-	private boolean playerMoving = false;
+	private Image boardImage; // original board image
+	private Image resizedImage; // resized board image
+	private Image moveImage; // image used to draw player path
+	private CluedoFrame frame; // the frame containing this canvas
+	private List<Square> possiblePath; // the path to draw when mouse has moved
+	private Queue<Square> movingPlayerQueue = new LinkedList<Square>(); // path for current player to follow
+	private Timer timer = new Timer(250, this); // a thread used for animating player movement
+	private Player currentPlayer; // the player whose turn it currently is
+	private boolean playerMoving = false; // true if a player is currently moving
 	
-	private String toolTipLine1;
-	private String toolTipLine2;
-	private int toolTipX;
-	private int toolTipY;
+	// tooltip fields
+	private String toolTipLine1; // the first line of the tooltip
+	private String toolTipLine2; // the second line of the tooltip
+	private int toolTipX; // the x position of the tooltip
+	private int toolTipY; // the y position of the tooltip
 	
 	/**
 	 * Constructor for class BoardCanvas.
@@ -62,6 +63,8 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		this.frame = frame;
+		this.timer.start();
+		// load images
 		try {
 			boardImage = ImageIO.read(new File("Images"+File.separator+"board.png"));
 			resizedImage = boardImage.getScaledInstance(CluedoFrame.BOARD_CANVAS_WIDTH,
@@ -84,8 +87,8 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		// draw board
 		g.drawImage(resizedImage, 0, 0, null);
 		// draw shortest path
-		if(path != null){
-			for(Square sq: path){
+		if(possiblePath != null){
+			for(Square sq: possiblePath){
 				int x = CluedoFrame.convertColToX(sq.col());
 				int y = CluedoFrame.convertRowToY(sq.row());
 				g.drawImage(moveImage, x, y, null);
@@ -150,28 +153,9 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 					frame.showDialog("Not enough moves!", "Invalid move");
 				}
 			} else {
-//				// move the player
-				this.shortestPathQueue .addAll(shortestPath);
-//				for(Square sq : shortestPath){ //FIXME
-//					try {
-//						Square fromSquare = board.squareAt(currentPlayer.row(), currentPlayer.column());
-//						currentPlayer.moveTo(sq);
-//						// use up player moves
-//						if(!(sq instanceof RoomSquare)){
-//							game.useMoves(1);
-//						} else if(fromSquare instanceof DoorSquare){
-//							game.useMoves(1);
-//						}
-//						frame.repaintAll();
-//						Thread.sleep(100);
-//					} catch (InterruptedException e) {e.printStackTrace();}
-					
-//					Timer timer = new Timer(250, this);
+				// move the player
+				this.movingPlayerQueue.addAll(shortestPath);
 				timer.restart();
-					
-	//				MoveTimer movePlayer = new MoveTimer(shortestPath, game, frame);
-	//				movePlayer.run();
-//				}
 					
 				// check if player is in room or not
 				if(goal instanceof RoomSquare || goal instanceof ShortcutSquare){
@@ -239,10 +223,11 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		if(Board.validRow(row) && Board.validCol(col)){
 			GameOfCluedo game = frame.getGame();
 			if(game != null){
-				displayShortestPath(row, col, game);
+				displayShortestPath(row, col);
 				// check if hovering over player
 				if(game.hasPlayerAt(row, col)){
 					Player p = game.getPlayerAt(row, col);
+					// set up tooltip
 					toolTipLine1 = p.getCharacter();
 					toolTipLine2 = p.getUserName();
 					toolTipX = e.getX();
@@ -250,10 +235,15 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 				} else {
 					setToolTipToNull();
 				}
+				repaint();
 			}
 		}
 	}
 
+	/**
+	 * Sets all tooltip fields to null to indicate that no tooltip
+	 * should be shown.
+	 */
 	private void setToolTipToNull() {
 		toolTipLine1 = null;
 		toolTipLine2 = null;
@@ -261,20 +251,27 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		toolTipY = 0;
 	}
 
-	public void displayShortestPath(int row, int col, GameOfCluedo game) {
-		if(playerMoving){
+	/**
+	 * 
+	 * @param startRow
+	 * @param startCol
+	 * @param game
+	 */
+	public void displayShortestPath(int startRow, int startCol) {
+		if(playerMoving){ // don't display a new path if a player is still moving
 			return;
 		}
-		currentPlayer = frame.getGame().getCurrentPlayer();
+		GameOfCluedo game = frame.getGame();
+		currentPlayer = game.getCurrentPlayer();
 		// if there is a current player, get their location
 		if(currentPlayer != null){
 			Board board = game.getBoard();
 			Square playerPos = board.squareAt(currentPlayer.row(), currentPlayer.column());
-			Square mousePos = board.squareAt(row, col);
+			Square mousePos = board.squareAt(startRow, startCol);
 			// find the path between player and mouse
 			List<Square> shortestPath = board.shortestPath(playerPos,
 					mousePos, game.getRoll(), game);
-			this.path = shortestPath;
+			this.possiblePath = shortestPath;
 			repaint();
 		}
 	}
@@ -285,13 +282,14 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if(!shortestPathQueue.isEmpty()){
+	public void actionPerformed(ActionEvent e) { // called every 250 milliseconds
+		if(!movingPlayerQueue.isEmpty()){ // a player should be moving
 			playerMoving = true;
 			GameOfCluedo game = frame.getGame();
 			Board board = game.getBoard();
 			Square fromSquare = board.squareAt(currentPlayer.row(), currentPlayer.column());
-			Square sq = shortestPathQueue.poll();
+			Square sq = movingPlayerQueue.poll();
+			// move the player to the next square
 			currentPlayer.moveTo(sq);
 			// use up player moves
 			if(!(sq instanceof RoomSquare)){

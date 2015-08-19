@@ -140,6 +140,7 @@ public class GameController {
 			}
 		}
 		
+		frame.repaintAll();
 		
 		// iterate over players' hands to find a matching card
 		for (Player otherPlayer : game.getPlayers()){

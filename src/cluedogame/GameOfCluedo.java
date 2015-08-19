@@ -49,14 +49,14 @@ public class GameOfCluedo {
 	private List<Card> characterCards;
 	private List<Card> roomCards;
 	private List<Card> weaponCards;
-	private Card[] murderCards = new Card[3];
-	List<Player> players = new ArrayList<Player>();
-	private Player currentPlayer;
+	private Card[] murderCards = new Card[3]; // the cards which are the solution to the murder
+	List<Player> players = new ArrayList<Player>(); // all the players in the game
+	private Player currentPlayer; // the player whose turn it is
 	private Board board;
-	private int roll;
+	private int roll; // the number of moves remaining for the current player
 	private GameController control;
-	private boolean isReady = false;
-	private boolean infiniteMovement; // part of a cheat code
+	private boolean isReady = false; // whether or not the game has finished setting up
+	private boolean infiniteMovement; // true if player is allowed infinite moves
 
 	
 	/**
@@ -132,7 +132,6 @@ public class GameOfCluedo {
 		// choose a weapon card
 		randomIndex = (int) (Math.random()*(roomCards.size()-1));
 		this.murderCards[2] = this.roomCards.remove(randomIndex);
-//		System.out.println(murderCards[0].getName()+","+murderCards[1].getName()+","+murderCards[2].getName());
 	}
 	
 	/**
@@ -174,6 +173,9 @@ public class GameOfCluedo {
 		}
 	}
 	
+	/**
+	 * Sets the roll to be essentially infinite.
+	 */
 	public void setRollToInfinite(){
 		roll = Integer.MAX_VALUE;
 	}
@@ -285,26 +287,42 @@ public class GameOfCluedo {
 		this.control.addPlayer(p);
 	}
 	
+	/**
+	 * Returns the player whose turn it is.
+	 * @return The Player whose turn it is.
+	 */
 	public Player getCurrentPlayer() {
 		return currentPlayer;
 	}
 
+	/**
+	 * Tells the game whose turn it is.
+	 * @param currentPlayer The Player whose turn it is.
+	 */
 	public void setCurrentPlayer(Player currentPlayer) {
 		this.currentPlayer = currentPlayer;
 	}
 	
 	/**
-	 * checks if the game is set up, returns true if it has been
-	 * @return
+	 * Checks if the game is set up.
+	 * @return True iff the game has finished being set up
 	 */
 	public boolean isReady(){
 		return isReady;
 	}
 	
-	public void isReady(boolean ready){
+	/**
+	 * Manually tells the game that it must have finished setting up, or not.
+	 * @param ready True if the game is ready, false otherwise.
+	 */
+	public void setReady(boolean ready){
 		isReady = ready;
 	}
 	
+	/**
+	 * Enables a infinite player movement.
+	 * @param infiniteMovement
+	 */
 	public void setInfiniteMovement(boolean infiniteMovement) {
 		this.infiniteMovement = infiniteMovement;
 	}
@@ -324,6 +342,13 @@ public class GameOfCluedo {
 		return false;
 	}
 	
+	/**
+	 * Returns the player at the given row and column.
+	 * @param row The row at which to look for a player
+	 * @param col The column at which to look for a player
+	 * @return The Player at the given row and column, or null if there
+	 * is none.
+	 */
 	public Player getPlayerAt(int row, int col){
 		for(Player p : players){
 			if(p.row() == row && p.column() == col){

@@ -36,7 +36,7 @@ public class Board {
 	 */
 	public void parse(){
 		try{
-			Scanner s = new Scanner(new File("boardFileV2.txt"));
+			Scanner s = new Scanner(new File("boardFile.txt"));
 			// create queues of special squares
 			Queue<String> shortcuts = shortcutRooms();
 			Queue<String> roomDoors = roomDoors();
