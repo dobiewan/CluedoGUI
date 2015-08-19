@@ -60,7 +60,12 @@ public class CluedoFrame extends JFrame implements KeyListener {
         game.dealCards();
         game.isReady(true);
     	keysPressed = new ArrayList<Integer>();
-    	addKeyListener(this);
+    	addKeyListeners();
+    	requestFocusInWindow();
+    }
+
+	public void addKeyListeners() {
+		addKeyListener(this);
     	boardCanvas.addKeyListener(this);
     	dashboardCanvas.addKeyListener(this);
     	btnPanel.addKeyListener(this);
@@ -73,8 +78,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
     	fileNewGame.addKeyListener(this);
     	fileDaveMode.addKeyListener(this);
     	fileExit.addKeyListener(this);
-    	requestFocusInWindow();
-    }
+	}
 
     /**
      * Initialises all GUI components.
@@ -896,7 +900,12 @@ public class CluedoFrame extends JFrame implements KeyListener {
      * Main method for CluedoFrame
      */
     public static void main(String args[]) {
-    	new CluedoFrame();
+    	try{
+    		new CluedoFrame();
+    	} catch(IllegalStateException e){
+    		System.out.println("Startup error. Restarting game...");
+    		CluedoFrame.main(args);
+    	}
     }   
     
     /**

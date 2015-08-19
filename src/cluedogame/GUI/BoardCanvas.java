@@ -3,18 +3,23 @@ package cluedogame.GUI;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 import cluedogame.Board;
 import cluedogame.GameOfCluedo;
@@ -29,7 +34,7 @@ import cluedogame.sqaures.Square;
  * @author Sarah Dobie and Christ Read
  *
  */
-public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener {
+public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener, ActionListener {
 	
 	public static int TOOLTIP_WIDTH = 150;
 	public static int TOOLTIP_HEIGHT = 40;
@@ -39,11 +44,15 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	private Image moveImage;
 	private CluedoFrame frame;
 	private List<Square> path;
+	private Queue<Square> shortestPathQueue = new LinkedList<Square>();
+	private Player currentPlayer;
+	private Timer timer = new Timer(250, this);
+	private boolean playerMoving = false;
+	
 	private String toolTipLine1;
 	private String toolTipLine2;
 	private int toolTipX;
 	private int toolTipY;
-	private boolean toolTipRight;
 	
 	/**
 	 * Constructor for class BoardCanvas.
@@ -74,10 +83,6 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 //				CluedoFrame.BOARD_CANVAS_HEIGHT, Image.SCALE_SMOOTH);
 		// draw board
 		g.drawImage(resizedImage, 0, 0, null);
-		// draw players
-		for(Player p : frame.getPlayers()){
-			p.draw(g);
-		}
 		// draw shortest path
 		if(path != null){
 			for(Square sq: path){
@@ -85,6 +90,10 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 				int y = CluedoFrame.convertRowToY(sq.row());
 				g.drawImage(moveImage, x, y, null);
 			}
+		}
+		// draw players
+		for(Player p : frame.getPlayers()){
+			p.draw(g);
 		}
 		// draw tooltip
 		if(toolTipLine1 != null){
@@ -117,10 +126,13 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	 * @param goalCol The column that the mouse was clicked in
 	 */
 	public void movePlayer(GameOfCluedo game, int goalRow, int goalCol) {
+		if(playerMoving){
+			return;
+		}
 		if(Board.validRow(goalRow) && Board.validCol(goalCol)){
 			Board board = game.getBoard();
 			// check if there is a current player
-			Player currentPlayer = game.getCurrentPlayer();
+			currentPlayer = game.getCurrentPlayer();
 			if(currentPlayer == null){
 				frame.showDialog("Click 'Next Turn' first!", "Invalid move");
 				return;
@@ -138,22 +150,29 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 					frame.showDialog("Not enough moves!", "Invalid move");
 				}
 			} else {
-				// move the player
-				for(Square sq : shortestPath){
-					Square fromSquare = board.squareAt(currentPlayer.row(), currentPlayer.column());
-					currentPlayer.moveTo(sq);
-					// use up player moves
-					if(!(sq instanceof RoomSquare)){
-						game.useMoves(1);
-					} else if(fromSquare instanceof DoorSquare){
-						game.useMoves(1);
-					}
-					frame.repaintAll();
+//				// move the player
+				this.shortestPathQueue .addAll(shortestPath);
+//				for(Square sq : shortestPath){ //FIXME
 //					try {
+//						Square fromSquare = board.squareAt(currentPlayer.row(), currentPlayer.column());
+//						currentPlayer.moveTo(sq);
+//						// use up player moves
+//						if(!(sq instanceof RoomSquare)){
+//							game.useMoves(1);
+//						} else if(fromSquare instanceof DoorSquare){
+//							game.useMoves(1);
+//						}
+//						frame.repaintAll();
 //						Thread.sleep(100);
 //					} catch (InterruptedException e) {e.printStackTrace();}
-				}
-//				game.useMoves(shortestPath.size());
+					
+//					Timer timer = new Timer(250, this);
+				timer.restart();
+					
+	//				MoveTimer movePlayer = new MoveTimer(shortestPath, game, frame);
+	//				movePlayer.run();
+//				}
+					
 				// check if player is in room or not
 				if(goal instanceof RoomSquare || goal instanceof ShortcutSquare){
 					frame.enableSuggestBtn(true);
@@ -166,6 +185,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 				} else {
 					frame.enableShortcutBtn(false);
 				}
+				
 			}
 		}
 	}
@@ -179,30 +199,36 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	@Override
 	public void mouseDragged(MouseEvent e) {}
 		
-	private void showToolTip(String line1, String line2, int x, int y, Graphics g){ //TODO
-		g.setColor(Color.WHITE);
+	private void showToolTip(String line1, String line2, int x, int y, Graphics g){
+		// determine which of line1 and line2 is shorter in pixels
 		int line1Width = g.getFontMetrics().stringWidth(line1);
 		int line2Width = g.getFontMetrics().stringWidth(line2);
 		int maxWidth = Math.max(line1Width, line2Width);
-		if(x > CluedoFrame.BOARD_CANVAS_WIDTH - maxWidth){
-			g.fillRect(x-maxWidth, y+5, maxWidth+10, TOOLTIP_HEIGHT);
-			g.setColor(Color.BLACK);
-			g.drawRect(x-maxWidth, y+5, maxWidth+10, TOOLTIP_HEIGHT);
-			g.drawString(line1, x+5-maxWidth, y+20);
-			g.drawString(line2, x+5-maxWidth, y+40);
-		} else if(y > CluedoFrame.BOARD_CANVAS_HEIGHT - TOOLTIP_HEIGHT){
-			g.fillRect(x, y+5-TOOLTIP_HEIGHT, maxWidth+10, TOOLTIP_HEIGHT);
-			g.setColor(Color.BLACK);
-			g.drawRect(x, y+5-TOOLTIP_HEIGHT, maxWidth+10, TOOLTIP_HEIGHT);
-			g.drawString(line1, x+5, y+20-TOOLTIP_HEIGHT);
-			g.drawString(line2, x+5, y+40-TOOLTIP_HEIGHT);
-		} else {
-			g.fillRect(x, y+5, maxWidth+10, TOOLTIP_HEIGHT);
-			g.setColor(Color.BLACK);
-			g.drawRect(x, y+5, maxWidth+10, TOOLTIP_HEIGHT);
-			g.drawString(line1, x+5, y+20);
-			g.drawString(line2, x+5, y+40);
+		// set up variables or drawing
+		int boxX = x;
+		int boxY = y+5;
+		int boxWidth = maxWidth+10;
+		int lineX = x+5;
+		int line1Y = y+20;
+		int line2Y = y+40;
+		// check if box is too far to right to draw
+		if(x > CluedoFrame.BOARD_CANVAS_WIDTH - maxWidth){ // mouse is too far to the right
+			boxX -= maxWidth;
+			lineX -= maxWidth;
 		}
+		// check if box is too close to the bottom to draw
+		if(y > CluedoFrame.BOARD_CANVAS_HEIGHT - TOOLTIP_HEIGHT){ // mouse too far down
+			boxY -= TOOLTIP_HEIGHT;
+			line1Y -= TOOLTIP_HEIGHT;
+			line2Y -= TOOLTIP_HEIGHT;
+		}
+		// draw the tooltip
+		g.setColor(Color.WHITE);
+		g.fillRect(boxX, boxY, boxWidth, TOOLTIP_HEIGHT);
+		g.setColor(Color.BLACK);
+		g.drawRect(boxX, boxY, boxWidth, TOOLTIP_HEIGHT);
+		g.drawString(line1, lineX, line1Y);
+		g.drawString(line2, lineX, line2Y);
 	}
 
 	@Override
@@ -236,11 +262,14 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	}
 
 	public void displayShortestPath(int row, int col, GameOfCluedo game) {
-		Player player = frame.getGame().getCurrentPlayer();
+		if(playerMoving){
+			return;
+		}
+		currentPlayer = frame.getGame().getCurrentPlayer();
 		// if there is a current player, get their location
-		if(player != null){
+		if(currentPlayer != null){
 			Board board = game.getBoard();
-			Square playerPos = board.squareAt(player.row(), player.column());
+			Square playerPos = board.squareAt(currentPlayer.row(), currentPlayer.column());
 			Square mousePos = board.squareAt(row, col);
 			// find the path between player and mouse
 			List<Square> shortestPath = board.shortestPath(playerPos,
@@ -253,6 +282,27 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	public void enableDaveMode() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(!shortestPathQueue.isEmpty()){
+			playerMoving = true;
+			GameOfCluedo game = frame.getGame();
+			Board board = game.getBoard();
+			Square fromSquare = board.squareAt(currentPlayer.row(), currentPlayer.column());
+			Square sq = shortestPathQueue.poll();
+			currentPlayer.moveTo(sq);
+			// use up player moves
+			if(!(sq instanceof RoomSquare)){
+				game.useMoves(1);
+			} else if(fromSquare instanceof DoorSquare){
+				game.useMoves(1);
+			}
+			frame.repaintAll();
+		} else {
+			playerMoving = false;
+		}
 	}
 	
 }
