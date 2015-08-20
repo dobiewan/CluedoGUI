@@ -187,7 +187,7 @@ public class GameController {
 					" with the "+accusation[1]+"!</html>", "Accusation results");
 			frame.showDialog("--GAME OVER--", "Game over");
 //			gameOver = true;
-			frame.enableDiceBtn(false);
+			frame.enableNextTurnBtn(false);
 		} else {
 			// accusation was incorrect, insult player
 			frame.showDialog("<html>You were wrong! ...you didn't really think this through...<br />"
@@ -199,7 +199,7 @@ public class GameController {
 				frame.showDialog("<html>--GAME OVER-- <br />"
 						+ "It was "+accusation[0]+" in the "+accusation[2]+
 						" with the "+accusation[1]+"!</html>", "Game over");
-				frame.enableDiceBtn(false);
+				frame.enableNextTurnBtn(false);
 				frame.enableShortcutBtn(false);
 				frame.enableSuggestBtn(false);
 				frame.enableAccuseBtn(false);

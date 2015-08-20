@@ -45,8 +45,13 @@ public class CluedoFrame extends JFrame implements KeyListener {
     private JMenuBar menuBar; // top menu bar
     private JMenu menuFile; // 'File' button in menu bar
     private JMenuItem fileNewGame;
-    private JMenuItem fileDaveMode;
     private JMenuItem fileExit;
+    private JMenu menuGame;
+    private JMenuItem gameNextTurn;
+    private JMenuItem gameTakeShortcut;
+    private JMenuItem gameSuggest;
+    private JMenuItem gameAccuse;
+    private JMenuItem gameDaveMode;
     
     // Game info
     private GameOfCluedo game;
@@ -83,7 +88,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
     	menuBar.addKeyListener(this);
     	menuFile.addKeyListener(this);
     	fileNewGame.addKeyListener(this);
-    	fileDaveMode.addKeyListener(this);
+    	gameDaveMode.addKeyListener(this);
     	fileExit.addKeyListener(this);
 	}
 
@@ -124,8 +129,13 @@ public class CluedoFrame extends JFrame implements KeyListener {
 	    menuBar = new JMenuBar();
 	    menuFile = new JMenu();
 	    fileNewGame = new JMenuItem();
-	    fileDaveMode = new JMenuItem();
+	    gameDaveMode = new JMenuItem();
 	    fileExit = new JMenuItem();
+	    menuGame = new JMenu();
+	    gameNextTurn = new JMenuItem();
+	    gameTakeShortcut = new JMenuItem();
+	    gameSuggest = new JMenuItem();
+	    gameAccuse = new JMenuItem();
 	}
 
 	/**
@@ -136,7 +146,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
 		nextTurnBtn.setText("Next Turn");
 	    nextTurnBtn.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent evt) {
-	            rollDiceBtnActionPerformed(evt);
+	            nextTurnBtnActionPerformed(evt);
 	        }
 	    });
 	    
@@ -202,6 +212,10 @@ public class CluedoFrame extends JFrame implements KeyListener {
 	 * Sets up the menu bar
 	 */
 	private void initialiseMenu() {
+	    setJMenuBar(menuBar);
+	    
+	    // set up File menu
+	    
 		menuFile.setText("File");
 	
 		// set up 'New Game' option
@@ -212,15 +226,6 @@ public class CluedoFrame extends JFrame implements KeyListener {
 	        }
 	    });
 	    menuFile.add(fileNewGame);
-	    
-	    // set up 'Dave Mode' option
-	    fileDaveMode.setText("Dave Mode (Ctrl + D)");
-	    fileDaveMode.addActionListener(new ActionListener() {
-	        public void actionPerformed(ActionEvent evt) {
-	            daveModeActionPerformed(evt);
-	        }
-	    });
-	    menuFile.add(fileDaveMode);
 	
 	    // set up 'Exit' option
 	    fileExit.setText("Exit");
@@ -233,7 +238,59 @@ public class CluedoFrame extends JFrame implements KeyListener {
 	    
 	    // add File to menu bar
 	    menuBar.add(menuFile);
-	    setJMenuBar(menuBar);
+	    
+
+	    // set up Game menu
+	    
+		menuGame.setText("Game");
+	
+		// set up 'Next Turn' option
+	    gameNextTurn.setText("Next turn (Ctrl + N)");
+	    gameNextTurn.addActionListener(new ActionListener() {
+	        public void actionPerformed(ActionEvent evt) {
+	            nextTurnBtnActionPerformed(evt);
+	        }
+	    });
+	    menuGame.add(gameNextTurn);
+	
+		// set up 'Take Shortcut' option
+	    gameTakeShortcut.setText("Take Shortcut (Ctrl + T)");
+	    gameTakeShortcut.addActionListener(new ActionListener() {
+	        public void actionPerformed(ActionEvent evt) {
+	            shortcutBtnActionPerformed(evt);
+	        }
+	    });
+	    menuGame.add(gameTakeShortcut);
+	    
+	    // set up 'Suggest' option
+	    gameSuggest.setText("Make a suggestion (Ctrl + S)");
+	    gameSuggest.addActionListener(new ActionListener() {
+	        public void actionPerformed(ActionEvent evt) {
+	            suggestBtnActionPerformed(evt);
+	        }
+	    });
+	    menuGame.add(gameSuggest);
+	    
+	    // set up 'Accuse' option
+	    gameAccuse.setText("Make an accusation (Ctrl + A)");
+	    gameAccuse.addActionListener(new ActionListener() {
+	        public void actionPerformed(ActionEvent evt) {
+	            accuseBtnActionPerformed(evt);
+	        }
+	    });
+	    menuGame.add(gameAccuse);
+	    
+	    // set up 'Dave Mode' option
+	    gameDaveMode.setText("Dave Mode (Ctrl + D)");
+	    gameDaveMode.addActionListener(new ActionListener() {
+	        public void actionPerformed(ActionEvent evt) {
+	            daveModeActionPerformed(evt);
+	        }
+	    });
+	    menuGame.add(gameDaveMode);
+	    
+	    // add Game to menu bar
+	    menuBar.add(menuGame);
 	}
 
 	/**
@@ -333,10 +390,10 @@ public class CluedoFrame extends JFrame implements KeyListener {
     }
 
     /**
-	 * Runs when the Roll Dice button is pushed.
+	 * Runs when the Next Turn button is pushed.
 	 * @param evt
 	 */
-    private void rollDiceBtnActionPerformed(ActionEvent evt) { 
+    private void nextTurnBtnActionPerformed(ActionEvent evt) { 
     	enableAccuseBtn(true);
         game.playTurn(this);
     }      
@@ -375,7 +432,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
 					keysPressed.clear();
 					break;
 				} else if(i == KeyEvent.VK_N && nextTurnBtn.isEnabled()){
-					rollDiceBtnActionPerformed(null);
+					nextTurnBtnActionPerformed(null);
 					keysPressed.clear();
 					break;
 				} else if(i == KeyEvent.VK_T && takeShortcutBtn.isEnabled()){
@@ -862,6 +919,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
 	 */
 	public void enableSuggestBtn(boolean canSuggest) {
 		suggestBtn.setEnabled(canSuggest);
+		gameSuggest.setEnabled(canSuggest);
 	}
 
 	/**
@@ -872,6 +930,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
 	 */
 	public void enableAccuseBtn(boolean canAccuse) {
 		accuseBtn.setEnabled(canAccuse);
+		gameAccuse.setEnabled(canAccuse);
 	}
 
 	/**
@@ -882,16 +941,18 @@ public class CluedoFrame extends JFrame implements KeyListener {
 	 */
 	public void enableShortcutBtn(boolean canTakeShortcut) {
 		takeShortcutBtn.setEnabled(canTakeShortcut);
+		gameTakeShortcut.setEnabled(canTakeShortcut);
 	}
 
 	/**
-	 * Enable or disable the Roll Dice button.
+	 * Enable or disable the Next Turn button.
 	 * When a button is disabled, it appears greyed out and cannot
 	 * be pressed by the user.
 	 * @param canRoll True to enable the button, false to disable.
 	 */
-	public void enableDiceBtn(boolean canRoll) {
+	public void enableNextTurnBtn(boolean canRoll) {
 		nextTurnBtn.setEnabled(canRoll);
+		gameNextTurn.setEnabled(canRoll);
 	}
 
 	/**
