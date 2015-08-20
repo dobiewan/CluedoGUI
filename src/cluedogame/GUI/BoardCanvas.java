@@ -37,8 +37,7 @@ import cluedogame.sqaures.Square;
  */
 public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener, ActionListener {
 	
-	public static int TOOLTIP_WIDTH = 150;
-	public static int TOOLTIP_HEIGHT = 40;
+	public static final int TOOLTIP_HEIGHT = 40;
 	
 	private Image boardImage; // original board image
 	private Image resizedBoardImage; // resized board image
@@ -166,7 +165,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	 * @param goalRow The row that the mouse was clicked in
 	 * @param goalCol The column that the mouse was clicked in
 	 */
-	public void movePlayer(GameOfCluedo game, int goalRow, int goalCol) {
+	private void movePlayer(GameOfCluedo game, int goalRow, int goalCol) {
 		if(playerMoving){
 			return;
 		}
@@ -296,7 +295,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	 * @param startCol
 	 * @param game
 	 */
-	public void displayShortestPath(int startRow, int startCol) {
+	private void displayShortestPath(int startRow, int startCol) {
 		if(playerMoving){ // don't display a new path if a player is still moving
 			return;
 		}

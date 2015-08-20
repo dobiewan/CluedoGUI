@@ -159,7 +159,7 @@ public class Player {
 	 * @param name The character for whom to find the start position.
 	 * @return the column in which the given character starts.
 	 */
-	public static int startCol(String name){
+	private static int startCol(String name){
 		switch(name){
 		case GameOfCluedo.SCARLETT : return 7;
 		case GameOfCluedo.MUSTARD : return 0;
@@ -176,7 +176,7 @@ public class Player {
 	 * @param name The character for whom to find the start position.
 	 * @return the row in which the given character starts.
 	 */
-	public static int startRow(String name){
+	private static int startRow(String name){
 		switch(name){
 		case GameOfCluedo.SCARLETT : return 24;
 		case GameOfCluedo.MUSTARD : return 17;
@@ -292,179 +292,6 @@ public class Player {
 		} catch(ArrayIndexOutOfBoundsException e){
 			return false;
 		}
-	}
-	
-//	/**
-//	 * Returns true if the player can move left.
-//	 * @param board The board being played on
-//	 * @return True if the square to the left of the player can be
-//	 * stepped on; false otherwise.
-//	 */
-//	public boolean canMoveLeft(Board board, GameOfCluedo game){
-//		try{
-//			int leftRow = rPosition;
-//			int leftCol = cPosition-1;
-//			Square currentSquare = board.squareAt(rPosition, cPosition);
-//			Square leftSquare = board.squareAt(leftRow, leftCol);
-//			// check if entering a room
-//			if(leftSquare instanceof RoomSquare){
-//				if(currentSquare instanceof DoorSquare){
-//					DoorSquare doorSq = ((DoorSquare)currentSquare);
-//					return doorSq.getRoom().equals(((RoomSquare)leftSquare).getRoom())
-//							&& doorSq.getEnterDir() == Dir.WEST;
-//				} else if(currentSquare instanceof RoomSquare || currentSquare instanceof ShortcutSquare){
-//					return true;
-//				} else {
-//					return false;
-//				}
-//			}
-//			// check if leaving room
-//			if(currentSquare instanceof RoomSquare){
-//				return leftSquare instanceof RoomSquare || leftSquare instanceof ShortcutSquare
-//						|| (leftSquare instanceof DoorSquare && ((DoorSquare)leftSquare).getEnterDir() == Dir.EAST);
-//			}
-//			return leftSquare.isSteppable() && !(leftSquare instanceof ShortcutSquare)
-//					&& !game.hasPlayerAt(leftRow, leftCol);
-//		} catch(ArrayIndexOutOfBoundsException e){
-//			return false;
-//		}
-//	}
-//
-//	/**
-//	 * Returns true if the player can move right.
-//	 * @param board The board being played on
-//	 * @return True if the square to the right of the player can be
-//	 * stepped on; false otherwise.
-//	 */
-//	public boolean canMoveRight(Board board, GameOfCluedo game){
-//		try {
-//			int rightRow = rPosition;
-//			int rightCol = cPosition+1;
-//			Square currentSquare = board.squareAt(rPosition, cPosition);
-//			Square rightSquare = board.squareAt(rightRow, rightCol);
-//			// check if entering a room
-//			if(rightSquare instanceof RoomSquare){
-//				if(currentSquare instanceof DoorSquare){
-//					DoorSquare doorSq = ((DoorSquare)currentSquare);
-//					return doorSq.getRoom().equals(((RoomSquare)rightSquare).getRoom())
-//							&& doorSq.getEnterDir() == Dir.EAST;
-//				} else if(currentSquare instanceof RoomSquare || currentSquare instanceof ShortcutSquare){
-//					return true;
-//				} else {
-//					return false;
-//				}
-//			}
-//			// check if leaving room
-//			if(currentSquare instanceof RoomSquare){
-//				return rightSquare instanceof RoomSquare || rightSquare instanceof ShortcutSquare
-//						|| (rightSquare instanceof DoorSquare && ((DoorSquare)rightSquare).getEnterDir() == Dir.WEST);
-//			}
-//			return rightSquare.isSteppable() && !(rightSquare instanceof ShortcutSquare) && !game.hasPlayerAt(rightRow, rightCol);
-//		} catch(ArrayIndexOutOfBoundsException e){
-//			return false;
-//		}
-//	}
-//	
-//	/**
-//	 * Returns true if the player can move up.
-//	 * @param board The board being played on
-//	 * @return True if the square to the up of the player can be
-//	 * stepped on; false otherwise.
-//	 */
-//	public boolean canMoveUp(Board board, GameOfCluedo game){
-//		try {
-//			int upRow = rPosition-1;
-//			int upCol = cPosition;
-//			Square currentSquare = board.squareAt(rPosition, cPosition);
-//			Square upSquare = board.squareAt(upRow, upCol);
-//			// check if entering a room
-//			if(upSquare instanceof RoomSquare){
-//				if(currentSquare instanceof DoorSquare){
-//					DoorSquare doorSq = ((DoorSquare)currentSquare);
-//					return doorSq.getRoom().equals(((RoomSquare)upSquare).getRoom())
-//							&& doorSq.getEnterDir() == Dir.NORTH;
-//				} else if(currentSquare instanceof RoomSquare || currentSquare instanceof ShortcutSquare){
-//					return true;
-//				} else {
-//					return false;
-//				}
-//			}
-//			// check if leaving room
-//			if(currentSquare instanceof RoomSquare){
-//				return upSquare instanceof RoomSquare || upSquare instanceof ShortcutSquare
-//						|| (upSquare instanceof DoorSquare && ((DoorSquare)upSquare).getEnterDir() == Dir.SOUTH);
-//			}
-//			return upSquare.isSteppable() && !(upSquare instanceof ShortcutSquare) && !game.hasPlayerAt(upRow, upCol);
-//		} catch(ArrayIndexOutOfBoundsException e){
-//			return false;
-//		}
-//	}
-//	
-//	/**
-//	 * Returns true if the player can move down.
-//	 * @param board The board being played on
-//	 * @return True if the square to the down of the player can be
-//	 * stepped on; false otherwise.
-//	 */
-//	public boolean canMoveDown(Board board, GameOfCluedo game){
-//		try {
-//			int downRow = rPosition+1;
-//			int downCol = cPosition;
-//			Square currentSquare = board.squareAt(rPosition, cPosition);
-//			Square downSquare = board.squareAt(downRow, downCol);
-//			// check if entering a room
-//			if(downSquare instanceof RoomSquare){
-//				if(currentSquare instanceof DoorSquare){
-//					DoorSquare doorSq = ((DoorSquare)currentSquare);
-//					return doorSq.getRoom().equals(((RoomSquare)downSquare).getRoom())
-//							&& doorSq.getEnterDir() == Dir.SOUTH;
-//				} else if(currentSquare instanceof RoomSquare || currentSquare instanceof ShortcutSquare){
-//					return true;
-//				} else {
-//					return false;
-//				}
-//			}
-//			// check if leaving room
-//			if(currentSquare instanceof RoomSquare){
-//				return downSquare instanceof RoomSquare || downSquare instanceof ShortcutSquare
-//						|| (downSquare instanceof DoorSquare && ((DoorSquare)downSquare).getEnterDir() == Dir.NORTH);
-//			}
-//			return downSquare.isSteppable() && !(downSquare instanceof ShortcutSquare) && !game.hasPlayerAt(downRow, downCol);
-//		} catch(ArrayIndexOutOfBoundsException e){
-//			return false;
-//		}
-//	}	
-
-	/**
-	 * Moves the player character left one space on the game board.
-	 */
-	public void moveLeft() {
-		this.cPosition -= 1;
-		
-	}
-
-	/**
-	 * Moves the player character right one space on the game board.
-	 */
-	public void moveRight() {
-		this.cPosition += 1;
-		
-	}
-
-	/**
-	 * Moves the player character up one space on the game board.
-	 */
-	public void moveUp() {
-		this.rPosition -= 1;
-		
-	}
-
-	/**
-	 * Moves the player character down one space on the game board.
-	 */
-	public void moveDown() {
-		this.rPosition += 1;
-		
 	}
 	
 	/**

@@ -34,7 +34,7 @@ public class Board {
 	 * Loads a board from a given file.
 	 * @param file The file containing the board data.
 	 */
-	public void parse(){
+	private void parse(){
 		try{
 			Scanner s = new Scanner(new File("boardFile.txt"));
 			// create queues of special squares

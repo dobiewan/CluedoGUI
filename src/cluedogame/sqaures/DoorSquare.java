@@ -11,8 +11,8 @@ public class DoorSquare extends Square {
 		NORTH,SOUTH,EAST,WEST;
 	}
 	
-	String room;
-	Dir enterDir; // the direction which the player can enter going in
+	private String room;
+	private Dir enterDir; // the direction which the player can enter going in
 	
 	/**
 	 * Constructor for class RoomSquare.

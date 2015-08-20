@@ -12,9 +12,9 @@ import cluedogame.GUI.CluedoFrame;
  */
 public abstract class Card {
 	
-	String name; // the item on the card
-	Image image;
-	private int identifier;
+	protected String name; // the item on the card
+	protected Image image;
+	protected int identifier;
 	
 	/**
 	 * Constructor for class card.

@@ -24,7 +24,7 @@ public class GameController {
 	private GameOfCluedo game; // the game this controller is associated with
 	private CluedoFrame frame; // the frame the game is being played in
 //	private boolean gameOver = false; 
-	LinkedList<Player> playersInGame = new LinkedList<Player>(); //players still in game
+	private LinkedList<Player> playersInGame = new LinkedList<Player>(); //players still in game
 	
 	/**
 	 * Constructor for class GameController.
@@ -67,7 +67,7 @@ public class GameController {
 	 * Enables the appropriate buttons in the frame.
 	 * @param player The current player
 	 */
-	public void enableButtons(Player player) {
+	private void enableButtons(Player player) {
 		Square playerSquare = getPlayerSquare(player);
 		// check if player is starting on a shortcut
 		if(playerSquare instanceof ShortcutSquare){
@@ -112,7 +112,7 @@ public class GameController {
 		}
 		
 		// get the suggestion info from the player
-		String[] suggestions = frame.showSuggestionDialog(room);
+		String[] suggestions = frame.getDialogHandler().showSuggestionDialog(room);
 		String character = suggestions[0];
 		String weapon = suggestions[1];
 		
@@ -178,7 +178,7 @@ public class GameController {
 			return;
 		}
 		// Prompt player to select cards
-		String[] accusation = frame.showAccusationDialog();
+		String[] accusation = frame.getDialogHandler().showAccusationDialog();
 		// make accusation
 		if (game.accuse(accusation)){
 			// player made a correct accusation and won the game

@@ -17,7 +17,6 @@ import cluedogame.cards.*;
  *
  */
 public class GameOfCluedo {
-	public static final int TOTAL_NUM_CARDS = 21;
 	
 	// Characters
 	public static final String SCARLETT = "Miss Scarlett";
@@ -50,7 +49,7 @@ public class GameOfCluedo {
 	private List<Card> roomCards;
 	private List<Card> weaponCards;
 	private Card[] murderCards = new Card[3]; // the cards which are the solution to the murder
-	List<Player> players = new ArrayList<Player>(); // all the players in the game
+	private List<Player> players = new ArrayList<Player>(); // all the players in the game
 	private Player currentPlayer; // the player whose turn it is
 	private Board board;
 	private int roll; // the number of moves remaining for the current player
