@@ -15,6 +15,12 @@ import cluedogame.GameOfCluedo;
 import cluedogame.Player;
 import cluedogame.cards.Card;
 
+/**
+ * A canvas drawn on the left side of the window, displaying the current player's
+ * hand, and the number of moves they have left.
+ * @author Sarah Dobie and Chris Read
+ *
+ */
 public class DashboardCanvas extends JPanel implements MouseListener {
 	
 	private Image DashBoardImage;
@@ -34,8 +40,8 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 						.getScaledInstance(45, 30, Image.SCALE_FAST);
 			}
 			DashBoardImage = ImageIO.read(new File("Images"+File.separator+"DashBoard.png"));
-			resizedImage = DashBoardImage.getScaledInstance(CluedoFrame.DASH_CANVAS_WIDTH,
-					CluedoFrame.DASH_CANVAS_HEIGHT, Image.SCALE_FAST);
+			resizedImage = DashBoardImage.getScaledInstance(frame.DASH_CANVAS_WIDTH,
+					frame.DASH_CANVAS_HEIGHT, Image.SCALE_FAST);
 		} catch (IOException e) {
 			System.out.println("Could not read image file: "+e.getMessage());
 		}
@@ -60,9 +66,9 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 //		g.drawString(""+game.getRoll(), 20, 40);
 		int roll = game.getRoll();
 		if (roll > 12){
-			g.drawImage(numbers[13], 15, CluedoFrame.BOARD_CANVAS_HEIGHT-45, null);
+			g.drawImage(numbers[13], 15, frame.BOARD_CANVAS_HEIGHT-45, null);
 		} else {
-			g.drawImage(numbers[roll], 15, CluedoFrame.BOARD_CANVAS_HEIGHT-45, null);
+			g.drawImage(numbers[roll], 15, frame.BOARD_CANVAS_HEIGHT-45, null);
 		}
 		
 		Image card;

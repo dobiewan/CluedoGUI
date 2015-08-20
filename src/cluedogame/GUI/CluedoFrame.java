@@ -23,12 +23,16 @@ import java.util.concurrent.TimeUnit;
  */
 public class CluedoFrame extends JFrame implements KeyListener {
 	
-	public static int PREF_BUTTON_SIZE = GroupLayout.DEFAULT_SIZE;
-	public static int MAX_BUTTON_SIZE = Short.MAX_VALUE;
-	public static int BOARD_CANVAS_WIDTH = 600;
-	public static int BOARD_CANVAS_HEIGHT = 625;
-	public static int DASH_CANVAS_WIDTH = 200;
-	public static int DASH_CANVAS_HEIGHT = BOARD_CANVAS_HEIGHT;
+	public static final int PREF_BUTTON_SIZE = GroupLayout.DEFAULT_SIZE;
+	public static final int MAX_BUTTON_SIZE = Short.MAX_VALUE;
+	public static final int MIN_BOARD_CANVAS_WIDTH = 300;
+	public static final int MIN_BOARD_CANVAS_HEIGHT = 312;
+	public static final int MIN_DASH_CANVAS_WIDTH = 100;
+	public static final int MIN_DASH_CANVAS_HEIGHT = MIN_BOARD_CANVAS_HEIGHT;
+	public int BOARD_CANVAS_WIDTH = 600;
+	public int BOARD_CANVAS_HEIGHT = 625;
+	public int DASH_CANVAS_WIDTH = 200;
+	public int DASH_CANVAS_HEIGHT = BOARD_CANVAS_HEIGHT;
 
 	// GUI components
     private BoardCanvas boardCanvas; // the canvas which displays the playing board
@@ -64,6 +68,9 @@ public class CluedoFrame extends JFrame implements KeyListener {
     	requestFocusInWindow();
     }
 
+    /**
+     * Adds this as a KeyListener to all relevant components.
+     */
 	public void addKeyListeners() {
 		addKeyListener(this);
     	boardCanvas.addKeyListener(this);
@@ -85,7 +92,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
      */
     private void initialiseUI() {
     	setVisible(true);
-    	setResizable(false);
+    	setResizable(true);
         initialiseFields();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         initialiseButtons();
@@ -95,6 +102,9 @@ public class CluedoFrame extends JFrame implements KeyListener {
         pack();
     }
     
+    /**
+     * Repaints the board and dashboard.
+     */
     public void repaintAll(){
     	boardCanvas.repaint();
     	dashboardCanvas.repaint();
@@ -237,8 +247,8 @@ public class CluedoFrame extends JFrame implements KeyListener {
         ParallelGroup hzGroup = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
         SequentialGroup sqGroupHz = layout.createSequentialGroup();
         
-        sqGroupHz.addComponent(dashboardCanvas, DASH_CANVAS_WIDTH, DASH_CANVAS_WIDTH, DASH_CANVAS_WIDTH);
-        sqGroupHz.addComponent(boardCanvas, BOARD_CANVAS_WIDTH, BOARD_CANVAS_WIDTH, BOARD_CANVAS_WIDTH);
+        sqGroupHz.addComponent(dashboardCanvas, MIN_DASH_CANVAS_WIDTH, DASH_CANVAS_WIDTH, DASH_CANVAS_WIDTH);
+        sqGroupHz.addComponent(boardCanvas, MIN_BOARD_CANVAS_WIDTH, BOARD_CANVAS_WIDTH, BOARD_CANVAS_WIDTH);
         hzGroup.addGroup(sqGroupHz);
         
 //        sqGroupHz.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
@@ -251,8 +261,8 @@ public class CluedoFrame extends JFrame implements KeyListener {
 //        vtGroup.addGroup(sqGroupVt);
         
         ParallelGroup dashboardGroup = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
-        dashboardGroup.addComponent(dashboardCanvas, DASH_CANVAS_HEIGHT, DASH_CANVAS_HEIGHT, DASH_CANVAS_HEIGHT);
-        sqGroupVt.addComponent(boardCanvas, BOARD_CANVAS_HEIGHT, BOARD_CANVAS_HEIGHT, BOARD_CANVAS_HEIGHT);
+        dashboardGroup.addComponent(dashboardCanvas, MIN_DASH_CANVAS_HEIGHT, DASH_CANVAS_HEIGHT, DASH_CANVAS_HEIGHT);
+        sqGroupVt.addComponent(boardCanvas, MIN_BOARD_CANVAS_HEIGHT, BOARD_CANVAS_HEIGHT, BOARD_CANVAS_HEIGHT);
         sqGroupVt.addComponent(btnPanel, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
         dashboardGroup.addGroup(sqGroupVt);
         
@@ -900,12 +910,17 @@ public class CluedoFrame extends JFrame implements KeyListener {
      * Main method for CluedoFrame
      */
     public static void main(String args[]) {
-    	try{
-    		new CluedoFrame();
-    	} catch(IllegalStateException e){
-    		System.out.println("Launch error. Restarting game...");
-    		CluedoFrame.main(args);
-    	}
+//    	try{
+//    		new CluedoFrame();
+//    	} catch(IllegalStateException e){
+//    		System.out.println("Launch error. Restarting game...");
+//    		CluedoFrame.main(args);
+//    	}
+    	EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new CluedoFrame();
+            }
+        });
     }   
     
     /**
@@ -913,7 +928,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
      * @param c The column position to convert
      * @return The absolute x position of the left of the column.
      */
-    public static int convertColToX(int c){
+    public int convertColToX(int c){
     	return (int)(squareWidth()*c);
     }
     
@@ -922,7 +937,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
      * @param x The x position to convert
      * @return The column containing the x position
      */
-    public static int convertXToCol(int x){
+    public int convertXToCol(int x){
     	return (int)((double)x/squareWidth());
     }
 
@@ -930,7 +945,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
      * Determines the current width of a board square
      * @return The width of a board square
      */
-    public static double squareWidth() {
+    public double squareWidth() {
 		double width = (double)BOARD_CANVAS_WIDTH/(double)Board.COLS;
 		return width;
 	}
@@ -940,7 +955,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
      * @param r The row position to convert
      * @return The absolute y position of the top of the row.
      */
-    public static int convertRowToY(int r){
+    public int convertRowToY(int r){
     	return (int)(squareHeight()*r);
     }
     
@@ -949,7 +964,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
      * @param y The y position to convert
      * @return The row containing the y position
      */
-    public static int convertYToRow(int y){
+    public int convertYToRow(int y){
     	return (int)((double)y/squareHeight());
     }
 
@@ -957,7 +972,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
      * Determines the current height of a board square
      * @return The height of a board square
      */
-    public static double squareHeight() {
+    public double squareHeight() {
 		double height = (double)BOARD_CANVAS_HEIGHT/(double)Board.ROWS;
 		return height;
 	}

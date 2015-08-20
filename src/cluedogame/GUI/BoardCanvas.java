@@ -106,7 +106,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		}
 		// draw players
 		for(Player p : frame.getPlayers()){
-			p.draw(g);
+			p.draw(g, frame);
 		}
 		// draw tooltip
 		if(toolTipLine1 != null){
