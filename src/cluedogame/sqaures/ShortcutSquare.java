@@ -28,6 +28,10 @@ public class ShortcutSquare extends Square {
 		toCol = findCol(toRoom);
 	}
 	
+	/**
+	 * Finds the room in which this shortcut begins.
+	 * @return The room in which this shortcut begins
+	 */
 	private String findStartRoom() {
 		switch(toRoom){
 		case GameOfCluedo.KITCHEN : return GameOfCluedo.STUDY;
@@ -70,6 +74,10 @@ public class ShortcutSquare extends Square {
 		}
 	}
 
+	/**
+	 * Gets the room this square starts in.
+	 * @return The name of the room this square starts in
+	 */
 	public String startRoom() {
 		return startRoom;
 	}

@@ -117,7 +117,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
 	 * Initialises all fields (components of the GUI)
 	 */
 	private void initialiseFields() {
-		boardCanvas = new BoardCanvas(this, game);
+		boardCanvas = new BoardCanvas(this);
 	    dashboardCanvas = new DashboardCanvas(this, game);
 	    btnPanel = new Panel();
 	    nextTurnBtn = new JButton();
@@ -196,13 +196,10 @@ public class CluedoFrame extends JFrame implements KeyListener {
         
         // set up the vertical alignment
         ParallelGroup vtGroup = panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING);
-//        SequentialGroup sqGroup = panelLayout.createSequentialGroup();
-//        vtGroup.addGroup(sqGroup);
         vtGroup.addComponent(nextTurnBtn);
         vtGroup.addComponent(takeShortcutBtn);
         vtGroup.addComponent(accuseBtn);
         vtGroup.addComponent(suggestBtn);
-//        sqGroup.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
         panelLayout.setVerticalGroup(vtGroup);
 	}
 
@@ -211,9 +208,14 @@ public class CluedoFrame extends JFrame implements KeyListener {
 	 */
 	private void initialiseMenu() {
 	    setJMenuBar(menuBar);
-	    
-	    // set up File menu
-	    
+		initialiseFileMenu();
+		initialiseGameMenu();
+	}
+
+	/**
+	 * Sets up the file menu
+	 */
+	public void initialiseFileMenu() {
 		menuFile.setText("File");
 	
 		// set up 'New Game' option
@@ -236,10 +238,12 @@ public class CluedoFrame extends JFrame implements KeyListener {
 	    
 	    // add File to menu bar
 	    menuBar.add(menuFile);
-	    
+	}
 
-	    // set up Game menu
-	    
+	/**
+	 * Sets up the Game menu.
+	 */
+	public void initialiseGameMenu() {
 		menuGame.setText("Game");
 	
 		// set up 'Next Turn' option
@@ -306,14 +310,11 @@ public class CluedoFrame extends JFrame implements KeyListener {
         sqGroupHz.addComponent(boardCanvas, MIN_BOARD_CANVAS_WIDTH, BOARD_CANVAS_WIDTH, BOARD_CANVAS_WIDTH);
         hzGroup.addGroup(sqGroupHz);
         
-//        sqGroupHz.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
         hzGroup.addComponent(btnPanel, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE);
         layout.setHorizontalGroup(hzGroup);
         
         // set up vertical alignment
-//        ParallelGroup vtGroup = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
         SequentialGroup sqGroupVt = layout.createSequentialGroup();
-//        vtGroup.addGroup(sqGroupVt);
         
         ParallelGroup dashboardGroup = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
         dashboardGroup.addComponent(dashboardCanvas, MIN_DASH_CANVAS_HEIGHT, DASH_CANVAS_HEIGHT, DASH_CANVAS_HEIGHT);
@@ -321,7 +322,6 @@ public class CluedoFrame extends JFrame implements KeyListener {
         sqGroupVt.addComponent(btnPanel, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
         dashboardGroup.addGroup(sqGroupVt);
         
-//        sqGroupVt.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED);
         layout.setVerticalGroup(dashboardGroup);
 	}
 	
@@ -339,17 +339,17 @@ public class CluedoFrame extends JFrame implements KeyListener {
 	}
 
 	/**
-	     * Checks if the user wants to start a new game, and restarts the game if they do.
-	     */
-	    private void confirmNewGame(){
-			int r = JOptionPane.showConfirmDialog(this, new JLabel("Do you really want to abandon this game?"),
-					"Start New Game?", JOptionPane.YES_NO_OPTION,
-					JOptionPane.WARNING_MESSAGE);
-			if(r == 0){
-				dispose();
-				new CluedoFrame();
-			}
-	    }
+     * Checks if the user wants to start a new game, and restarts the game if they do.
+     */
+    private void confirmNewGame(){
+		int r = JOptionPane.showConfirmDialog(this, new JLabel("Do you really want to abandon this game?"),
+				"Start New Game?", JOptionPane.YES_NO_OPTION,
+				JOptionPane.WARNING_MESSAGE);
+		if(r == 0){
+			dispose();
+			new CluedoFrame();
+		}
+    }
 
 	/**
 	 * Runs when the Exit button is pushed.
@@ -377,7 +377,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
 	 */
 	private void nextTurnBtnActionPerformed(ActionEvent evt) { 
 		enableAccuseBtn(true);
-	    game.playTurn(this);
+	    game.playTurn();
 	}
 
 	/**
@@ -416,66 +416,66 @@ public class CluedoFrame extends JFrame implements KeyListener {
 	public void keyTyped(KeyEvent e) {}
 
 	@Override
-		public void keyPressed(KeyEvent e) {
-	//		System.out.println(e.getKeyCode());
-			keysPressed.add(e.getKeyCode());
-			boolean foundCtrl = false;
-			boolean foundShift = false;
-			for(int i : keysPressed){
-				if(i == KeyEvent.VK_CONTROL){
-					foundCtrl = true;
-	//				break;
-				} else if(i == KeyEvent.VK_SHIFT){
-					foundShift = true;
-				}
+	public void keyPressed(KeyEvent e) {
+		keysPressed.add(e.getKeyCode());
+		boolean foundCtrl = false;
+		boolean foundShift = false;
+		// see if ctrl or shift are held down
+		for(int i : keysPressed){
+			if(i == KeyEvent.VK_CONTROL){
+				foundCtrl = true;
+			} else if(i == KeyEvent.VK_SHIFT){
+				foundShift = true;
 			}
-			if(foundCtrl){
-				for(int i : keysPressed){
-					if(i == KeyEvent.VK_N && foundShift){
-						confirmNewGame();
-						keysPressed.clear();
-						break;
-					} else if(i == KeyEvent.VK_D){
-						boardCanvas.enableDaveMode();
-						keysPressed.clear();
-						break;
-					} else if(i == KeyEvent.VK_I){
-						game.setInfiniteMovement(true);
-						game.setRollToInfinite();
-						repaintAll();
-						keysPressed.clear();
-						break;
-					} else if(i == KeyEvent.VK_N && nextTurnBtn.isEnabled()){
-						nextTurnBtnActionPerformed(null);
-						keysPressed.clear();
-						break;
-					} else if(i == KeyEvent.VK_T && takeShortcutBtn.isEnabled()){
-						shortcutBtnActionPerformed(null);
-						keysPressed.clear();
-						break;
-					} else if(i == KeyEvent.VK_S && suggestBtn.isEnabled()){
-						suggestBtnActionPerformed(null);
-						keysPressed.clear();
-						break;
-					} else if(i == KeyEvent.VK_A && accuseBtn.isEnabled()){
-						accuseBtnActionPerformed(null);
-						keysPressed.clear();
-						break;
-					}
+		}
+		// ctrl + [ ] shortcuts
+		if(foundCtrl){
+			for(int i : keysPressed){
+				if(i == KeyEvent.VK_N && foundShift){ // new game
+					confirmNewGame();
+					keysPressed.clear();
+					break;
+				} else if(i == KeyEvent.VK_D){ // dave mode
+					boardCanvas.enableDaveMode();
+					keysPressed.clear();
+					break;
+				} else if(i == KeyEvent.VK_I){ // infinite moves
+					game.setInfiniteMovement(true);
+					game.setRollToInfinite();
+					repaintAll();
+					keysPressed.clear();
+					break;
+				} else if(i == KeyEvent.VK_N && nextTurnBtn.isEnabled()){ // next turn
+					nextTurnBtnActionPerformed(null);
+					keysPressed.clear();
+					break;
+				} else if(i == KeyEvent.VK_T && takeShortcutBtn.isEnabled()){ // take shortcut
+					shortcutBtnActionPerformed(null);
+					keysPressed.clear();
+					break;
+				} else if(i == KeyEvent.VK_S && suggestBtn.isEnabled()){ // suggest
+					suggestBtnActionPerformed(null);
+					keysPressed.clear();
+					break;
+				} else if(i == KeyEvent.VK_A && accuseBtn.isEnabled()){ // accuse
+					accuseBtnActionPerformed(null);
+					keysPressed.clear();
+					break;
 				}
 			}
 		}
+	}
 
 	@Override
-		public void keyReleased(KeyEvent e) {
-	//		System.out.println("key released");
-			for(int i=0; i<keysPressed.size(); i++){
-				int keyCode = keysPressed.get(i);
-				if(keyCode == e.getKeyCode()){
-					keysPressed.remove(i);
-				}
+	public void keyReleased(KeyEvent e) {
+		// remove the key from the list of keys held down
+		for(int i=0; i<keysPressed.size(); i++){
+			int keyCode = keysPressed.get(i);
+			if(keyCode == e.getKeyCode()){
+				keysPressed.remove(i);
 			}
 		}
+	}
 
 	/**
 	 * Shows a basic dialog window with an OK button.
@@ -486,6 +486,28 @@ public class CluedoFrame extends JFrame implements KeyListener {
 		JOptionPane.showConfirmDialog(this, new JLabel(message),
 				title, JOptionPane.DEFAULT_OPTION,
 				JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	/**
+	 * Enable or disable the Next Turn button.
+	 * When a button is disabled, it appears greyed out and cannot
+	 * be pressed by the user.
+	 * @param canRoll True to enable the button, false to disable.
+	 */
+	public void enableNextTurnBtn(boolean canRoll) {
+		nextTurnBtn.setEnabled(canRoll);
+		gameNextTurn.setEnabled(canRoll);
+	}
+
+	/**
+	 * Enable or disable the Take Shortcut button.
+	 * When a button is disabled, it appears greyed out and cannot
+	 * be pressed by the user.
+	 * @param canTakeShortcut True to enable the button, false to disable.
+	 */
+	public void enableShortcutBtn(boolean canTakeShortcut) {
+		takeShortcutBtn.setEnabled(canTakeShortcut);
+		gameTakeShortcut.setEnabled(canTakeShortcut);
 	}
 
 	/**
@@ -509,30 +531,20 @@ public class CluedoFrame extends JFrame implements KeyListener {
 		accuseBtn.setEnabled(canAccuse);
 		gameAccuse.setEnabled(canAccuse);
 	}
-
+	
 	/**
-	 * Enable or disable the Take Shortcut button.
-	 * When a button is disabled, it appears greyed out and cannot
-	 * be pressed by the user.
-	 * @param canTakeShortcut True to enable the button, false to disable.
+	 * Disables all JButtons and buttons in the game menu (except Dave Move).
 	 */
-	public void enableShortcutBtn(boolean canTakeShortcut) {
-		takeShortcutBtn.setEnabled(canTakeShortcut);
-		gameTakeShortcut.setEnabled(canTakeShortcut);
+	public void disableAllButtons(){
+		enableNextTurnBtn(false);
+		enableShortcutBtn(false);
+		enableSuggestBtn(false);
+		enableAccuseBtn(false);
 	}
 
-	/**
-	 * Enable or disable the Next Turn button.
-	 * When a button is disabled, it appears greyed out and cannot
-	 * be pressed by the user.
-	 * @param canRoll True to enable the button, false to disable.
-	 */
-	public void enableNextTurnBtn(boolean canRoll) {
-		nextTurnBtn.setEnabled(canRoll);
-		gameNextTurn.setEnabled(canRoll);
-	}
-    
-    ////////////////////////////////////////////////////////
+	
+
+	////////////////////////////////////////////////////////
     //                INFORMATION METHODS                 //
     ////////////////////////////////////////////////////////
 
@@ -544,11 +556,18 @@ public class CluedoFrame extends JFrame implements KeyListener {
 		return game;
 	}
 
+	/**
+	 * Gets all players in the game.
+	 * @return A List of all players involved in the game
+	 */
 	public List<Player> getPlayers(){
 		return game.getPlayers();
 	}
 
-	
+	/**
+	 * Gets the dialog handler for this frame.
+	 * @return The DialogHandler associated with this frame
+	 */
 	public DialogHandler getDialogHandler(){
 		return dialogHandler;
 	}
@@ -619,12 +638,6 @@ public class CluedoFrame extends JFrame implements KeyListener {
      * Main method for CluedoFrame
      */
     public static void main(String args[]) {
-//    	try{
-//    		new CluedoFrame();
-//    	} catch(IllegalStateException e){
-//    		System.out.println("Launch error. Restarting game...");
-//    		CluedoFrame.main(args);
-//    	}
     	EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new CluedoFrame();

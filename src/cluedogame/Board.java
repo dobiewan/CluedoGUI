@@ -61,6 +61,8 @@ public class Board {
 	/**
 	 * Creates a new square based on the code read from the file.
 	 * @param code A character from the file
+	 * @param row The row of the new square
+	 * @param col The column of the new square
 	 * @param shortcuts The remaining shortcut rooms
 	 * @param roomDoors The remaining room entrances
 	 * @return A Square corresponding to the given code.
@@ -70,7 +72,7 @@ public class Board {
 		Square sq = null;
 		switch(code){
 		case '/' : sq = new BlankSquare(row, col); break;
-		case '_' : sq = new GridSquare(row, col); break;
+		case '_' : sq = new HallwaySquare(row, col); break;
 		case '~' : sq = new ShortcutSquare(shortcuts.poll(), this, row, col); break;
 		case 'K' : sq = new RoomSquare(GameOfCluedo.KITCHEN, row, col); break;
 		case 'B' : sq = new RoomSquare(GameOfCluedo.BALL_ROOM, row, col); break;
@@ -176,7 +178,7 @@ public class Board {
 				List<Square> neighbours = setupNeighbours(n.node, goal, game);
 				for(Square neigh : neighbours){
 					// iterate over valid neighbours
-					if(!neigh.isVisited()/* && neigh.isSteppable()*/){
+					if(!neigh.isVisited()){
 						// add valid neighbours to queue
 						double costToNeigh = n.costToHere + 1;
 						double estTotal = costToNeigh + distance(neigh, goal);
@@ -218,17 +220,6 @@ public class Board {
 		Square sq = goal;
 		int movesTaken = 0;
 		Square nextSquare = sq.getFrom();
-//		shortestPath.add(goal);
-//		while(sq.getFrom() != null){
-//			shortestPath.add(0,sq.getFrom());
-//			if(!(sq instanceof RoomSquare)){ // RoomSquare moves don't count
-//				movesTaken++;
-//			} else if(fromSquare instanceof DoorSquare){ // unless they are first being entered
-//				movesTaken++;
-//			}
-//			fromSquare = sq;
-//			sq = sq.getFrom();
-//		}
 		while(sq != null && sq != start){
 			shortestPath.add(0,sq);
 			if(!(sq instanceof RoomSquare)){ // RoomSquare moves don't count
@@ -239,8 +230,6 @@ public class Board {
 			sq = sq.getFrom();
 			nextSquare = sq.getFrom();
 		}
-//		shortestPath.remove(0);
-//		System.out.println("Path length: "+shortestPath.size());
 		// if the path is too long, set it to null
 		if(movesTaken > moves){
 			shortestPath = null;
@@ -255,27 +244,29 @@ public class Board {
 	 * @return The Euclidean distance between the two given squares.
 	 */
 	private double distance(Square square1, Square square2) {
-//		System.out.println(Math.hypot(start.col() - goal.col(), start.row() - goal.row()));
 		return Math.hypot(square1.col() - square2.col(), square1.row() - square2.row());
 	}
 	
 	/**
 	 * Makes a list of up to four neighbours of a square, that is
 	 * the squares above, below, to the left and to the right of the
-	 * given square, as well as any available shortcut squares.
+	 * given square.
 	 * @param node The square to find the neighbours of.
 	 * @return A list of squares above, below, to the left and to
-	 * the right of the given square, as well as any available shortcut squares.
+	 * the right of the given square.
 	 */
 	private List<Square> setupNeighbours(Square node, Square goal, GameOfCluedo game){
 		List<Square> neighbours = new ArrayList<Square>();
+		// determine neighbour positions
 		int nodeRow = node.row();
 		int nodeCol = node.col();
 		int leftCol = nodeCol - 1;
 		int rightCol = nodeCol + 1;
 		int upRow = nodeRow - 1;
 		int downRow = nodeRow + 1;
+		// make a dummy player at the position of the node
 		Player mock = new Player(node.row(), node.col());
+		// add all valid neighbours to list
 		if(mock.canMoveLeft(this, game)){
 			neighbours.add(board[nodeRow][leftCol]);}
 		if(mock.canMoveRight(this, game)){
@@ -284,16 +275,7 @@ public class Board {
 			neighbours.add(board[upRow][nodeCol]);}
 		if(mock.canMoveDown(this, game)){
 			neighbours.add(board[downRow][nodeCol]);}
-		// check for shortcuts
-//		if(goal instanceof ShortcutSquare){
-//			ShortcutSquare shortcutSq = (ShortcutSquare)goal;
-//			if(node instanceof DoorSquare){
-//				DoorSquare roomSq = (DoorSquare)node;
-//				if(roomSq.getRoom().equals(shortcutSq.startRoom())){
-//					neighbours.add(goal);
-//				}
-//			}
-//		}
+		
 		return neighbours;
 	}
 
@@ -325,6 +307,13 @@ public class Board {
 		public double costToHere;
 		public double totalCostToGoal;
 		
+		/**
+		 * Constructor for class AStarNode
+		 * @param node The node represented by this class
+		 * @param from The parent of this node
+		 * @param costToHere The cost from the start node to this node
+		 * @param totalCostToGoal costToHere + the estimated distance to the goal
+		 */
 		public AStarNode(Square node, Square from,
 				double costToHere, double totalCostToGoal) {
 			this.node = node;
@@ -339,8 +328,6 @@ public class Board {
 			else if(o.totalCostToGoal == totalCostToGoal){ return 0;}
 			else { return -1;}
 		}
-		
-		
 		
 	}
 }

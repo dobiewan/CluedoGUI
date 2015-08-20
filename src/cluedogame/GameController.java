@@ -15,7 +15,7 @@ import cluedogame.sqaures.Square;
 
 /**
  * A class which controls the gameplay, containing the methods
- * required each time a player takes their turn.
+ * run each time a player takes their turn.
  * @author Sarah Dobie, Chris Read
  *
  */
@@ -23,7 +23,6 @@ public class GameController {
 	
 	private GameOfCluedo game; // the game this controller is associated with
 	private CluedoFrame frame; // the frame the game is being played in
-//	private boolean gameOver = false; 
 	private LinkedList<Player> playersInGame = new LinkedList<Player>(); //players still in game
 	
 	/**
@@ -49,7 +48,7 @@ public class GameController {
 	 * Stars the turn for the next player.
 	 */
 	public void playTurn(){
-		if (/*!gameOver && */playersInGame.size() > 0) {
+		if (playersInGame.size() > 0) {
 			// get the next player
 			Player player = playersInGame.peek();
 			// roll the dice
@@ -69,6 +68,7 @@ public class GameController {
 	 */
 	private void enableButtons(Player player) {
 		Square playerSquare = getPlayerSquare(player);
+		frame.enableAccuseBtn(true);
 		// check if player is starting on a shortcut
 		if(playerSquare instanceof ShortcutSquare){
 			frame.enableShortcutBtn(true);
@@ -90,7 +90,7 @@ public class GameController {
 	 * @return The Square that the given player is currently located at.
 	 */
 	private Square getPlayerSquare(Player player) {
-		return game.getBoard().squareAt(player.row(), player.column());
+		return game.getBoard().squareAt(player.row(), player.col());
 	}
 	
 	/**
@@ -116,6 +116,7 @@ public class GameController {
 		String character = suggestions[0];
 		String weapon = suggestions[1];
 		
+		// get the player object from the string
 		Player suggestedPlayer = null;
 		for(Player p : game.getPlayers()){
 			if(p.getCharacter().equals(character)){
@@ -123,8 +124,10 @@ public class GameController {
 				break;
 			}
 		}
+		// move the suggested player to the room
 		if(suggestedPlayer != null){
 			Board board = game.getBoard();
+			// find the room on the board
 			for(int r=0; r<Board.ROWS; r++){
 				for(int c=0; c<Board.COLS; c++){
 					Square sq = board.squareAt(r, c);
@@ -174,9 +177,10 @@ public class GameController {
 				+ "to make an accusation?</html>"),
 				"Make accusation?", JOptionPane.YES_NO_OPTION,
 				JOptionPane.WARNING_MESSAGE);
-		if(r == 1){
+		if(r == 1){ // if the player selected no, return
 			return;
 		}
+		
 		// Prompt player to select cards
 		String[] accusation = frame.getDialogHandler().showAccusationDialog();
 		// make accusation
@@ -186,23 +190,24 @@ public class GameController {
 					+ "It was "+accusation[0]+" in the "+accusation[2]+
 					" with the "+accusation[1]+"!</html>", "Accusation results");
 			frame.showDialog("--GAME OVER--", "Game over");
-//			gameOver = true;
-			frame.enableNextTurnBtn(false);
+			frame.disableAllButtons();
 		} else {
 			// accusation was incorrect, insult player
-			frame.showDialog("<html>You were wrong! ...you didn't really think this through...<br />"
+			frame.showDialog("<html>You were wrong! You didn't really think this through...<br />"
 					+ player.getCharacter()+" is out of the game!</html>", "Accusation results");
 			// remove player from game
 			playersInGame.remove(player);
+			player.setInGame(false);
+			game.endTurn();
 			// check if the game is over
 			if(playersInGame.size() == 0){
 				frame.showDialog("<html>--GAME OVER-- <br />"
 						+ "It was "+accusation[0]+" in the "+accusation[2]+
 						" with the "+accusation[1]+"!</html>", "Game over");
-				frame.enableNextTurnBtn(false);
-				frame.enableShortcutBtn(false);
-				frame.enableSuggestBtn(false);
-				frame.enableAccuseBtn(false);
+				frame.disableAllButtons();
+			} else {
+				// still players remaining, move to next player
+				playTurn();
 			}
 		}
 	}
@@ -210,19 +215,19 @@ public class GameController {
 	/**
 	 * Takes the player to the other side of the shortcut they are
 	 * standing on.
-	 * @param player
+	 * @param player The player to move
 	 */
 	public void takeShortcut(Player player) {
 		try{
 			if(game.getRoll() > 0){ // if there are any moves left
 				ShortcutSquare shortcut = (ShortcutSquare)getPlayerSquare(player);
 				player.setPos(shortcut.toRow(), shortcut.toCol());
-				game.useMoves(1);
+				game.useMoves(1); // use up a move
 				frame.repaintAll();
-				if(game.getRoll() <= 0){
+				if(game.getRoll() <= 0){ // disable button if no moves left
 					frame.enableShortcutBtn(false);
 				}
-			} else {
+			} else { // no moves left
 				frame.showDialog("Not enough moves!", "Invalid move");
 			}
 		} catch(ClassCastException e){

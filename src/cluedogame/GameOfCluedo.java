@@ -63,6 +63,7 @@ public class GameOfCluedo {
 	
 	/**
 	 * Constructor for class GameOfCluedo
+	 * @param frame The CluedoFrame displaying this game.
 	 */
 	public GameOfCluedo(CluedoFrame frame){
 		this.board = new Board();
@@ -73,7 +74,7 @@ public class GameOfCluedo {
 	}
 	
 	/**
-	 * Generate a list of all cards in the game, and
+	 * Generates a list of all cards in the game, and
 	 * shuffles the order.
 	 * @return A shuffled List of all game cards.
 	 */
@@ -176,7 +177,7 @@ public class GameOfCluedo {
 	}
 	
 	/**
-	 * Sets the roll to be essentially infinite.
+	 * Sets the roll to be (essentially) infinite.
 	 */
 	public void setRollToInfinite(){
 		roll = Integer.MAX_VALUE;
@@ -207,9 +208,8 @@ public class GameOfCluedo {
 
 	/**
 	 * Start the next turn.
-	 * @param frame The frame the game is being played in
 	 */
-	public void playTurn(CluedoFrame frame) {
+	public void playTurn() {
 		control.playTurn();
 	}
 
@@ -250,8 +250,8 @@ public class GameOfCluedo {
 	}
 
 	/**
-	 * Testing method used when checking a correct accusation
-	 * @return the murder cards
+	 * Testing method used when checking for a correct accusation.
+	 * @return The three murder cards
 	 */
 	public Card[] getMurderCards(){
 		return murderCards;
@@ -283,15 +283,16 @@ public class GameOfCluedo {
 
 	/**
 	 * Adds a player to the game.
+	 * @param player The player to add
 	 */
-	public void addPlayer(Player p){
-		this.players.add(p);
-		this.control.addPlayer(p);
+	public void addPlayer(Player player){
+		this.players.add(player);
+		this.control.addPlayer(player);
 	}
 	
 	/**
 	 * Returns the player whose turn it is.
-	 * @return The Player whose turn it is.
+	 * @return The Player whose turn it is at the moment.
 	 */
 	public Player getCurrentPlayer() {
 		return currentPlayer;
@@ -322,8 +323,8 @@ public class GameOfCluedo {
 	}
 	
 	/**
-	 * Enables a infinite player movement.
-	 * @param infiniteMovement
+	 * Enables/disables infinite player movement.
+	 * @param infiniteMovement True to enable, false to disable
 	 */
 	public void setInfiniteMovement(boolean infiniteMovement) {
 		this.infiniteMovement = infiniteMovement;
@@ -337,7 +338,7 @@ public class GameOfCluedo {
 	 */
 	public boolean hasPlayerAt(int row, int col){
 		for(Player p : players){
-			if(p.row() == row && p.column() == col){
+			if(p.row() == row && p.col() == col){
 				return true;
 			}
 		}
@@ -353,7 +354,7 @@ public class GameOfCluedo {
 	 */
 	public Player getPlayerAt(int row, int col){
 		for(Player p : players){
-			if(p.row() == row && p.column() == col){
+			if(p.row() == row && p.col() == col){
 				return p;
 			}
 		}
@@ -361,28 +362,41 @@ public class GameOfCluedo {
 	}
 	
 	/**
-	 * getter and setter for pixelSize
-	 * @return
+	 * Gets the pixel drawing size.
+	 * @return The current pixel size
 	 */
 	public int getPixelSize(){
 		return pixelSize;
 	}
 	
+	/**
+	 * Sets the pixel size.
+	 * @param size The new pixel size
+	 */
 	public void setPixelSixe(int size){
 		pixelSize = size;
 	}
 	
 	/**
-	 * getter and setter for CardsSeen boolean
+	 * Determines whether the cards seen window is currently
+	 * displaying.
+	 * @return True iff the cards seen window is on display.
 	 */
 	public boolean cardsSeenWindow(){
 		return cardsSeen;
 	}
 	
+	/**
+	 * Show/hide cards seen window.
+	 * @param isOpen True to show, false to hide
+	 */
 	public void setCardsSeenWindow(boolean isOpen){
 		cardsSeen = isOpen;
 	}
 	
+	/**
+	 * Reverses the current status of the cards seen window.
+	 */
 	public void toggleCardsSeen(){
 		cardsSeen = !cardsSeen;
 	}

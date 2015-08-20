@@ -18,7 +18,9 @@ public abstract class Square {
 	
 	/**
 	 * Constructor for class Square.
-	 * @param steppable True if a player can walk on this square.
+	 * @param steppable True if a player can walk on this square
+	 * @param row The row on the board containing this square
+	 * @param col The column on the board containing this square
 	 */
 	public Square(boolean steppable, int row, int col){
 		this.steppable = steppable;
@@ -33,6 +35,22 @@ public abstract class Square {
 	 */
 	public boolean isSteppable(){
 		return steppable;
+	}
+
+	/**
+	 * Gets the row of this square.
+	 * @return The row this square belongs to.
+	 */
+	public int row() {
+		return row;
+	}
+
+	/**
+	 * Gets the column of this square.
+	 * @return The column this square belongs to.
+	 */
+	public int col() {
+		return col;
 	}
 
 	// A* search getters/setters
@@ -59,14 +77,6 @@ public abstract class Square {
 
 	public void setVisited(boolean visited) {
 		this.visited = visited;
-	}
-
-	public int row() {
-		return row;
-	}
-
-	public int col() {
-		return col;
 	}
 	
 	

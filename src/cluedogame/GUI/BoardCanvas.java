@@ -32,24 +32,27 @@ import cluedogame.sqaures.Square;
 
 /**
  * A canvas which shows the Cluedo playing board.
- * @author Sarah Dobie and Christ Read
+ * @author Sarah Dobie, Chris Read
  *
  */
 public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener, ActionListener {
 	
-	public static final int TOOLTIP_HEIGHT = 40;
+	public static final int TOOLTIP_HEIGHT = 40; // the height of tooltip windows
 	
-	private Image boardImage; // original board image
-	private Image resizedBoardImage; // resized board image
-	private Image cardsSeenImage; // cards seen window image
-	private Image cardsSeenResized;
-	private Image moveImage; // image used to draw player path
 	private CluedoFrame frame; // the frame containing this canvas
+	private GameOfCluedo game; // the game represented on the board
+	private Image boardImage; // original board image
 	private List<Square> possiblePath; // the path to draw when mouse has moved
 	private Queue<Square> movingPlayerQueue = new LinkedList<Square>(); // path for current player to follow
 	private Timer timer = new Timer(100, this); // a thread used for animating player movement
 	private Player currentPlayer; // the player whose turn it currently is
 	private boolean playerMoving = false; // true if a player is currently moving
+	
+	// image fields
+	private Image resizedBoardImage; // resized board image
+	private Image cardsSeenImage; // cards seen window image
+	private Image cardsSeenResized;
+	private Image moveImage; // image used to draw player path
 	
 	// tooltip fields
 	private String toolTipLine1; // the first line of the tooltip
@@ -57,19 +60,24 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	private int toolTipX; // the x position of the tooltip
 	private int toolTipY; // the y position of the tooltip
 	
-	private GameOfCluedo game;
 	
 	/**
 	 * Constructor for class BoardCanvas.
 	 * @param frame The CluedoFrame containing this canvas.
 	 */
-	public BoardCanvas(CluedoFrame frame, GameOfCluedo game){
+	public BoardCanvas(CluedoFrame frame){
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		this.frame = frame;
-		this.game = game;
+		this.game = frame.getGame();
 		this.timer.start();
-		// load images
+		loadImages();
+	}
+
+	/**
+	 * Loads image field files.
+	 */
+	public void loadImages() {
 		try {
 			boardImage = ImageIO.read(new File("Images"+File.separator+"board.png"));
 			resizedBoardImage = boardImage.getScaledInstance(frame.BOARD_CANVAS_WIDTH,
@@ -84,14 +92,13 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		}
 	}
 
+	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 	}
 
 	@Override
 	public void paint(Graphics g){
-//		Image resizedImage = boardImage.getScaledInstance(CluedoFrame.BOARD_CANVAS_WIDTH,
-//				CluedoFrame.BOARD_CANVAS_HEIGHT, Image.SCALE_SMOOTH);
 		// draw board
 		int pixel = game.getPixelSize();
 		g.drawImage(resizedBoardImage, 0, 0, null);
@@ -118,13 +125,20 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		}
 	}
 
+	/**
+	 * Draws the cards seen window.
+	 * @param g The graphics object on which to draw the window
+	 * @param pixel The current pixel size
+	 */
 	private void drawCardsSeen(Graphics g, int pixel) {
-		if(currentPlayer == null){
+		if(currentPlayer == null){ // check the game is in play
 			return;
 		}
+		// draw the background
 		g.drawImage(cardsSeenResized, 0, 0, null);
-		Image icon = currentPlayer.getIcon();
+		Image icon = currentPlayer.getToken();
 		List<Card> seen = currentPlayer.getCardsSeen();
+		// draws the player token next to all seen cards
 		for (Card c : seen){
 			int id = c.getID();
 			if (id < 10){
@@ -145,10 +159,12 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		// hide the cards seen window if it's showing
 		if (game.cardsSeenWindow()){
 			game.setCardsSeenWindow(false);
 			return;
 		}
+		// try to move the player to the clicked square
 		GameOfCluedo game = frame.getGame();
 		int row = frame.convertYToRow(e.getY());
 		int col = frame.convertXToCol(e.getX());
@@ -166,7 +182,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	 * @param goalCol The column that the mouse was clicked in
 	 */
 	private void movePlayer(GameOfCluedo game, int goalRow, int goalCol) {
-		if(playerMoving){
+		if(playerMoving){ // wait until any other players stop moving
 			return;
 		}
 		if(Board.validRow(goalRow) && Board.validCol(goalCol)){
@@ -178,7 +194,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 				return;
 			}
 			// determine shortest path
-			Square start = board.squareAt(currentPlayer.row(), currentPlayer.column());
+			Square start = board.squareAt(currentPlayer.row(), currentPlayer.col());
 			Square goal = board.squareAt(goalRow, goalCol);
 			List<Square> shortestPath = board.shortestPath(start, goal,
 					game.getRoll(), game);
@@ -226,7 +242,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		int line1Width = g.getFontMetrics().stringWidth(line1);
 		int line2Width = g.getFontMetrics().stringWidth(line2);
 		int maxWidth = Math.max(line1Width, line2Width);
-		// set up variables or drawing
+		// set up variables for drawing
 		int boxX = x;
 		int boxY = y+5;
 		int boxWidth = maxWidth+10;
@@ -290,10 +306,10 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	}
 
 	/**
-	 * 
-	 * @param startRow
-	 * @param startCol
-	 * @param game
+	 * Draw the shortest path between the current player and the mouse on
+	 * the board.
+	 * @param startRow The player's row
+	 * @param startCol The player's column
 	 */
 	private void displayShortestPath(int startRow, int startCol) {
 		if(playerMoving){ // don't display a new path if a player is still moving
@@ -304,7 +320,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		// if there is a current player, get their location
 		if(currentPlayer != null){
 			Board board = game.getBoard();
-			Square playerPos = board.squareAt(currentPlayer.row(), currentPlayer.column());
+			Square playerPos = board.squareAt(currentPlayer.row(), currentPlayer.col());
 			Square mousePos = board.squareAt(startRow, startCol);
 			// find the path between player and mouse
 			List<Square> shortestPath = board.shortestPath(playerPos,
@@ -325,7 +341,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 			playerMoving = true;
 			GameOfCluedo game = frame.getGame();
 			Board board = game.getBoard();
-			Square fromSquare = board.squareAt(currentPlayer.row(), currentPlayer.column());
+			Square fromSquare = board.squareAt(currentPlayer.row(), currentPlayer.col());
 			Square sq = movingPlayerQueue.poll();
 			// move the player to the next square
 			currentPlayer.moveTo(sq);

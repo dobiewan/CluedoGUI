@@ -15,8 +15,9 @@ public class DoorSquare extends Square {
 	private Dir enterDir; // the direction which the player can enter going in
 	
 	/**
-	 * Constructor for class RoomSquare.
+	 * Constructor for class DoorSquare.
 	 * @param room The room being represented
+	 * @param enterDir The direction in which the door can be entered.
 	 */
 	public DoorSquare(String room, Dir enterDir, int row, int col){
 		super(true, row, col);
@@ -24,10 +25,18 @@ public class DoorSquare extends Square {
 		this.enterDir = enterDir;
 	}
 	
+	/**
+	 * Gets the room this door opens to.
+	 * @return The name of the room this door opens to.
+	 */
 	public String getRoom(){
 		return room;
 	}
 	
+	/**
+	 * Gets the direction through which the door can be entered.
+	 * @return The direction through which this door can be entered
+	 */
 	public Dir getEnterDir(){
 		return enterDir;
 	}
