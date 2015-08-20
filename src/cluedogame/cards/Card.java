@@ -14,15 +14,17 @@ public abstract class Card {
 	
 	String name; // the item on the card
 	Image image;
+	private int identifier;
 	
 	/**
 	 * Constructor for class card.
 	 * @param name A String representing the item on
 	 * the card
 	 */
-	public Card(String name, Image image){
+	public Card(String name, Image image, int identifier){
 		this.name = name;
 		this.image = image.getScaledInstance(60,80, Image.SCALE_FAST);
+		this.identifier = identifier;
 	}
 	
 	/**
@@ -43,6 +45,10 @@ public abstract class Card {
 			return this.getName().equals(c.getName());
 		}
 		return false;
+	}
+	
+	public int getID(){
+		return identifier;
 	}
 	
 }

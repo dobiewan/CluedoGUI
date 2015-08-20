@@ -196,7 +196,7 @@ public class GameController {
 			playersInGame.remove(player);
 			// check if the game is over
 			if(playersInGame.size() == 0){
-				frame.showDialog("<html>--GAME OVER--<br />"
+				frame.showDialog("<html>--GAME OVER-- <br />" //TODO check if they want to play again
 						+ "It was "+accusation[0]+" in the "+accusation[2]+
 						" with the "+accusation[1]+"!</html>", "Game over");
 				frame.enableDiceBtn(false);

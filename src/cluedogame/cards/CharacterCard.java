@@ -14,8 +14,8 @@ public class CharacterCard extends Card {
 	 * Constructor for class CharacterCard.
 	 * @param name The name of the character represented
 	 */
-	public CharacterCard(String name, Image image) {
-		super(name, image);
+	public CharacterCard(String name, Image image, int id) {
+		super(name, image, id);
 	}
 
 	@Override

@@ -11,7 +11,7 @@ DDDDD____________Ebbbbbb
 DDDDDDDD__/////___bbbbbb
 DDDDDDDD__/////___bbbbbb
 DDDDDDDDW_/////___bbbbbb
-DDDDDDDD__/////_____S_N/
+DDDDDDDD__/////______SN/
 DDDDDDDD__/////___lllll/
 DDDDDDDD__/////__lllllll
 /_____N___/////_Elllllll

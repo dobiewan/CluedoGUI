@@ -14,8 +14,8 @@ public class RoomCard extends Card {
 	 * Constructor for class RoomCard.
 	 * @param name The name of the room represented
 	 */
-	public RoomCard(String name, Image image) {
-		super(name, image);
+	public RoomCard(String name, Image image, int id) {
+		super(name, image, id);
 	}
 
 	@Override

@@ -57,6 +57,9 @@ public class GameOfCluedo {
 	private GameController control;
 	private boolean isReady = false; // whether or not the game has finished setting up
 	private boolean infiniteMovement; // true if player is allowed infinite moves
+	
+	private int pixelSize = 5; // size of the pixels of the art
+	private boolean cardsSeen = false; // whether the cardsseen window is being displayed
 
 	
 	/**
@@ -80,37 +83,37 @@ public class GameOfCluedo {
 		// add character cards
 		List<Card> cCards = new ArrayList<Card>();
 		try {	
-		cCards.add(new CharacterCard(SCARLETT, ImageIO.read(new File("Images"+File.separator+"ScarlettCard.png"))));
-		cCards.add(new CharacterCard(MUSTARD, ImageIO.read(new File("Images"+File.separator+"MustardCard.png"))));
-		cCards.add(new CharacterCard(WHITE, ImageIO.read(new File("Images"+File.separator+"WhiteCard.png"))));
-		cCards.add(new CharacterCard(GREEN, ImageIO.read(new File("Images"+File.separator+"GreenCard.png"))));
-		cCards.add(new CharacterCard(PEACOCK, ImageIO.read(new File("Images"+File.separator+"PeacockCard.png"))));
-		cCards.add(new CharacterCard(PLUM, ImageIO.read(new File("Images"+File.separator+"PlumCard.png"))));
+		cCards.add(new CharacterCard(SCARLETT, ImageIO.read(new File("Images"+File.separator+"ScarlettCard.png")), 0));
+		cCards.add(new CharacterCard(MUSTARD, ImageIO.read(new File("Images"+File.separator+"MustardCard.png")), 1));
+		cCards.add(new CharacterCard(WHITE, ImageIO.read(new File("Images"+File.separator+"WhiteCard.png")), 5));
+		cCards.add(new CharacterCard(GREEN, ImageIO.read(new File("Images"+File.separator+"GreenCard.png")), 2));
+		cCards.add(new CharacterCard(PEACOCK, ImageIO.read(new File("Images"+File.separator+"PeacockCard.png")), 4));
+		cCards.add(new CharacterCard(PLUM, ImageIO.read(new File("Images"+File.separator+"PlumCard.png")), 3));
 		Collections.shuffle(cCards);
 		this.characterCards = cCards;
 		
 		// add room cards
 		List<Card> rCards = new ArrayList<Card>();
-		rCards.add(new RoomCard("Conservatory", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
-		rCards.add(new RoomCard("Billiard Room", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
-		rCards.add(new RoomCard("Library", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
-		rCards.add(new RoomCard("Study", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
-		rCards.add(new RoomCard("Hall", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
-		rCards.add(new RoomCard("Lounge", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
-		rCards.add(new RoomCard("Dining Room", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
-		rCards.add(new RoomCard("Kitchen", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
-		rCards.add(new RoomCard("Ball Room", ImageIO.read(new File("Images"+File.separator+"RoomCard.png"))));
+		rCards.add(new RoomCard("Conservatory", ImageIO.read(new File("Images"+File.separator+"ConservatoryCard.png")), 23));
+		rCards.add(new RoomCard("Billiard Room", ImageIO.read(new File("Images"+File.separator+"BilliardsCard.png")), 24));
+		rCards.add(new RoomCard("Library", ImageIO.read(new File("Images"+File.separator+"LibraryCard.png")), 25));
+		rCards.add(new RoomCard("Study", ImageIO.read(new File("Images"+File.separator+"StudyCard.png")), 26));
+		rCards.add(new RoomCard("Hall", ImageIO.read(new File("Images"+File.separator+"HallCard.png")), 27));
+		rCards.add(new RoomCard("Lounge", ImageIO.read(new File("Images"+File.separator+"LoungeCard.png")), 28));
+		rCards.add(new RoomCard("Dining Room", ImageIO.read(new File("Images"+File.separator+"DiningCard.png")), 20));
+		rCards.add(new RoomCard("Kitchen", ImageIO.read(new File("Images"+File.separator+"KitchenCard.png")), 21));
+		rCards.add(new RoomCard("Ball Room", ImageIO.read(new File("Images"+File.separator+"BallroomCard.png")), 22));
 		Collections.shuffle(rCards);
 		this.roomCards = rCards;
 		
 		// add weapon cards
 		List<Card> wCards = new ArrayList<Card>();
-		wCards.add(new WeaponCard("Candlestick", ImageIO.read(new File("Images"+File.separator+"CandlestickCard.png"))));
-		wCards.add(new WeaponCard("Dagger", ImageIO.read(new File("Images"+File.separator+"DaggerCard.png"))));
-		wCards.add(new WeaponCard("Lead Pipe", ImageIO.read(new File("Images"+File.separator+"PipeCard.png"))));
-		wCards.add(new WeaponCard("Revolver", ImageIO.read(new File("Images"+File.separator+"RevolverCard.png"))));
-		wCards.add(new WeaponCard("Rope", ImageIO.read(new File("Images"+File.separator+"RopeCard.png"))));
-		wCards.add(new WeaponCard("Spanner", ImageIO.read(new File("Images"+File.separator+"SpannerCard.png"))));
+		wCards.add(new WeaponCard("Candlestick", ImageIO.read(new File("Images"+File.separator+"CandlestickCard.png")), 12));
+		wCards.add(new WeaponCard("Dagger", ImageIO.read(new File("Images"+File.separator+"DaggerCard.png")), 10));
+		wCards.add(new WeaponCard("Lead Pipe", ImageIO.read(new File("Images"+File.separator+"PipeCard.png")), 13));
+		wCards.add(new WeaponCard("Revolver", ImageIO.read(new File("Images"+File.separator+"RevolverCard.png")), 11));
+		wCards.add(new WeaponCard("Rope", ImageIO.read(new File("Images"+File.separator+"RopeCard.png")), 15));
+		wCards.add(new WeaponCard("Spanner", ImageIO.read(new File("Images"+File.separator+"SpannerCard.png")), 14));
 		Collections.shuffle(wCards);
 		this.weaponCards = wCards;
 		} catch (IOException e) {
@@ -356,6 +359,33 @@ public class GameOfCluedo {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * getter and setter for pixelSize
+	 * @return
+	 */
+	public int getPixelSize(){
+		return pixelSize;
+	}
+	
+	public void setPixelSixe(int size){
+		pixelSize = size;
+	}
+	
+	/**
+	 * getter and setter for CardsSeen boolean
+	 */
+	public boolean cardsSeenWindow(){
+		return cardsSeen;
+	}
+	
+	public void setCardsSeenWindow(boolean isOpen){
+		cardsSeen = isOpen;
+	}
+	
+	public void toggleCardsSeen(){
+		cardsSeen = !cardsSeen;
 	}
 	
 }

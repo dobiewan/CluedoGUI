@@ -14,8 +14,8 @@ public class WeaponCard extends Card {
 	 * Constructor for class WeaponCard.
 	 * @param name The name of the weapon represented.
 	 */
-	public WeaponCard(String name, Image image) {
-		super(name, image);
+	public WeaponCard(String name, Image image, int id) {
+		super(name, image, id);
 	}
 
 	@Override

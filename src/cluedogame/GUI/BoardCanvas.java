@@ -24,6 +24,7 @@ import javax.swing.Timer;
 import cluedogame.Board;
 import cluedogame.GameOfCluedo;
 import cluedogame.Player;
+import cluedogame.cards.Card;
 import cluedogame.sqaures.DoorSquare;
 import cluedogame.sqaures.RoomSquare;
 import cluedogame.sqaures.ShortcutSquare;
@@ -40,12 +41,14 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	public static int TOOLTIP_HEIGHT = 40;
 	
 	private Image boardImage; // original board image
-	private Image resizedImage; // resized board image
+	private Image resizedBoardImage; // resized board image
+	private Image cardsSeenImage; // cards seen window image
+	private Image cardsSeenResized;
 	private Image moveImage; // image used to draw player path
 	private CluedoFrame frame; // the frame containing this canvas
 	private List<Square> possiblePath; // the path to draw when mouse has moved
 	private Queue<Square> movingPlayerQueue = new LinkedList<Square>(); // path for current player to follow
-	private Timer timer = new Timer(250, this); // a thread used for animating player movement
+	private Timer timer = new Timer(100, this); // a thread used for animating player movement
 	private Player currentPlayer; // the player whose turn it currently is
 	private boolean playerMoving = false; // true if a player is currently moving
 	
@@ -55,19 +58,25 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	private int toolTipX; // the x position of the tooltip
 	private int toolTipY; // the y position of the tooltip
 	
+	private GameOfCluedo game;
+	
 	/**
 	 * Constructor for class BoardCanvas.
 	 * @param frame The CluedoFrame containing this canvas.
 	 */
-	public BoardCanvas(CluedoFrame frame){
+	public BoardCanvas(CluedoFrame frame, GameOfCluedo game){
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		this.frame = frame;
+		this.game = game;
 		this.timer.start();
 		// load images
 		try {
 			boardImage = ImageIO.read(new File("Images"+File.separator+"board.png"));
-			resizedImage = boardImage.getScaledInstance(frame.BOARD_CANVAS_WIDTH,
+			resizedBoardImage = boardImage.getScaledInstance(frame.BOARD_CANVAS_WIDTH,
+					frame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
+			cardsSeenImage = ImageIO.read(new File("Images"+File.separator+"CardsSeen.png"));
+			cardsSeenResized = cardsSeenImage.getScaledInstance(frame.BOARD_CANVAS_WIDTH,
 					frame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
 			moveImage = ImageIO.read(new File("Images"+File.separator+"Move.png"))
 					.getScaledInstance(25,25, Image.SCALE_FAST);
@@ -85,7 +94,8 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 //		Image resizedImage = boardImage.getScaledInstance(CluedoFrame.BOARD_CANVAS_WIDTH,
 //				CluedoFrame.BOARD_CANVAS_HEIGHT, Image.SCALE_SMOOTH);
 		// draw board
-		g.drawImage(resizedImage, 0, 0, null);
+		int pixel = game.getPixelSize();
+		g.drawImage(resizedBoardImage, 0, 0, null);
 		// draw shortest path
 		if(possiblePath != null){
 			for(Square sq: possiblePath){
@@ -96,11 +106,32 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		}
 		// draw players
 		for(Player p : frame.getPlayers()){
-			p.draw(g, frame);
+			p.draw(g);
 		}
 		// draw tooltip
 		if(toolTipLine1 != null){
 			showToolTip(toolTipLine1, toolTipLine2, toolTipX, toolTipY, g);
+		}
+		
+		// draw cards seen window
+		if (game.cardsSeenWindow()){
+			drawCardsSeen(g, pixel);
+		}
+	}
+
+	private void drawCardsSeen(Graphics g, int pixel) {
+		g.drawImage(cardsSeenResized, 0, 0, null);
+		Image icon = currentPlayer.getIcon();
+		List<Card> seen = currentPlayer.getCardsSeen();
+		for (Card c : seen){
+			int id = c.getID();
+			if (id < 10){
+				g.drawImage(icon, (pixel*3)-(pixel*2), (pixel*5)+(pixel*8*id)-(pixel*2), null);
+			} else if (id < 20){
+				g.drawImage(icon, (pixel*3)-(pixel*2), (pixel*57)+(pixel*8*(id-10))-(pixel*2), null);
+			} else {
+				g.drawImage(icon, (pixel*67)-(pixel*2), (pixel*5)+(pixel*8*(id-20))-(pixel*2), null);
+			}
 		}
 	}
 
@@ -112,6 +143,10 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		if (game.cardsSeenWindow()){
+			game.setCardsSeenWindow(false);
+			return;
+		}
 		GameOfCluedo game = frame.getGame();
 		int row = frame.convertYToRow(e.getY());
 		int col = frame.convertXToCol(e.getX());
@@ -145,6 +180,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 			Square goal = board.squareAt(goalRow, goalCol);
 			List<Square> shortestPath = board.shortestPath(start, goal,
 					game.getRoll(), game);
+			possiblePath = null;
 			// check for invalid path
 			if(shortestPath == null){
 				if(!goal.isSteppable()){
@@ -297,10 +333,10 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 			} else if(fromSquare instanceof DoorSquare){
 				game.useMoves(1);
 			}
-			frame.repaintAll();
 		} else {
 			playerMoving = false;
 		}
+		frame.repaintAll();
 	}
 	
 }
