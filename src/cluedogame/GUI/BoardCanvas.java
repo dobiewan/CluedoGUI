@@ -120,6 +120,9 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	}
 
 	private void drawCardsSeen(Graphics g, int pixel) {
+		if(currentPlayer == null){
+			return;
+		}
 		g.drawImage(cardsSeenResized, 0, 0, null);
 		Image icon = currentPlayer.getIcon();
 		List<Card> seen = currentPlayer.getCardsSeen();
