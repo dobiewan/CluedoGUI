@@ -25,6 +25,7 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
 	
 	public static final int PREF_BUTTON_SIZE = GroupLayout.DEFAULT_SIZE;
 	public static final int MAX_BUTTON_SIZE = Short.MAX_VALUE;
+	public static final int BUTTON_HEIGHT = 49;
 	public static final int MIN_BOARD_CANVAS_WIDTH = 120;
 	public static final int MIN_BOARD_CANVAS_HEIGHT = 125;
 	public static final int MIN_DASH_CANVAS_WIDTH = 40;
@@ -673,6 +674,10 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
 		BOARD_CANVAS_HEIGHT = 125*pixelSize;
 		DASH_CANVAS_WIDTH = 40*pixelSize;
 		DASH_CANVAS_HEIGHT = BOARD_CANVAS_HEIGHT;
+		Insets insets = getInsets();
+		int newFrameWidth = BOARD_CANVAS_WIDTH + DASH_CANVAS_WIDTH + insets.left + insets.right;
+		int newFrameHeight = (int) (BOARD_CANVAS_HEIGHT + BUTTON_HEIGHT + insets.top + insets.bottom);
+		setSize(new Dimension(newFrameWidth, newFrameHeight));
 	}
 
 	@Override
