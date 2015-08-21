@@ -29,10 +29,10 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 	private CluedoFrame frame;
 	private GameOfCluedo game;
 	
-	public DashboardCanvas(CluedoFrame frame, GameOfCluedo game){
+	public DashboardCanvas(CluedoFrame frame){
 		addMouseListener(this);
 		this.frame = frame;
-		this.game = game;
+		this.game = frame.getGame();
 		try {
 			numbers = new Image[14];
 			for (int i = 0; i<=13; i++){
@@ -62,8 +62,6 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 		if (p == null){return;}
 		g.setColor(Color.WHITE);
 		g.drawImage(p.getNameImage(), 0, 0, null);
-//		g.drawString(p.getCharacter() + " ("+p.getUserName()+")", 10, 20);
-//		g.drawString(""+game.getRoll(), 20, 40);
 		int roll = game.getRoll();
 		if (roll > 12){
 			g.drawImage(numbers[13], 15, frame.BOARD_CANVAS_HEIGHT-45, null);
@@ -85,32 +83,20 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseClicked(MouseEvent arg0) {}
 
 	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseEntered(MouseEvent arg0) {}
 
 	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseExited(MouseEvent arg0) {}
 
 	@Override
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mousePressed(MouseEvent arg0) {}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		int pixel = game.getPixelSize();
+		int pixel = frame.getPixelSize();
 		int x = e.getX();
 		int y = e.getY();
 		if (x>pixel*13 && x<pixel*27){

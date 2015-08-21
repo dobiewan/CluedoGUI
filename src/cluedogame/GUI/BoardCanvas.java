@@ -53,6 +53,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	private Image cardsSeenImage; // cards seen window image
 	private Image cardsSeenResized;
 	private Image moveImage; // image used to draw player path
+	private Image moveImageResized;
 	
 	// tooltip fields
 	private String toolTipLine1; // the first line of the tooltip
@@ -80,13 +81,8 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	public void loadImages() {
 		try {
 			boardImage = ImageIO.read(new File("Images"+File.separator+"board.png"));
-			resizedBoardImage = boardImage.getScaledInstance(frame.BOARD_CANVAS_WIDTH,
-					frame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
 			cardsSeenImage = ImageIO.read(new File("Images"+File.separator+"CardsSeen.png"));
-			cardsSeenResized = cardsSeenImage.getScaledInstance(frame.BOARD_CANVAS_WIDTH,
-					frame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
-			moveImage = ImageIO.read(new File("Images"+File.separator+"Move.png"))
-					.getScaledInstance(25,25, Image.SCALE_FAST);
+			moveImage = ImageIO.read(new File("Images"+File.separator+"Move.png"));
 		} catch (IOException e) {
 			System.out.println("Could not read image file: "+e.getMessage());
 		}
@@ -99,15 +95,21 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 
 	@Override
 	public void paint(Graphics g){
+		int pixel = frame.getPixelSize();
+		// resize images
+		resizedBoardImage = boardImage.getScaledInstance(frame.BOARD_CANVAS_WIDTH,
+				frame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
+		cardsSeenResized = cardsSeenImage.getScaledInstance(frame.BOARD_CANVAS_WIDTH,
+				frame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
+		moveImageResized = moveImage.getScaledInstance(pixel*5,pixel*5, Image.SCALE_FAST);
 		// draw board
-		int pixel = game.getPixelSize();
 		g.drawImage(resizedBoardImage, 0, 0, null);
 		// draw shortest path
 		if(possiblePath != null){
 			for(Square sq: possiblePath){
 				int x = frame.convertColToX(sq.col());
 				int y = frame.convertRowToY(sq.row());
-				g.drawImage(moveImage, x, y, null);
+				g.drawImage(moveImageResized, x, y, null);
 			}
 		}
 		// draw players
@@ -354,6 +356,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		} else {
 			playerMoving = false;
 		}
+		frame.resize();
 		frame.repaintAll();
 	}
 	

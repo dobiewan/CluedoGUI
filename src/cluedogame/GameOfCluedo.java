@@ -57,7 +57,6 @@ public class GameOfCluedo {
 	private boolean isReady = false; // whether or not the game has finished setting up
 	private boolean infiniteMovement; // true if player is allowed infinite moves
 	
-	private int pixelSize = 5; // size of the pixels of the art
 	private boolean cardsSeen = false; // whether the cardsseen window is being displayed
 
 	
@@ -359,22 +358,6 @@ public class GameOfCluedo {
 			}
 		}
 		return null;
-	}
-	
-	/**
-	 * Gets the pixel drawing size.
-	 * @return The current pixel size
-	 */
-	public int getPixelSize(){
-		return pixelSize;
-	}
-	
-	/**
-	 * Sets the pixel size.
-	 * @param size The new pixel size
-	 */
-	public void setPixelSixe(int size){
-		pixelSize = size;
 	}
 	
 	/**

@@ -21,13 +21,13 @@ import java.util.concurrent.TimeUnit;
  * 
  * @author Sarah Dobie, Chris Read
  */
-public class CluedoFrame extends JFrame implements KeyListener {
+public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListener {
 	
 	public static final int PREF_BUTTON_SIZE = GroupLayout.DEFAULT_SIZE;
 	public static final int MAX_BUTTON_SIZE = Short.MAX_VALUE;
-	public static final int MIN_BOARD_CANVAS_WIDTH = 300;
-	public static final int MIN_BOARD_CANVAS_HEIGHT = 312;
-	public static final int MIN_DASH_CANVAS_WIDTH = 100;
+	public static final int MIN_BOARD_CANVAS_WIDTH = 120;
+	public static final int MIN_BOARD_CANVAS_HEIGHT = 125;
+	public static final int MIN_DASH_CANVAS_WIDTH = 40;
 	public static final int MIN_DASH_CANVAS_HEIGHT = MIN_BOARD_CANVAS_HEIGHT;
 	public int BOARD_CANVAS_WIDTH = 600;
 	public int BOARD_CANVAS_HEIGHT = 625;
@@ -53,6 +53,8 @@ public class CluedoFrame extends JFrame implements KeyListener {
     private JMenuItem gameAccuse;
     private JMenuItem gameDaveMode;
     
+	private int pixelSize = 5; // size of the pixels of the art
+    
     // Game info
     private GameOfCluedo game;
     private DialogHandler dialogHandler;
@@ -64,6 +66,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
      * Constructor for class CluedoFrame
      */
     public CluedoFrame() {
+    	addMouseMotionListener(this);
     	this.game = new GameOfCluedo(this);
     	this.dialogHandler = new DialogHandler(this);
         initialiseUI();
@@ -118,7 +121,7 @@ public class CluedoFrame extends JFrame implements KeyListener {
 	 */
 	private void initialiseFields() {
 		boardCanvas = new BoardCanvas(this);
-	    dashboardCanvas = new DashboardCanvas(this, game);
+	    dashboardCanvas = new DashboardCanvas(this);
 	    btnPanel = new Panel();
 	    nextTurnBtn = new JButton();
 	    takeShortcutBtn = new JButton();
@@ -644,4 +647,50 @@ public class CluedoFrame extends JFrame implements KeyListener {
             }
         });
     }
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		System.out.println("dragged");
+		resize();
+	}
+	
+	public void resize(){
+		Rectangle bounds = getBounds();
+		int x = bounds.width;
+		int y = bounds.height;
+		// aspect ratio = 800x625 (5px)
+		//(32x25) (160x125)
+		double xSize = x/160;
+		double ySize = y/125;
+		if(xSize < 1 || ySize < 1){
+			pixelSize = 1;
+			return;
+		}
+		double minSize = Math.min(xSize, ySize);
+		int newPixelSize = (int)minSize;
+		pixelSize = newPixelSize;
+		BOARD_CANVAS_WIDTH = 120*pixelSize;
+		BOARD_CANVAS_HEIGHT = 125*pixelSize;
+		DASH_CANVAS_WIDTH = 40*pixelSize;
+		DASH_CANVAS_HEIGHT = BOARD_CANVAS_HEIGHT;
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {}
+	
+	/**
+	 * Gets the pixel drawing size.
+	 * @return The current pixel size
+	 */
+	public int getPixelSize(){
+		return pixelSize;
+	}
+	
+	/**
+	 * Sets the pixel size.
+	 * @param size The new pixel size
+	 */
+	public void setPixelSize(int size){
+		pixelSize = size;
+	}
 }
