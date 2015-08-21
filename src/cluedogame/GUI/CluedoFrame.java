@@ -310,8 +310,8 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
         ParallelGroup hzGroup = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
         SequentialGroup sqGroupHz = layout.createSequentialGroup();
         
-        sqGroupHz.addComponent(dashboardCanvas, MIN_DASH_CANVAS_WIDTH, DASH_CANVAS_WIDTH, DASH_CANVAS_WIDTH);
-        sqGroupHz.addComponent(boardCanvas, MIN_BOARD_CANVAS_WIDTH, BOARD_CANVAS_WIDTH, BOARD_CANVAS_WIDTH);
+        sqGroupHz.addComponent(dashboardCanvas, DASH_CANVAS_WIDTH, DASH_CANVAS_WIDTH, DASH_CANVAS_WIDTH);
+        sqGroupHz.addComponent(boardCanvas, BOARD_CANVAS_WIDTH, BOARD_CANVAS_WIDTH, BOARD_CANVAS_WIDTH);
         hzGroup.addGroup(sqGroupHz);
         
         hzGroup.addComponent(btnPanel, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE);
@@ -321,8 +321,8 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
         SequentialGroup sqGroupVt = layout.createSequentialGroup();
         
         ParallelGroup dashboardGroup = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
-        dashboardGroup.addComponent(dashboardCanvas, MIN_DASH_CANVAS_HEIGHT, DASH_CANVAS_HEIGHT, DASH_CANVAS_HEIGHT);
-        sqGroupVt.addComponent(boardCanvas, MIN_BOARD_CANVAS_HEIGHT, BOARD_CANVAS_HEIGHT, BOARD_CANVAS_HEIGHT);
+        dashboardGroup.addComponent(dashboardCanvas, DASH_CANVAS_HEIGHT, DASH_CANVAS_HEIGHT, DASH_CANVAS_HEIGHT);
+        sqGroupVt.addComponent(boardCanvas, BOARD_CANVAS_HEIGHT, BOARD_CANVAS_HEIGHT, BOARD_CANVAS_HEIGHT);
         sqGroupVt.addComponent(btnPanel, PREF_BUTTON_SIZE, PREF_BUTTON_SIZE, MAX_BUTTON_SIZE);
         dashboardGroup.addGroup(sqGroupVt);
         
@@ -678,6 +678,7 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
 		int newFrameWidth = BOARD_CANVAS_WIDTH + DASH_CANVAS_WIDTH + insets.left + insets.right;
 		int newFrameHeight = (int) (BOARD_CANVAS_HEIGHT + BUTTON_HEIGHT + insets.top + insets.bottom);
 		setSize(new Dimension(newFrameWidth, newFrameHeight));
+		initialiseFrame();
 	}
 
 	@Override
