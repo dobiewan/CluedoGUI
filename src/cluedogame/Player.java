@@ -70,11 +70,9 @@ public class Player {
 	private void chooseImage() {
 		try {
 			// load player name image
-			playerNameImg = ImageIO.read(new File("Images"+File.separator+character+"Name.png"))
-					.getScaledInstance(200, 75, Image.SCALE_FAST);
+			playerNameImg = ImageIO.read(new File("Images"+File.separator+character+"Name.png"));
 			// load player token image
-			tokenImg = ImageIO.read(new File("Images"+File.separator+character+".png"))
-					.getScaledInstance(45, 45, Image.SCALE_FAST);
+			tokenImg = ImageIO.read(new File("Images"+File.separator+character+".png"));
 		} catch (IOException e) {
 			System.out.println("Could not read image file: "+e.getMessage());
 		}
@@ -84,8 +82,8 @@ public class Player {
 	 * Returns the name image for drawing at the top of the Dashboard.
 	 * @return An image of the player's name
 	 */
-	public Image getNameImage(){
-		return playerNameImg;
+	public Image getNameImage(int pixel){
+		return playerNameImg.getScaledInstance(40*pixel, 15*pixel, Image.SCALE_FAST);
 	}
 
 	/**
@@ -373,9 +371,10 @@ public class Player {
 	 * @param g The Graphics object to draw on.
 	 */
 	public void draw(Graphics g, CluedoFrame frame){
+		int pixel = frame.getPixelSize();
 		int x = frame.convertColToX(cPosition);
 		int y = frame.convertRowToY(rPosition);
-		g.drawImage(tokenImg, x-10, y-10, null);
+		g.drawImage(tokenImg.getScaledInstance(9*pixel, 9*pixel, Image.SCALE_FAST), x-(2*pixel), y-(2*pixel), null);
 	}
 	
 	/**

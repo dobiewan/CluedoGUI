@@ -36,12 +36,10 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 		try {
 			numbers = new Image[14];
 			for (int i = 0; i<=13; i++){
-				numbers[i] = ImageIO.read(new File("Images"+File.separator+"Numbers"+File.separator+i+".png"))
-						.getScaledInstance(45, 30, Image.SCALE_FAST);
+				numbers[i] = ImageIO.read(new File("Images"+File.separator+"Numbers"+File.separator+i+".png"));
 			}
 			DashBoardImage = ImageIO.read(new File("Images"+File.separator+"DashBoard.png"));
-			resizedImage = DashBoardImage.getScaledInstance(frame.DASH_CANVAS_WIDTH,
-					frame.DASH_CANVAS_HEIGHT, Image.SCALE_FAST);
+			
 		} catch (IOException e) {
 			System.out.println("Could not read image file: "+e.getMessage());
 		}
@@ -54,6 +52,9 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 
 	@Override
 	public void paint(Graphics g){
+		int pixel = frame.getPixelSize();
+		resizedImage = DashBoardImage.getScaledInstance(frame.DASH_CANVAS_WIDTH,
+				frame.DASH_CANVAS_HEIGHT, Image.SCALE_FAST);
 		g.drawImage(resizedImage, 0, 0, null);
 		if (!game.isReady()){
 			return;
@@ -61,22 +62,22 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 		Player p = game.getCurrentPlayer();
 		if (p == null){return;}
 		g.setColor(Color.WHITE);
-		g.drawImage(p.getNameImage(), 0, 0, null);
+		g.drawImage(p.getNameImage(pixel), 0, 0, null);
 		int roll = game.getRoll();
 		if (roll > 12){
-			g.drawImage(numbers[13], 15, frame.BOARD_CANVAS_HEIGHT-45, null);
+			g.drawImage(numbers[13].getScaledInstance(9*pixel, 6*pixel, Image.SCALE_FAST), 3*pixel, frame.BOARD_CANVAS_HEIGHT-9*pixel, null);
 		} else {
-			g.drawImage(numbers[roll], 15, frame.BOARD_CANVAS_HEIGHT-45, null);
+			g.drawImage(numbers[roll].getScaledInstance(9*pixel, 6*pixel, Image.SCALE_FAST), 3*pixel, frame.BOARD_CANVAS_HEIGHT-9*pixel, null);
 		}
 		
 		Image card;
-		int x = 35;
-		int y = 70;
+		int x = 7*pixel;
+		int y = 14*pixel;
 		int column = 0;
 		int row = 0;
 		for (Card c : p.getHand()){
-			card = c.getImage();
-			g.drawImage(card, x+(column*70), y+(row*90), null);
+			card = c.getImage().getScaledInstance(12*pixel,16*pixel, Image.SCALE_FAST);
+			g.drawImage(card, x+(column*14*pixel), y+(row*18*pixel), null);
 			column++;
 			if (column > 1){column = 0; row++;}
 		}

@@ -23,7 +23,7 @@ public abstract class Card {
 	 */
 	public Card(String name, Image image, int identifier){
 		this.name = name;
-		this.image = image.getScaledInstance(60,80, Image.SCALE_FAST);
+		this.image = image;
 		this.identifier = identifier;
 	}
 	
