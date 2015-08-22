@@ -356,7 +356,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		} else {
 			playerMoving = false;
 		}
-		frame.resize();
+//		frame.resize();
 		frame.repaintAll();
 	}
 	

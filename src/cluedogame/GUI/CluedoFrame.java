@@ -67,6 +67,7 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
      * Constructor for class CluedoFrame
      */
     public CluedoFrame() {
+    	this.addComponentListener(new CompAdapter(this));
     	addMouseMotionListener(this);
     	this.game = new GameOfCluedo(this);
     	this.dialogHandler = new DialogHandler(this);
@@ -696,4 +697,22 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
 	public void setPixelSize(int size){
 		pixelSize = size;
 	}
+}
+
+/*
+ * class for ComponentAdapter to allow resizing
+ * 
+ */
+class CompAdapter extends ComponentAdapter {
+	private CluedoFrame frame;
+	
+	public CompAdapter(CluedoFrame frame){
+		this.frame = frame;
+	}
+	
+	@Override
+	public void componentResized(ComponentEvent e) {
+        // This is only called when the user releases the mouse button.
+        frame.resize();
+    }
 }
