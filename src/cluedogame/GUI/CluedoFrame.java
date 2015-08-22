@@ -650,10 +650,7 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
     }
 
 	@Override
-	public void mouseDragged(MouseEvent e) {
-		System.out.println("dragged");
-		resize();
-	}
+	public void mouseDragged(MouseEvent e) {}
 	
 	public void resize(){
 		Rectangle bounds = getBounds();

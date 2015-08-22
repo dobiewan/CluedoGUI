@@ -138,7 +138,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		}
 		// draw the background
 		g.drawImage(cardsSeenResized, 0, 0, null);
-		Image icon = currentPlayer.getToken();
+		Image icon = currentPlayer.getToken().getScaledInstance(9*pixel, 9*pixel, Image.SCALE_FAST);
 		List<Card> seen = currentPlayer.getCardsSeen();
 		// draws the player token next to all seen cards
 		for (Card c : seen){
