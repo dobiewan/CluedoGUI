@@ -296,8 +296,24 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
 	    });
 	    menuGame.add(gameDaveMode);
 	    
+	    // set up 'Infinite Movement' option
+	    gameDaveMode.setText("Infinite Moves (Ctrl + I)");
+	    gameDaveMode.addActionListener(new ActionListener() {
+	        public void actionPerformed(ActionEvent evt) {
+	            infiniteMovesActionPerformed(evt);
+	        }
+	    });
+	    menuGame.add(gameDaveMode);
+	    
 	    // add Game to menu bar
 	    menuBar.add(menuGame);
+	}
+
+	//Infinite moves menu option
+	protected void infiniteMovesActionPerformed(ActionEvent evt) {
+		game.setInfiniteMovement(true);
+		game.setRollToInfinite();
+		repaintAll();
 	}
 
 	/**
@@ -712,7 +728,6 @@ class CompAdapter extends ComponentAdapter {
 	
 	@Override
 	public void componentResized(ComponentEvent e) {
-        // This is only called when the user releases the mouse button.
         frame.resize();
     }
 }

@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -21,16 +22,20 @@ import cluedogame.cards.Card;
  * @author Sarah Dobie and Chris Read
  *
  */
-public class DashboardCanvas extends JPanel implements MouseListener {
+public class DashboardCanvas extends JPanel implements MouseListener, MouseMotionListener {
 	
 	private Image DashBoardImage;
 	private Image resizedImage;
+	private Image cardsSeen;
 	private Image numbers[];
 	private CluedoFrame frame;
 	private GameOfCluedo game;
 	
+	private boolean lightBtn = false;
+	
 	public DashboardCanvas(CluedoFrame frame){
 		addMouseListener(this);
+		addMouseMotionListener(this);
 		this.frame = frame;
 		this.game = frame.getGame();
 		try {
@@ -39,6 +44,7 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 				numbers[i] = ImageIO.read(new File("Images"+File.separator+"Numbers"+File.separator+i+".png"));
 			}
 			DashBoardImage = ImageIO.read(new File("Images"+File.separator+"DashBoard.png"));
+			cardsSeen = ImageIO.read(new File("Images"+File.separator+"lightBtn.png"));
 			
 		} catch (IOException e) {
 			System.out.println("Could not read image file: "+e.getMessage());
@@ -81,6 +87,9 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 			column++;
 			if (column > 1){column = 0; row++;}
 		}
+		if (lightBtn){
+			g.drawImage(cardsSeen.getScaledInstance(pixel*14, pixel*7, Image.SCALE_FAST), pixel*13, pixel*106, null);
+		}
 	}
 
 	@Override
@@ -104,6 +113,25 @@ public class DashboardCanvas extends JPanel implements MouseListener {
 			if (y>pixel*106 && y<pixel*113){
 				game.toggleCardsSeen();
 			}
+		}
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		int pixel = frame.getPixelSize();
+		int x = e.getX();
+		int y = e.getY();
+		if (x>pixel*13 && x<pixel*27){
+			if (y>pixel*106 && y<pixel*113){
+				lightBtn = true;
+			} else {
+				lightBtn = false;
+			}
+		} else {
+			lightBtn = false;
 		}
 	}
 }
