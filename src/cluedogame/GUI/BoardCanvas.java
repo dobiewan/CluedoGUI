@@ -268,7 +268,6 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 			} else {
 				// move the player
 				this.movingPlayerQueue.addAll(shortestPath);
-				timer.restart();
 					
 				// check if player is in room or not
 				if(goal instanceof RoomSquare || goal instanceof ShortcutSquare){
@@ -348,7 +347,6 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 				} else {
 					setToolTipToNull();
 				}
-				repaint();
 			}
 		}
 	}
