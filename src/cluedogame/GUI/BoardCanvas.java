@@ -43,11 +43,14 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	private GameOfCluedo game; // the game represented on the board
 	private Image boardImage; // original board image
 	private Image daveBoardImage; // everything is dave
+	private Image[] daveRave; // and dave is dancing
 	private List<Square> possiblePath; // the path to draw when mouse has moved
 	private Queue<Square> movingPlayerQueue = new LinkedList<Square>(); // path for current player to follow
 	private Timer timer = new Timer(100, this); // a thread used for animating player movement
 	private Player currentPlayer; // the player whose turn it currently is
 	private boolean playerMoving = false; // true if a player is currently moving
+	private int raveCounter = 0; // rave image counter
+	private boolean rave = false;
 	
 	// image fields
 	private Image resizedBoardImage; // resized board image
@@ -74,6 +77,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		this.frame = frame;
 		this.game = frame.getGame();
 		this.timer.start();
+		daveRave = new Image[2];
 		loadImages();
 	}
 
@@ -86,7 +90,9 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 			cardsSeenImage = ImageIO.read(new File("Images"+File.separator+"CardsSeen.png"));
 			daveSeenImage = ImageIO.read(new File("Images"+File.separator+"DavesSeen.png"));
 			moveImage = ImageIO.read(new File("Images"+File.separator+"Move.png"));
-			daveBoardImage = ImageIO.read(new File("Images"+File.separator+"DaveBoard.png"));			
+			daveBoardImage = ImageIO.read(new File("Images"+File.separator+"DaveBoard.png"));	
+			daveRave[0] = ImageIO.read(new File("Images"+File.separator+"DaveRave0.png"));	
+			daveRave[1] = ImageIO.read(new File("Images"+File.separator+"DaveRave1.png"));
 		} catch (IOException e) {
 			System.out.println("Could not read image file: "+e.getMessage());
 		}
@@ -127,6 +133,10 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		for(Player p : frame.getPlayers()){
 			p.draw(g, frame);
 		}
+		
+		// get funky
+		daveRave(g, pixel);
+		
 		// draw tooltip
 		if(toolTipLine1 != null){
 			showToolTip(toolTipLine1, toolTipLine2, toolTipX, toolTipY, g);
@@ -136,6 +146,42 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		if (game.cardsSeenWindow()){
 			drawCardsSeen(g, pixel);
 		}
+	}
+
+	// Does what it says on the box
+	private void daveRave(Graphics g, int pixel) {
+		if (!rave){
+			return;
+		}
+		//successful rave
+		Image raveResized = daveRave[raveCounter].getScaledInstance(frame.BOARD_CANVAS_WIDTH,
+				frame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
+		g.drawImage(raveResized, 0, 0, null);
+		raveCounter++;
+		if (raveCounter > 1){
+			raveCounter = 0;
+		}
+	}
+
+	private void checkRave() {
+		if (!frame.isDave()){
+			rave = false;
+			return;
+		}
+		Board gameBoard = game.getBoard();
+		for (Player p : frame.getPlayers()){
+			Square s = gameBoard.squareAt(p.row(), p.col());
+			if (!(s instanceof RoomSquare)){
+				rave = false;
+				return;
+			}
+			RoomSquare r = (RoomSquare)s;
+			if (r.getRoom() != GameOfCluedo.BALL_ROOM){
+				rave = false;
+				return;
+			}
+		}
+		rave = true;
 	}
 
 	/**
@@ -359,6 +405,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 			} else if(fromSquare instanceof DoorSquare){
 				game.useMoves(1);
 			}
+			checkRave();
 		} else {
 			playerMoving = false;
 		}
