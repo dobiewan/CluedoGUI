@@ -24,17 +24,21 @@ import cluedogame.cards.Card;
  */
 public class DashboardCanvas extends JPanel implements MouseListener, MouseMotionListener {
 	
-	private Image DashBoardImage;
-	private Image DaveBoardImage;
-	private Image resizedImage;
-	private Image daveNameImage;
-	private Image cardsSeen;
-	private Image numbers[];
+	private Image DashBoardImage; // background image for dashboard
+	private Image DaveBoardImage; // all cards belong to dave
+	private Image resizedImage; // image resized to fit window
+	private Image daveNameImage; // deep down, we all want to be dave
+	private Image cardsSeenBtn; // the cards seen button highlight
+	private Image numbers[]; // number countdown images
 	private CluedoFrame frame;
 	private GameOfCluedo game;
 	
-	private boolean lightBtn = false;
+	private boolean lightCardsSeenBtn = false; // true if the cards seen button is selected
 	
+	/**
+	 * Constructor for class DashboardCanvas.
+	 * @param frame The CluedoFrame containing this canvas
+	 */
 	public DashboardCanvas(CluedoFrame frame){
 		addMouseListener(this);
 		addMouseMotionListener(this);
@@ -44,6 +48,9 @@ public class DashboardCanvas extends JPanel implements MouseListener, MouseMotio
 		repaint();
 	}
 
+	/**
+	 * Loads all image files to Image objects.
+	 */
 	private void loadImages() {
 		try {
 			numbers = new Image[14];
@@ -52,7 +59,7 @@ public class DashboardCanvas extends JPanel implements MouseListener, MouseMotio
 			}
 			DashBoardImage = ImageIO.read(new File("Images"+File.separator+"DashBoard.png"));
 			DaveBoardImage = ImageIO.read(new File("Images"+File.separator+"DaveDashBoard.png"));
-			cardsSeen = ImageIO.read(new File("Images"+File.separator+"lightBtn.png"));
+			cardsSeenBtn = ImageIO.read(new File("Images"+File.separator+"lightBtn.png"));
 			daveNameImage = ImageIO.read(new File("Images"+File.separator+"DaveName.png"));
 			
 		} catch (IOException e) {
@@ -67,6 +74,7 @@ public class DashboardCanvas extends JPanel implements MouseListener, MouseMotio
 	@Override
 	public void paint(Graphics g){
 		int pixel = frame.getPixelSize();
+		// draw background
 		if(frame.isDave()){
 			resizedImage = DaveBoardImage.getScaledInstance(frame.DASH_CANVAS_WIDTH,
 					frame.DASH_CANVAS_HEIGHT, Image.SCALE_FAST);
@@ -78,6 +86,8 @@ public class DashboardCanvas extends JPanel implements MouseListener, MouseMotio
 		if (!game.isReady()){
 			return;
 		}
+		
+		// draw player name
 		Player p = game.getCurrentPlayer();
 		if (p == null){return;}
 		g.setColor(Color.WHITE);
@@ -87,6 +97,8 @@ public class DashboardCanvas extends JPanel implements MouseListener, MouseMotio
 		} else {
 			g.drawImage(p.getNameImage(pixel), 0, 0, null);
 		}		
+		
+		// draw # moves remaining
 		int roll = game.getRoll();
 		if (roll > 12){
 			g.drawImage(numbers[13].getScaledInstance(9*pixel, 6*pixel, Image.SCALE_FAST), 3*pixel, frame.BOARD_CANVAS_HEIGHT-9*pixel, null);
@@ -94,6 +106,7 @@ public class DashboardCanvas extends JPanel implements MouseListener, MouseMotio
 			g.drawImage(numbers[roll].getScaledInstance(9*pixel, 6*pixel, Image.SCALE_FAST), 3*pixel, frame.BOARD_CANVAS_HEIGHT-9*pixel, null);
 		}
 		
+		// draw cards in player hand
 		Image card;
 		int x = 7*pixel;
 		int y = 14*pixel;
@@ -105,8 +118,10 @@ public class DashboardCanvas extends JPanel implements MouseListener, MouseMotio
 			column++;
 			if (column > 1){column = 0; row++;}
 		}
-		if (lightBtn){
-			g.drawImage(cardsSeen.getScaledInstance(pixel*14, pixel*7, Image.SCALE_FAST), pixel*13, pixel*106, null);
+		
+		// highlight cards seen button
+		if (lightCardsSeenBtn){
+			g.drawImage(cardsSeenBtn.getScaledInstance(pixel*14, pixel*7, Image.SCALE_FAST), pixel*13, pixel*106, null);
 		}
 	}
 
@@ -124,6 +139,7 @@ public class DashboardCanvas extends JPanel implements MouseListener, MouseMotio
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		// check if the player clicks on cards seen button
 		int pixel = frame.getPixelSize();
 		int x = e.getX();
 		int y = e.getY();
@@ -139,17 +155,18 @@ public class DashboardCanvas extends JPanel implements MouseListener, MouseMotio
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
+		// check if player is hovering over cards seen button
 		int pixel = frame.getPixelSize();
 		int x = e.getX();
 		int y = e.getY();
 		if (x>pixel*13 && x<pixel*27){
 			if (y>pixel*106 && y<pixel*113){
-				lightBtn = true;
+				lightCardsSeenBtn = true;
 			} else {
-				lightBtn = false;
+				lightCardsSeenBtn = false;
 			}
 		} else {
-			lightBtn = false;
+			lightCardsSeenBtn = false;
 		}
 	}
 }
