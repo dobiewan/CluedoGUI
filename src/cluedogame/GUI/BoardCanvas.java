@@ -42,6 +42,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	private CluedoFrame frame; // the frame containing this canvas
 	private GameOfCluedo game; // the game represented on the board
 	private Image boardImage; // original board image
+	private Image daveBoardImage; // everything is dave
 	private List<Square> possiblePath; // the path to draw when mouse has moved
 	private Queue<Square> movingPlayerQueue = new LinkedList<Square>(); // path for current player to follow
 	private Timer timer = new Timer(100, this); // a thread used for animating player movement
@@ -51,6 +52,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	// image fields
 	private Image resizedBoardImage; // resized board image
 	private Image cardsSeenImage; // cards seen window image
+	private Image daveSeenImage; // dave sees everything 
 	private Image cardsSeenResized;
 	private Image moveImage; // image used to draw player path
 	private Image moveImageResized;
@@ -82,7 +84,9 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		try {
 			boardImage = ImageIO.read(new File("Images"+File.separator+"board.png"));
 			cardsSeenImage = ImageIO.read(new File("Images"+File.separator+"CardsSeen.png"));
+			daveSeenImage = ImageIO.read(new File("Images"+File.separator+"DavesSeen.png"));
 			moveImage = ImageIO.read(new File("Images"+File.separator+"Move.png"));
+			daveBoardImage = ImageIO.read(new File("Images"+File.separator+"DaveBoard.png"));			
 		} catch (IOException e) {
 			System.out.println("Could not read image file: "+e.getMessage());
 		}
@@ -97,10 +101,17 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	public void paint(Graphics g){
 		int pixel = frame.getPixelSize();
 		// resize images
-		resizedBoardImage = boardImage.getScaledInstance(frame.BOARD_CANVAS_WIDTH,
-				frame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
-		cardsSeenResized = cardsSeenImage.getScaledInstance(frame.BOARD_CANVAS_WIDTH,
-				frame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
+		if(frame.isDave()){
+			resizedBoardImage = daveBoardImage.getScaledInstance(frame.BOARD_CANVAS_WIDTH,
+					frame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
+			cardsSeenResized = daveSeenImage.getScaledInstance(frame.BOARD_CANVAS_WIDTH,
+					frame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
+		} else {
+			resizedBoardImage = boardImage.getScaledInstance(frame.BOARD_CANVAS_WIDTH,
+					frame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
+			cardsSeenResized = cardsSeenImage.getScaledInstance(frame.BOARD_CANVAS_WIDTH,
+					frame.BOARD_CANVAS_HEIGHT, Image.SCALE_FAST);
+		}
 		moveImageResized = moveImage.getScaledInstance(pixel*5,pixel*5, Image.SCALE_FAST);
 		// draw board
 		g.drawImage(resizedBoardImage, 0, 0, null);
@@ -284,7 +295,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 				if(game.hasPlayerAt(row, col)){
 					Player p = game.getPlayerAt(row, col);
 					// set up tooltip
-					toolTipLine1 = p.getCharacter();
+					toolTipLine1 = frame.makeDave(p.getCharacter());
 					toolTipLine2 = p.getUserName();
 					toolTipX = e.getX();
 					toolTipY = e.getY();
@@ -330,11 +341,6 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 			this.possiblePath = shortestPath;
 			repaint();
 		}
-	}
-
-	public void enableDaveMode() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

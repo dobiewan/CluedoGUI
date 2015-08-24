@@ -55,7 +55,7 @@ public class GameController {
 			game.setCurrentPlayer(player);
 			frame.repaintAll();
 			game.rollDice();
-			frame.showDialog(player.getCharacter()+" rolls "+game.getRoll(), "Dice roll");
+			frame.showDialog(frame.makeDave(player.getCharacter())+" rolls "+game.getRoll(), "Dice roll");
 			enableButtons(player);
 			// put player on end of queue
 			playersInGame.add(playersInGame.poll());
@@ -112,7 +112,7 @@ public class GameController {
 		}
 		
 		// get the suggestion info from the player
-		String[] suggestions = frame.getDialogHandler().showSuggestionDialog(room);
+		String[] suggestions = frame.getDialogHandler().showSuggestionDialog(frame.makeDave(room));
 		String character = suggestions[0];
 		String weapon = suggestions[1];
 		
@@ -152,7 +152,8 @@ public class GameController {
 					String cardName = c.getName();
 					if ((cardName.equals(character) || cardName.equals(weapon) || cardName.equals(room))
 							&& !player.hasSeenCard(c)){
-						frame.showDialog(otherPlayer.getCharacter() + " has the card: " + cardName, "Suggestion results");
+						frame.showDialog(frame.makeDave(otherPlayer.getCharacter())
+								+ " has the card: " + frame.makeDave(cardName), "Suggestion results");
 						player.addCardSeen(c);
 						return;
 					}
@@ -187,23 +188,33 @@ public class GameController {
 		if (game.accuse(accusation)){
 			// player made a correct accusation and won the game
 			frame.showDialog("<html>You are correct! <br />"
-					+ "It was "+accusation[0]+" in the "+accusation[2]+
-					" with the "+accusation[1]+"!</html>", "Accusation results");
-			frame.showDialog("--GAME OVER--", "Game over");
+					+ "It was "+frame.makeDave(accusation[0])+" in the "+frame.makeDave(accusation[2])+
+					" with the "+frame.makeDave(accusation[1])+"!</html>", "Accusation results");
+			if(frame.isDave()){
+				frame.showDialog("--DAVE OVER--", "Game over");
+			} else {
+				frame.showDialog("--GAME OVER--", "Game over");
+			}
 			frame.disableAllButtons();
 		} else {
 			// accusation was incorrect, insult player
 			frame.showDialog("<html>You were wrong! You didn't really think this through...<br />"
-					+ player.getCharacter()+" is out of the game!</html>", "Accusation results");
+					+ frame.makeDave(player.getCharacter())+" is out of the game!</html>", "Accusation results");
 			// remove player from game
 			playersInGame.remove(player);
 			player.setInGame(false);
 			game.endTurn();
 			// check if the game is over
 			if(playersInGame.size() == 0){
-				frame.showDialog("<html>--GAME OVER-- <br />"
-						+ "It was "+accusation[0]+" in the "+accusation[2]+
-						" with the "+accusation[1]+"!</html>", "Game over");
+				if(frame.isDave()){
+					frame.showDialog("<html>--DAVE OVER-- <br />"
+							+ "It was "+frame.makeDave(accusation[0])+" in the "+frame.makeDave(accusation[2])+
+							" with the "+frame.makeDave(accusation[1])+"!</html>", "Game over");
+				} else {
+					frame.showDialog("<html>--GAME OVER-- <br />"
+							+ "It was "+frame.makeDave(accusation[0])+" in the "+frame.makeDave(accusation[2])+
+							" with the "+frame.makeDave(accusation[1])+"!</html>", "Game over");
+				}
 				frame.disableAllButtons();
 			} else {
 				// still players remaining, move to next player

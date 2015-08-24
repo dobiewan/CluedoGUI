@@ -25,7 +25,9 @@ import cluedogame.cards.Card;
 public class DashboardCanvas extends JPanel implements MouseListener, MouseMotionListener {
 	
 	private Image DashBoardImage;
+	private Image DaveBoardImage;
 	private Image resizedImage;
+	private Image daveNameImage;
 	private Image cardsSeen;
 	private Image numbers[];
 	private CluedoFrame frame;
@@ -38,18 +40,24 @@ public class DashboardCanvas extends JPanel implements MouseListener, MouseMotio
 		addMouseMotionListener(this);
 		this.frame = frame;
 		this.game = frame.getGame();
+		loadImages();
+		repaint();
+	}
+
+	private void loadImages() {
 		try {
 			numbers = new Image[14];
 			for (int i = 0; i<=13; i++){
 				numbers[i] = ImageIO.read(new File("Images"+File.separator+"Numbers"+File.separator+i+".png"));
 			}
 			DashBoardImage = ImageIO.read(new File("Images"+File.separator+"DashBoard.png"));
+			DaveBoardImage = ImageIO.read(new File("Images"+File.separator+"DaveDashBoard.png"));
 			cardsSeen = ImageIO.read(new File("Images"+File.separator+"lightBtn.png"));
+			daveNameImage = ImageIO.read(new File("Images"+File.separator+"DaveName.png"));
 			
 		} catch (IOException e) {
 			System.out.println("Could not read image file: "+e.getMessage());
 		}
-		repaint();
 	}
 
 	protected void paintComponent(Graphics g) {
@@ -59,8 +67,13 @@ public class DashboardCanvas extends JPanel implements MouseListener, MouseMotio
 	@Override
 	public void paint(Graphics g){
 		int pixel = frame.getPixelSize();
-		resizedImage = DashBoardImage.getScaledInstance(frame.DASH_CANVAS_WIDTH,
-				frame.DASH_CANVAS_HEIGHT, Image.SCALE_FAST);
+		if(frame.isDave()){
+			resizedImage = DaveBoardImage.getScaledInstance(frame.DASH_CANVAS_WIDTH,
+					frame.DASH_CANVAS_HEIGHT, Image.SCALE_FAST);
+		} else {
+			resizedImage = DashBoardImage.getScaledInstance(frame.DASH_CANVAS_WIDTH,
+					frame.DASH_CANVAS_HEIGHT, Image.SCALE_FAST);
+		}
 		g.drawImage(resizedImage, 0, 0, null);
 		if (!game.isReady()){
 			return;
@@ -68,7 +81,12 @@ public class DashboardCanvas extends JPanel implements MouseListener, MouseMotio
 		Player p = game.getCurrentPlayer();
 		if (p == null){return;}
 		g.setColor(Color.WHITE);
-		g.drawImage(p.getNameImage(pixel), 0, 0, null);
+		if(frame.isDave()){
+			Image daveNameResize = daveNameImage.getScaledInstance(40*pixel, 15*pixel, Image.SCALE_FAST);
+			g.drawImage(daveNameResize, 0, 0, null);
+		} else {
+			g.drawImage(p.getNameImage(pixel), 0, 0, null);
+		}		
 		int roll = game.getRoll();
 		if (roll > 12){
 			g.drawImage(numbers[13].getScaledInstance(9*pixel, 6*pixel, Image.SCALE_FAST), 3*pixel, frame.BOARD_CANVAS_HEIGHT-9*pixel, null);

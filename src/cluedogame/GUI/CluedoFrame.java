@@ -59,6 +59,7 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
     // Game info
     private GameOfCluedo game;
     private DialogHandler dialogHandler;
+	private boolean daveMode = false; // to dave or not to dave?
     
     // buttons pressed
     private List<Integer> keysPressed;
@@ -291,7 +292,7 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
 	    gameDaveMode.setText("Dave Mode (Ctrl + D)");
 	    gameDaveMode.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent evt) {
-	            daveModeActionPerformed(evt);
+	            toggleDaveMode();
 	        }
 	    });
 	    menuGame.add(gameDaveMode);
@@ -427,10 +428,9 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
 
 	/**
 	 * Runs when the Dave Mode button is pushed.
-	 * @param evt
 	 */
-	private void daveModeActionPerformed(ActionEvent evt) {                                           
-	    boardCanvas.enableDaveMode();
+	private void toggleDaveMode() {                                           
+	    daveMode = !daveMode;
 	}
 
 	@Override
@@ -457,7 +457,7 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
 					keysPressed.clear();
 					break;
 				} else if(i == KeyEvent.VK_D){ // dave mode
-					boardCanvas.enableDaveMode();
+					toggleDaveMode();
 					keysPressed.clear();
 					break;
 				} else if(i == KeyEvent.VK_I){ // infinite moves
@@ -712,6 +712,77 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
 	 */
 	public void setPixelSize(int size){
 		pixelSize = size;
+	}
+	
+	/**
+	 * Do you accept the one true Dave?
+	 * @return DAVE
+	 */
+	public boolean isDave(){
+		return daveMode;
+	}
+
+	public String makeDave(String input) {
+		if(!daveMode){
+			return input;
+		}
+		switch(input){
+		case GameOfCluedo.SCARLETT : return "Miss Dave";
+		case GameOfCluedo.MUSTARD : return "Colonel Dave";
+		case GameOfCluedo.GREEN : return "Reverend Dave";
+		case GameOfCluedo.PLUM : return "Professor Dave";
+		case GameOfCluedo.PEACOCK : return "Mrs Dave";
+		case GameOfCluedo.WHITE : return "Dave White";
+		
+		case GameOfCluedo.DAGGER : return "Daver";
+		case GameOfCluedo.REVOLVER : return "Redaver";
+		case GameOfCluedo.CANDLESTICK : return "Davestick";
+		case GameOfCluedo.LEAD_PIPE : return "Lead Dave";
+		case GameOfCluedo.SPANNER : return "Dave Spanner";
+		case GameOfCluedo.ROPE : return "Rope Dave";
+
+		case GameOfCluedo.DINING_ROOM : return "Daving Room";
+		case GameOfCluedo.KITCHEN : return "Dave Kitchen";
+		case GameOfCluedo.BALL_ROOM : return "Dave Rave";
+		case GameOfCluedo.CONSERVATORY : return "Davatory";
+		case GameOfCluedo.BILLIARD_ROOM : return "Billiard Dave";
+		case GameOfCluedo.LIBRARY : return "Dave Library";
+		case GameOfCluedo.STUDY : return "Cotton 231";
+		case GameOfCluedo.HALL : return "Dave Hall";
+		case GameOfCluedo.LOUNGE : return "Dave Lounge";
+		
+		default : return input;
+		}
+	}
+
+	public String unDave(String input) {
+		switch(input){
+		case "Miss Dave" : return GameOfCluedo.SCARLETT;
+		case "Colonel Dave" : return GameOfCluedo.MUSTARD;
+		case "Reverend Dave" : return GameOfCluedo.GREEN;
+		case "Professor Dave" : return GameOfCluedo.PLUM;
+		case "Mrs Dave" : return GameOfCluedo.PEACOCK;
+		case "Dave White" : return GameOfCluedo.WHITE;
+		
+		case "Daver" : return GameOfCluedo.DAGGER;
+		case "Redaver" : return GameOfCluedo.REVOLVER;
+		case "Davestick" : return GameOfCluedo.CANDLESTICK;
+		case "Lead Dave" : return GameOfCluedo.LEAD_PIPE;
+		case "Dave Spanner" : return GameOfCluedo.SPANNER;
+		case "Rope Dave" : return GameOfCluedo.ROPE;
+
+		case "Daving Room" : return GameOfCluedo.DINING_ROOM;
+		case "Dave Kitchen" : return GameOfCluedo.KITCHEN;
+		case "Dave Rave" : return GameOfCluedo.BALL_ROOM;
+		case "Davatory" : return GameOfCluedo.CONSERVATORY;
+		case "Billiard Dave" : return GameOfCluedo.BILLIARD_ROOM;
+		case "Dave Library" : return GameOfCluedo.LIBRARY;
+		case "Cotton 231" : return GameOfCluedo.STUDY;
+		case "Dave Hall" : return GameOfCluedo.HALL;
+		case "Dave Lounge" : return GameOfCluedo.LOUNGE;
+		
+		default : return input;
+		}
 	}
 }
 

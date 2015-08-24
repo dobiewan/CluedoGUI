@@ -112,7 +112,6 @@ public class DialogHandler {
 			JOptionPane.showOptionDialog(frame, panel, "# Players",
 					JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
 			String numPlayersResponse = txt.getText();
-	//		String numPlayersResponse = JOptionPane.showInputDialog(this, "How many players? (2-6)");
 			
 			// determine input validity
 			int numPlayers = 0;
@@ -120,7 +119,6 @@ public class DialogHandler {
 				numPlayers = Integer.parseInt(numPlayersResponse);
 				// check for out of bounds number
 				while(numPlayers < 2 || numPlayers > 6){
-	//				numPlayers = Integer.parseInt(JOptionPane.showInputDialog(this, "Invalid number. Must be 2-6 players."));
 					panel.remove(lbl);
 					txt.setText("");
 					lbl = new JLabel("Invalid number. Must be 2-6 players.");
@@ -217,7 +215,7 @@ public class DialogHandler {
 		game.endTurn();
 		String characterSuggestion = showCharacterSuggestions(room);
 		String weaponSuggestion = showWeaponSuggestions(room);
-		return new String[]{characterSuggestion, weaponSuggestion};
+		return new String[]{frame.unDave(characterSuggestion), frame.unDave(weaponSuggestion)};
 	}
 
 	/**
@@ -231,7 +229,7 @@ public class DialogHandler {
 			List<JRadioButton> btns = setupWeaponButtons();
 	        
 	        JPanel weaponPanel = new JPanel(new GridLayout(0, 1));
-			JLabel lbl = new JLabel("You are in the "+room+"."
+			JLabel lbl = new JLabel("You are in the "+frame.makeDave(room)+"."
 					+ "\n Select the weapon that you suspect.");
 			weaponPanel.add(lbl);
 	        
@@ -242,8 +240,6 @@ public class DialogHandler {
 			
 	        JOptionPane.showMessageDialog(frame, weaponPanel);
 	        
-	//        ButtonModel model = weaponButtons.getSelection();
-	//        return model.getActionCommand();
 	        for(JRadioButton b : btns){
 	        	if(b.isSelected()){
 	        		return b.getText();
@@ -294,8 +290,8 @@ public class DialogHandler {
 	 */
 	public String[] showAccusationDialog() {
 		frame.enableAccuseBtn(false);
-		return new String[]{showCharacterAccusations(),
-				showWeaponAccusations(),showRoomAccusations()};
+		return new String[]{frame.unDave(showCharacterAccusations()),
+				frame.unDave(showWeaponAccusations()),frame.unDave(showRoomAccusations())};
 	}
 
 	/**
@@ -396,15 +392,15 @@ public class DialogHandler {
 	private List<JRadioButton> setupCharacterButtons() {
 		List<JRadioButton> btns = new ArrayList<JRadioButton>();
 		// select the first button
-		JRadioButton greenBtn = new JRadioButton(GameOfCluedo.GREEN);
+		JRadioButton greenBtn = new JRadioButton(frame.makeDave(GameOfCluedo.GREEN));
 		greenBtn.setSelected(true);
 		// add buttons to list
 		btns.add(greenBtn);
-		btns.add(new JRadioButton(GameOfCluedo.MUSTARD));
-		btns.add(new JRadioButton(GameOfCluedo.PEACOCK)); 
-		btns.add(new JRadioButton(GameOfCluedo.PLUM)); 
-		btns.add(new JRadioButton(GameOfCluedo.SCARLETT)); 
-		btns.add(new JRadioButton(GameOfCluedo.WHITE)); 
+		btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.MUSTARD)));
+		btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.PEACOCK))); 
+		btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.PLUM))); 
+		btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.SCARLETT))); 
+		btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.WHITE))); 
 		return btns;
 	}
 
@@ -416,15 +412,16 @@ public class DialogHandler {
 	private List<JRadioButton> setupWeaponButtons() {
 	    List<JRadioButton> btns = new ArrayList<JRadioButton>();
 	    // select top button
-	    JRadioButton candlestickBtn = new JRadioButton(GameOfCluedo.CANDLESTICK);
+	    JRadioButton candlestickBtn = new JRadioButton(frame.makeDave(GameOfCluedo.CANDLESTICK));
 	    candlestickBtn.setSelected(true);
 	    // add buttons to list
 		btns.add(candlestickBtn);
-		btns.add(new JRadioButton(GameOfCluedo.DAGGER));
-		btns.add(new JRadioButton(GameOfCluedo.LEAD_PIPE)); 
-		btns.add(new JRadioButton(GameOfCluedo.REVOLVER)); 
-		btns.add(new JRadioButton(GameOfCluedo.ROPE)); 
-		btns.add(new JRadioButton(GameOfCluedo.SPANNER));
+		btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.DAGGER)));
+		btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.LEAD_PIPE))); 
+		btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.REVOLVER))); 
+		btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.ROPE))); 
+		btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.SPANNER)));
+		
 		return btns;
 	}
 
@@ -436,18 +433,18 @@ public class DialogHandler {
 	private List<JRadioButton> setupRoomButtons() {
 	    List<JRadioButton> btns = new ArrayList<JRadioButton>();
 	    // select the top button
-		JRadioButton kitchenBtn = new JRadioButton(GameOfCluedo.KITCHEN);
+		JRadioButton kitchenBtn = new JRadioButton(frame.makeDave(GameOfCluedo.KITCHEN));
 	    kitchenBtn.setSelected(true);
 	    // add buttons to list
 	    btns.add(kitchenBtn);
-	    btns.add(new JRadioButton(GameOfCluedo.BALL_ROOM));
-	    btns.add(new JRadioButton(GameOfCluedo.CONSERVATORY)); 
-	    btns.add(new JRadioButton(GameOfCluedo.BILLIARD_ROOM)); 
-	    btns.add(new JRadioButton(GameOfCluedo.LIBRARY)); 
-	    btns.add(new JRadioButton(GameOfCluedo.STUDY)); 
-	    btns.add(new JRadioButton(GameOfCluedo.HALL)); 
-	    btns.add(new JRadioButton(GameOfCluedo.LOUNGE)); 
-	    btns.add(new JRadioButton(GameOfCluedo.DINING_ROOM)); 
+    	btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.BALL_ROOM)));
+	    btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.CONSERVATORY))); 
+	    btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.BILLIARD_ROOM))); 
+	    btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.LIBRARY))); 
+	    btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.STUDY))); 
+	    btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.HALL))); 
+	    btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.LOUNGE))); 
+	    btns.add(new JRadioButton(frame.makeDave(GameOfCluedo.DINING_ROOM))); 
 		return btns;
 	}
 
