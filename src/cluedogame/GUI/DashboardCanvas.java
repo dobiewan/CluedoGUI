@@ -90,38 +90,73 @@ public class DashboardCanvas extends JPanel implements MouseListener, MouseMotio
 		// draw player name
 		Player p = game.getCurrentPlayer();
 		if (p == null){return;}
-		g.setColor(Color.WHITE);
-		if(frame.isDave()){
-			Image daveNameResize = daveNameImage.getScaledInstance(40*pixel, 15*pixel, Image.SCALE_FAST);
-			g.drawImage(daveNameResize, 0, 0, null);
-		} else {
-			g.drawImage(p.getNameImage(pixel), 0, 0, null);
-		}		
+		drawPlayerName(g, pixel, p);		
 		
 		// draw # moves remaining
-		int roll = game.getRoll();
-		if (roll > 12){
-			g.drawImage(numbers[13].getScaledInstance(9*pixel, 6*pixel, Image.SCALE_FAST), 3*pixel, frame.BOARD_CANVAS_HEIGHT-9*pixel, null);
-		} else {
-			g.drawImage(numbers[roll].getScaledInstance(9*pixel, 6*pixel, Image.SCALE_FAST), 3*pixel, frame.BOARD_CANVAS_HEIGHT-9*pixel, null);
-		}
+		drawRemainingMoves(g, pixel);
 		
 		// draw cards in player hand
+		drawPlayerHand(g, pixel, p);
+		
+		// highlight cards seen button
+		if (lightCardsSeenBtn){
+			g.drawImage(cardsSeenBtn.getScaledInstance
+					(pixel*14, pixel*7, Image.SCALE_FAST), pixel*13, pixel*106, null);
+		}
+	}
+
+	/**
+	 * Draws the name of the player at the top of the dashboard.
+	 * @param g The graphics object to draw with
+	 * @param pixel The current pixel size
+	 * @param player The current player
+	 */
+	private void drawPlayerName(Graphics g, int pixel, Player player) {
+		g.setColor(Color.WHITE);
+		if(frame.isDave()){
+			Image daveNameResize = daveNameImage.getScaledInstance
+					(40*pixel, 15*pixel, Image.SCALE_FAST);
+			g.drawImage(daveNameResize, 0, 0, null);
+		} else {
+			g.drawImage(player.getNameImage(pixel), 0, 0, null);
+		}
+	}
+
+	/**
+	 * Draws a number representing how many moves the player has left.
+	 * @param g The graphics object to draw with
+	 * @param pixel The current pixel size
+	 */
+	private void drawRemainingMoves(Graphics g, int pixel) {
+		int roll = game.getRoll();
+		if (roll > 12){
+			g.drawImage(numbers[13].getScaledInstance
+					(9*pixel, 6*pixel, Image.SCALE_FAST), 3*pixel, frame.BOARD_CANVAS_HEIGHT-9*pixel, null);
+		} else {
+			g.drawImage(numbers[roll].getScaledInstance
+					(9*pixel, 6*pixel, Image.SCALE_FAST), 3*pixel, frame.BOARD_CANVAS_HEIGHT-9*pixel, null);
+		}
+	}
+
+	/**
+	 * Draws the current player's hand.
+	 * @param g The graphics object to draw with
+	 * @param pixel The current pixel size
+	 * @param player The player to draw the hand of
+	 */
+	private void drawPlayerHand(Graphics g, int pixel, Player player) {
 		Image card;
+		// initialise co-ordinates
 		int x = 7*pixel;
 		int y = 14*pixel;
 		int column = 0;
 		int row = 0;
-		for (Card c : p.getHand()){
+		// scale and draw each card
+		for (Card c : player.getHand()){
 			card = c.getImage().getScaledInstance(12*pixel,16*pixel, Image.SCALE_FAST);
 			g.drawImage(card, x+(column*14*pixel), y+(row*18*pixel), null);
 			column++;
 			if (column > 1){column = 0; row++;}
-		}
-		
-		// highlight cards seen button
-		if (lightCardsSeenBtn){
-			g.drawImage(cardsSeenBtn.getScaledInstance(pixel*14, pixel*7, Image.SCALE_FAST), pixel*13, pixel*106, null);
 		}
 	}
 

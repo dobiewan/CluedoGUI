@@ -53,6 +53,7 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
     private JMenuItem gameSuggest;
     private JMenuItem gameAccuse;
     private JMenuItem gameDaveMode;
+    private JMenuItem gameInfiniteMoves;
     
 	private int pixelSize = 5; // size of the pixels of the art
     
@@ -100,8 +101,13 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
     	menuBar.addKeyListener(this);
     	menuFile.addKeyListener(this);
     	fileNewGame.addKeyListener(this);
-    	gameDaveMode.addKeyListener(this);
     	fileExit.addKeyListener(this);
+        gameNextTurn.addKeyListener(this);
+        gameTakeShortcut.addKeyListener(this);
+        gameSuggest.addKeyListener(this);
+        gameAccuse.addKeyListener(this);
+    	gameDaveMode.addKeyListener(this);
+    	gameInfiniteMoves.addKeyListener(this);
 	}
 
     /**
@@ -133,13 +139,14 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
 	    menuBar = new JMenuBar();
 	    menuFile = new JMenu();
 	    fileNewGame = new JMenuItem();
-	    gameDaveMode = new JMenuItem();
 	    fileExit = new JMenuItem();
 	    menuGame = new JMenu();
 	    gameNextTurn = new JMenuItem();
 	    gameTakeShortcut = new JMenuItem();
 	    gameSuggest = new JMenuItem();
 	    gameAccuse = new JMenuItem();
+	    gameDaveMode = new JMenuItem();
+	    gameInfiniteMoves = new JMenuItem();
 	}
 
 	/**
@@ -298,13 +305,13 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
 	    menuGame.add(gameDaveMode);
 	    
 	    // set up 'Infinite Movement' option
-	    gameDaveMode.setText("Infinite Moves (Ctrl + I)");
-	    gameDaveMode.addActionListener(new ActionListener() {
+	    gameInfiniteMoves.setText("Infinite Moves (Ctrl + I)");
+	    gameInfiniteMoves.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent evt) {
 	            infiniteMovesActionPerformed(evt);
 	        }
 	    });
-	    menuGame.add(gameDaveMode);
+	    menuGame.add(gameInfiniteMoves);
 	    
 	    // add Game to menu bar
 	    menuBar.add(menuGame);
@@ -655,39 +662,35 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
 		dashboardCanvas.repaint();
 	}
 
-	/**
-     * Main method for CluedoFrame
-     */
-    public static void main(String args[]) {
-    	EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new CluedoFrame();
-            }
-        });
-    }
-
 	@Override
 	public void mouseDragged(MouseEvent e) {}
 	
+	/**
+	 * Snaps the window to a size that fits the aspect ratio.
+	 * Called when a user resizes the window.
+	 */
 	public void resize(){
+		// get window size info
 		Rectangle bounds = getBounds();
 		int x = bounds.width;
 		int y = bounds.height;
-		// aspect ratio = 800x625 (5px)
-		//(32x25) (160x125)
 		double xSize = x/160;
 		double ySize = y/125;
+		// if smaller than min size, make window min size
 		if(xSize < 1 || ySize < 1){
 			pixelSize = 1;
 			return;
 		}
+		// choose the smallest of the x unit and y unit
 		double minSize = Math.min(xSize, ySize);
 		int newPixelSize = (int)minSize;
 		pixelSize = newPixelSize;
+		// update size fields
 		BOARD_CANVAS_WIDTH = 120*pixelSize;
 		BOARD_CANVAS_HEIGHT = 125*pixelSize;
 		DASH_CANVAS_WIDTH = 40*pixelSize;
 		DASH_CANVAS_HEIGHT = BOARD_CANVAS_HEIGHT;
+		// determine new window size
 		Insets insets = getInsets();
 		int newFrameWidth = BOARD_CANVAS_WIDTH + DASH_CANVAS_WIDTH + insets.left + insets.right;
 		int newFrameHeight = (int) (BOARD_CANVAS_HEIGHT + BUTTON_HEIGHT + insets.top + insets.bottom);
@@ -722,6 +725,12 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
 		return daveMode;
 	}
 
+	/**
+	 * Dave will recreate the world in his own image.
+	 * @param input An offering to Dave
+	 * @return If Dave accepts the offering, a Davified version will
+	 * be given unto you.
+	 */
 	public String makeDave(String input) {
 		if(!daveMode){
 			return input;
@@ -755,6 +764,11 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
 		}
 	}
 
+	/**
+	 * For use when Dave has had enough of mortals.
+	 * @param input A davified string
+	 * @return An undavified string
+	 */
 	public String unDave(String input) {
 		switch(input){
 		case "Miss Dave" : return GameOfCluedo.SCARLETT;
@@ -784,11 +798,23 @@ public class CluedoFrame extends JFrame implements KeyListener, MouseMotionListe
 		default : return input;
 		}
 	}
+
+	/**
+     * Main method for CluedoFrame
+     */
+    public static void main(String args[]) {
+    	EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new CluedoFrame();
+            }
+        });
+    }
 }
 
-/*
- * class for ComponentAdapter to allow resizing
- * 
+/**
+ * A class to handle resizing of the window.
+ * @author Sarah Dobie, Chris Read
+ *
  */
 class CompAdapter extends ComponentAdapter {
 	private CluedoFrame frame;

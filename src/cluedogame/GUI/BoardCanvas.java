@@ -148,7 +148,11 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		}
 	}
 
-	// Does what it says on the box
+	/**
+	 * Does what it says on the box.
+	 * @param g The graphics object to draw with
+	 * @param pixel The pixel size of the window
+	 */
 	private void daveRave(Graphics g, int pixel) {
 		if (!rave){
 			return;
@@ -163,11 +167,16 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		}
 	}
 
+	/**
+	 * Ask The Great Dave for permission to party.
+	 */
 	private void checkRave() {
 		if (!frame.isDave()){
+			// dave does not approve
 			rave = false;
 			return;
 		}
+		// all players must be present in the Dave Rave
 		Board gameBoard = game.getBoard();
 		for (Player p : frame.getPlayers()){
 			Square s = gameBoard.squareAt(p.row(), p.col());
@@ -388,7 +397,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) { // called every 250 milliseconds
+	public void actionPerformed(ActionEvent e) { // called every 100 milliseconds
 		if(!movingPlayerQueue.isEmpty()){ // a player should be moving
 			playerMoving = true;
 			GameOfCluedo game = frame.getGame();
@@ -407,7 +416,6 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		} else {
 			playerMoving = false;
 		}
-//		frame.resize();
 		frame.repaintAll();
 	}
 	
